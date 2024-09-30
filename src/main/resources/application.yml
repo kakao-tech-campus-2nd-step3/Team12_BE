@@ -3,7 +3,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: 'jdbc:mysql://localhost/jpa_1'
     username: root
-    password: starki9337
+    password: pwd
 
   servlet:
     multipart:
@@ -32,8 +32,8 @@ spring:
         registration:
 
           kakao:
-            client-id: 0079af8e66a2f897721d5419a0933b70
-            client-secret: zswRxlhG4BxDtwdibpuOIRyw6b75yekK
+            client-id: clientID
+            client-secret: pwd
             redirect-uri: http://localhost:8080/login/oauth2/code/kakao
 
             authorization-grant-type: authorization_code
