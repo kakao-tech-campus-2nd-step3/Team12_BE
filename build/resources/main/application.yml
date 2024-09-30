@@ -1,3 +1,63 @@
 spring:
-  application:
-    name: ditto
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: 'jdbc:mysql://localhost/jpa_1'
+    username: root
+    password: starki9337
+
+  servlet:
+    multipart:
+      maxFileSize: 10MB # 파일 하나의 최대 크기
+      maxRequestSize: 30MB
+
+  sql:
+    init:
+      mode: always
+
+  jpa:
+    hibernate:
+      ddl-auto: create        # DB 초기화 전략 (none, create, create-drop, update, validate)
+
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        show-sql: true
+
+    defer-datasource-initialization: true
+    database: mysql
+
+  security:
+    oauth2:
+      client:
+        registration:
+
+          kakao:
+            client-id: 0079af8e66a2f897721d5419a0933b70
+            client-secret: zswRxlhG4BxDtwdibpuOIRyw6b75yekK
+            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+
+            authorization-grant-type: authorization_code
+            scope: profile_nickname
+            client-name: kakao
+            client-authentication-method: client_secret_post
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
+
+
+
+jwt:
+  issuer: yoonsu0325@gmail.com
+  secret_key: studySpringbootttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+
+  access:
+    expiration: 3600000 # 1시간(60분) (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h))
+    header: Authorization
+
+  refresh:
+    expiration: 1209600000 #  (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h) * 24L(h -> 하루) * 14(2주))
+    header: Authorization-refresh
