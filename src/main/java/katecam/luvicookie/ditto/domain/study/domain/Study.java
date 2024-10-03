@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -45,5 +46,14 @@ public class Study {
 
     @Column(name = "profile_image", nullable = false, length = MAX_STUDY_PROFILE_IMAGE_LENGTH)
     private String profileImage;
+
+    @Builder
+    public Study(String name, String description, Boolean isOpen, String topic, String profileImage) {
+        this.name = name;
+        this.description = description;
+        this.isOpen = isOpen;
+        this.topic = topic;
+        this.profileImage = profileImage;
+    }
 
 }

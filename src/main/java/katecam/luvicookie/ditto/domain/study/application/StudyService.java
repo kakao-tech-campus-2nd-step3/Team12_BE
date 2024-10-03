@@ -2,6 +2,7 @@ package katecam.luvicookie.ditto.domain.study.application;
 
 import katecam.luvicookie.ditto.domain.study.dao.StudyRepository;
 import katecam.luvicookie.ditto.domain.study.domain.Study;
+import katecam.luvicookie.ditto.domain.study.dto.request.StudyCreateRequest;
 import katecam.luvicookie.ditto.domain.study.dto.response.StudyListResponse;
 import katecam.luvicookie.ditto.domain.study.dto.response.StudyResponse;
 import katecam.luvicookie.ditto.global.error.ErrorCode;
@@ -29,6 +30,10 @@ public class StudyService {
         return studyRepository.findById(studyId)
                 .map(StudyResponse::toResponse)
                 .orElseThrow(() -> new GlobalException(ErrorCode.STUDY_NOT_FOUND));
+    }
+
+    public void create(StudyCreateRequest request) {
+        studyRepository.save(request.toEntity());
     }
 
 }
