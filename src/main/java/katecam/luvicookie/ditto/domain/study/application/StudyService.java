@@ -36,4 +36,9 @@ public class StudyService {
         studyRepository.save(request.toEntity());
     }
 
+    public void delete(Long studyId) {
+        // 조장 검증 코드 필요
+        studyRepository.deleteById(studyId);
+    }
+
 }
