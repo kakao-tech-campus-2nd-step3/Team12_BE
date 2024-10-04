@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "study")
+@Table(name = "team")
 public class Study {
 
     private static final int MAX_STUDY_NAME_LENGTH = 127;
@@ -27,7 +27,7 @@ public class Study {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false)
-    private Long id;
+    private Integer id;
 
     @Column(name = "name", nullable = false, length = MAX_STUDY_NAME_LENGTH)
     private String name;

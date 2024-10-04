@@ -6,7 +6,7 @@ import lombok.Builder;
 @Builder
 public class StudyResponse {
 
-    private Long studyId;
+    private Integer studyId;
     private String name;
     private String description;
     private Boolean isOpen;

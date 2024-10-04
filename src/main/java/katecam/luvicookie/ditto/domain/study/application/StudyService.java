@@ -26,7 +26,7 @@ public class StudyService {
         return StudyListResponse.toResponse(studyResponses);
     }
 
-    public StudyResponse getStudy(Long studyId) {
+    public StudyResponse getStudy(Integer studyId) {
         return studyRepository.findById(studyId)
                 .map(StudyResponse::toResponse)
                 .orElseThrow(() -> new GlobalException(ErrorCode.STUDY_NOT_FOUND));
@@ -36,7 +36,7 @@ public class StudyService {
         studyRepository.save(request.toEntity());
     }
 
-    public void delete(Long studyId) {
+    public void delete(Integer studyId) {
         // 조장 검증 코드 필요
         studyRepository.deleteById(studyId);
     }

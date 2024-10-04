@@ -28,7 +28,7 @@ public class StudyController {
     }
 
     @GetMapping("/{studyId}")
-    public ResponseEntity<StudyResponse> getStudy(@PathVariable Long studyId) {
+    public ResponseEntity<StudyResponse> getStudy(@PathVariable Integer studyId) {
         return ResponseEntity.ok(studyService.getStudy(studyId));
     }
 
@@ -42,7 +42,7 @@ public class StudyController {
 
     // 회원 로그인 검증 필요
     @DeleteMapping("/{studyId}")
-    public ResponseEntity<Void> deleteStudy(@PathVariable Long studyId) {
+    public ResponseEntity<Void> deleteStudy(@PathVariable Integer studyId) {
         studyService.delete(studyId);
         return ResponseEntity.noContent()
                 .build();
