@@ -21,14 +21,14 @@ public class StudyService {
     public StudyListResponse getStudyList() {
         List<Study> studies = studyRepository.findAll();
         List<StudyResponse> studyResponses = studies.stream()
-                .map(StudyResponse::toResponse)
+                .map(StudyResponse::from)
                 .toList();
-        return StudyListResponse.toResponse(studyResponses);
+        return StudyListResponse.from(studyResponses);
     }
 
     public StudyResponse getStudy(Integer studyId) {
         return studyRepository.findById(studyId)
-                .map(StudyResponse::toResponse)
+                .map(StudyResponse::from)
                 .orElseThrow(() -> new GlobalException(ErrorCode.STUDY_NOT_FOUND));
     }
 

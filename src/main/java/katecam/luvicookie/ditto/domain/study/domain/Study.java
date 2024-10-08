@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "team")
+@Table(name = "study")
 public class Study {
 
     private static final int MAX_STUDY_NAME_LENGTH = 127;
