@@ -13,7 +13,7 @@ public class StudyResponse {
     private String topic;
     private String profileImage;
 
-    public static StudyResponse toResponse(Study study) {
+    public static StudyResponse from(Study study) {
         return StudyResponse.builder()
                 .studyId(study.getId())
                 .name(study.getName())

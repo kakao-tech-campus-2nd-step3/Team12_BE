@@ -1,4 +1,3 @@
-/*
 CREATE TABLE member (
     id SERIAL PRIMARY KEY,
     name VARCHAR(25),
@@ -28,4 +27,3 @@ CREATE TABLE teammate (
     CONSTRAINT FK_member_TO_teammate FOREIGN KEY (memberId) REFERENCES member (id),
     CONSTRAINT FK_team_TO_teammate FOREIGN KEY (teamId) REFERENCES team (id)
 );
-*/
