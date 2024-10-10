@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -30,25 +29,24 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
         OAuth2User user = super.loadUser(userRequest);
         Map<String, Object> attributes = user.getAttributes();
 
-        String userNameAttributeName = userRequest.getClientRegistration()
-                .getProviderDetails()
-                .getUserInfoEndpoint()
-                .getUserNameAttributeName();
-
         KakaoUserInfo kakaoUserInfo = new KakaoUserInfo(attributes);
         String socialId = KakaoUserInfo.getSocialId();
         log.info(socialId);
         String name = kakaoUserInfo.getName();
 
-        Optional<User> bySocialId = userRepository.findBySocialId(socialId);
-        User member = bySocialId.orElseGet(() -> saveSocialMember(socialId, name));
+        User member = userRepository.findBySocialId(socialId)
+                .orElseGet(() -> saveSocialMember(socialId, name));
 
         return new PrincipalDetail(member, Collections.singleton(new SimpleGrantedAuthority(member.getRole().getValue())),
                 attributes);
     }
 
     public User saveSocialMember(String socialId, String name) {
-        User newMember = User.builder().socialId(socialId).name(name).role(Role.GUEST).build();
+        User newMember = User.builder()
+                    .socialId(socialId)
+                    .name(name)
+                    .role(Role.GUEST)
+                    .build();
         return userRepository.save(newMember);
     }
 }

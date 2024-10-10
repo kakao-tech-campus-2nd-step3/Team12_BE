@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class UserDTO {
-
     private String nickname;
-    private String type;
+    private String profileImage;
+
 }

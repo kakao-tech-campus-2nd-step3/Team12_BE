@@ -15,7 +15,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private Long id;
+    private Integer id;
     @Column(name = "name")
     private String name;
 
@@ -27,12 +27,7 @@ public class User {
     //최초 로그인인지 아닌지 알아보기 위한 용도
     @Enumerated(EnumType.STRING)
     private Role role;
-    //멘토인지 멘티인지
-    @Column(name = "type")
-    private String type;
-    public void setType(String type){
-        this.type = type;
-    }
+
     public void authorizeUser(){
         this.role = Role.USER;
     }
@@ -40,12 +35,14 @@ public class User {
     public void setNickname(String nickname){
         this.nickname = nickname;
     }
-    public static User makeUser(UserDTO dto){
-        User user = User.builder()
+    public static User toEntity(UserDTO dto){
+        return User.builder()
                 .role(Role.USER)
-                .type(dto.getType())
                 .nickname(dto.getNickname())
                 .build();
-        return user;
+    }
+
+    public boolean isGuest() {
+        return role.equals(Role.GUEST);
     }
 }

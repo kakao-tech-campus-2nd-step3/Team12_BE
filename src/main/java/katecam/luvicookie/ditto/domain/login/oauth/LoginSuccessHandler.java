@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import katecam.luvicookie.ditto.domain.login.jwt.JwtConstants;
 import katecam.luvicookie.ditto.domain.login.jwt.TokenProvider;
 import katecam.luvicookie.ditto.domain.user.domain.PrincipalDetail;
-import katecam.luvicookie.ditto.domain.user.domain.Role;
 import katecam.luvicookie.ditto.domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -24,7 +23,6 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException {
 
-
         PrincipalDetail principal = (PrincipalDetail) authentication.getPrincipal();
         User member = principal.getUser();
         Map<String, Object> responseMap = principal.getMemberInfo();
@@ -33,7 +31,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         String refreshToken = TokenProvider.generateToken(responseMap, JwtConstants.REFRESH_EXP_TIME);
 
         // 최초 로그인인 경우 추가 정보 입력을 위한 회원가입 페이지로 리다이렉트
-        if (member.getRole().equals(Role.GUEST)) {
+        if (member.isGuest()) {
             response.addHeader(JwtConstants.ACCESS, JwtConstants.JWT_TYPE + accessToken);
             response.addHeader(JwtConstants.REFRESH, JwtConstants.JWT_TYPE + refreshToken);
             String redirectURL = UriComponentsBuilder.fromUriString("http://localhost:8080/user/info")

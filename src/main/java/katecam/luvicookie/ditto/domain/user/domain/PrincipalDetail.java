@@ -78,7 +78,7 @@ public class PrincipalDetail implements OAuth2User, UserDetails {
         return null;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return user.getId();
     }
 

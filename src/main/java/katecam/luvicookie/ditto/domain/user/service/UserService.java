@@ -19,10 +19,10 @@ public class UserService {
     public void updateUser(UserDTO userDTO, Long userId){
         log.info(String.valueOf(userId));
         log.info(userDTO.getNickname());
-        log.info(userDTO.getType());
-        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당사용자가없습니다"));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당사용자가없습니다"));
         user.authorizeUser();
-        user.setType(userDTO.getType());
         user.setNickname(userDTO.getNickname());
     }
 

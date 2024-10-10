@@ -1,4 +1,4 @@
-package com.spring_ditto.ditto.config.oauth;
+package katecam.luvicookie.ditto.domain.login.oauth;
 
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 
