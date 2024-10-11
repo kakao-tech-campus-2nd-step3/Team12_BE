@@ -35,7 +35,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
             response.addHeader(JwtConstants.ACCESS, JwtConstants.JWT_TYPE + accessToken);
             response.addHeader(JwtConstants.REFRESH, JwtConstants.JWT_TYPE + refreshToken);
-            String redirectURL = UriComponentsBuilder.fromUriString("http://localhost:8080/user/info")
+            String redirectURL = UriComponentsBuilder.fromUriString("http://localhost:8080/api/auth")
                     //.queryParam("email", member.getEmail()).build()
                     .encode(StandardCharsets.UTF_8)
                     .toUriString();
@@ -47,7 +47,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
             response.addHeader(JwtConstants.REFRESH, JwtConstants.JWT_TYPE + refreshToken);
 
             // 최초 로그인이 아닌 경우 로그인 성공 페이지로 이동
-            String redirectURL = UriComponentsBuilder.fromUriString("http://localhost:8080/interest/public")
+            String redirectURL = UriComponentsBuilder.fromUriString("http://localhost:8080/api/auth/kakao")
                     .build()
                     .encode(StandardCharsets.UTF_8)
                     .toUriString();
