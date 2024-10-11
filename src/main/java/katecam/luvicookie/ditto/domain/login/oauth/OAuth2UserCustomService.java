@@ -1,10 +1,10 @@
 package katecam.luvicookie.ditto.domain.login.oauth;
 
-import katecam.luvicookie.ditto.domain.user.domain.KakaoUserInfo;
-import katecam.luvicookie.ditto.domain.user.domain.PrincipalDetail;
-import katecam.luvicookie.ditto.domain.user.domain.Role;
-import katecam.luvicookie.ditto.domain.user.domain.User;
-import katecam.luvicookie.ditto.domain.user.repository.UserRepository;
+import katecam.luvicookie.ditto.domain.member.domain.KakaoUserInfo;
+import katecam.luvicookie.ditto.domain.member.domain.Member;
+import katecam.luvicookie.ditto.domain.member.domain.PrincipalDetail;
+import katecam.luvicookie.ditto.domain.member.domain.Role;
+import katecam.luvicookie.ditto.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,7 +22,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class OAuth2UserCustomService extends DefaultOAuth2UserService {
 
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -30,23 +30,22 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
         Map<String, Object> attributes = user.getAttributes();
 
         KakaoUserInfo kakaoUserInfo = new KakaoUserInfo(attributes);
-        String socialId = KakaoUserInfo.getSocialId();
-        log.info(socialId);
-        String name = kakaoUserInfo.getName();
 
-        User member = userRepository.findBySocialId(socialId)
-                .orElseGet(() -> saveSocialMember(socialId, name));
+        String name = kakaoUserInfo.getName();
+        String email = kakaoUserInfo.getEmail();
+        Member member = memberRepository.findByEmail(email)
+                .orElseGet(() -> saveSocialMember(email, name));
 
         return new PrincipalDetail(member, Collections.singleton(new SimpleGrantedAuthority(member.getRole().getValue())),
                 attributes);
     }
 
-    public User saveSocialMember(String socialId, String name) {
-        User newMember = User.builder()
-                    .socialId(socialId)
+    public Member saveSocialMember(String email, String name) {
+        Member newMember = Member.builder()
+                    .email(email)
                     .name(name)
                     .role(Role.GUEST)
                     .build();
-        return userRepository.save(newMember);
+        return memberRepository.save(newMember);
     }
 }

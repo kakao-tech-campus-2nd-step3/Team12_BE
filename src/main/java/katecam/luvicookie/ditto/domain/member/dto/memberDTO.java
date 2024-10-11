@@ -1,4 +1,4 @@
-package katecam.luvicookie.ditto.domain.user.dto;
+package katecam.luvicookie.ditto.domain.member.dto;
 
 
 import lombok.Getter;
@@ -8,8 +8,8 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
-public class UserDTO {
-    private String nickname;
+public class memberDTO {
+    private String email;
     private String profileImage;
 
 }

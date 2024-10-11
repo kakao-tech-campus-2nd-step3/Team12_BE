@@ -1,4 +1,4 @@
-package katecam.luvicookie.ditto.domain.user.domain;
+package katecam.luvicookie.ditto.domain.member.domain;
 
 import lombok.Getter;
 
@@ -16,6 +16,7 @@ public class KakaoUserInfo {
         profile = (Map<String, Object>) account.get("profile");
     }
 
+    public String getEmail(){return String.valueOf(account.get("email"));}
     public String getName(){
         return String.valueOf(profile.get("nickname"));
     }

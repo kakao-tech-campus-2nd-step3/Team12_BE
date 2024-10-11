@@ -4,9 +4,9 @@ package katecam.luvicookie.ditto.domain.login.jwt;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import katecam.luvicookie.ditto.domain.user.domain.PrincipalDetail;
-import katecam.luvicookie.ditto.domain.user.domain.Role;
-import katecam.luvicookie.ditto.domain.user.domain.User;
+import katecam.luvicookie.ditto.domain.member.domain.PrincipalDetail;
+import katecam.luvicookie.ditto.domain.member.domain.Role;
+import katecam.luvicookie.ditto.domain.member.domain.Member;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -49,7 +49,7 @@ public class TokenProvider {
         String role = (String) claims.get("role");
         Role memberRole = Role.valueOf(role);
 
-        User member = User.builder().name(name).role(memberRole).build();
+        Member member = Member.builder().name(name).role(memberRole).build();
         Set<SimpleGrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority(member.getRole().getValue()));
         PrincipalDetail principalDetail = new PrincipalDetail(member, authorities);
 

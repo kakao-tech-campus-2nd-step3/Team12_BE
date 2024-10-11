@@ -1,6 +1,5 @@
-package katecam.luvicookie.ditto.domain.user.domain;
+package katecam.luvicookie.ditto.domain.member.domain;
 
-import katecam.luvicookie.ditto.domain.user.domain.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -10,26 +9,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PrincipalDetail implements OAuth2User, UserDetails {
-    private User user;
+    private Member member;
     private Collection<? extends GrantedAuthority> authorities;
 
     private Map<String, Object> attributes;
-    public PrincipalDetail(User user, Collection<? extends GrantedAuthority> authorities){
-        this.user = user;
+    public PrincipalDetail(Member member, Collection<? extends GrantedAuthority> authorities){
+        this.member = member;
         this.authorities = authorities;
 
     }
-    public PrincipalDetail(User user, Collection<? extends GrantedAuthority> authorities, Map<String, Object> attributes){
-        this.user = user;
+    public PrincipalDetail(Member member, Collection<? extends GrantedAuthority> authorities, Map<String, Object> attributes){
+        this.member = member;
         this.authorities = authorities;
         this.attributes = attributes;
     }
 
     public Map<String, Object> getMemberInfo() {
         Map<String, Object> info = new HashMap<>();
-        info.put("name", user.getName());
+        info.put("name", member.getName());
         //info.put("email", user.getEmail());
-        info.put("role", user.getRole());
+        info.put("role", member.getRole());
         return info;
     }
 
@@ -50,7 +49,7 @@ public class PrincipalDetail implements OAuth2User, UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getName();
+        return member.getName();
     }
 
     @Override
@@ -79,10 +78,10 @@ public class PrincipalDetail implements OAuth2User, UserDetails {
     }
 
     public Integer getId() {
-        return user.getId();
+        return member.getId();
     }
 
-    public User getUser() {
-        return user;
+    public Member getUser() {
+        return member;
     }
 }

@@ -1,44 +1,40 @@
-package katecam.luvicookie.ditto.domain.user.domain;
+package katecam.luvicookie.ditto.domain.member.domain;
 
 import jakarta.persistence.*;
-import katecam.luvicookie.ditto.domain.user.dto.UserDTO;
+import katecam.luvicookie.ditto.domain.member.dto.memberDTO;
 import lombok.*;
 
-@Table(name = "user_tb")
+@Table(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Setter
 @Entity
 @Builder
 @AllArgsConstructor
-public class User {
+public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "id")
     private Integer id;
     @Column(name = "name")
     private String name;
-
     @Column(name = "nickname")
     private String nickname;
-    //socialId로 유저 구분 가능
-    @Column(name = "socialId")
-    private String socialId;
     //최초 로그인인지 아닌지 알아보기 위한 용도
     @Enumerated(EnumType.STRING)
     private Role role;
-
+    @Column(name = "email")
+    private String email;
+    @Column(name = "contact")
+    private String contact;
     public void authorizeUser(){
         this.role = Role.USER;
     }
-
-    public void setNickname(String nickname){
-        this.nickname = nickname;
-    }
-    public static User toEntity(UserDTO dto){
-        return User.builder()
+    public static Member toEntity(memberDTO dto){
+        return Member.builder()
                 .role(Role.USER)
-                .nickname(dto.getNickname())
+                .email(dto.getEmail())
                 .build();
     }
 

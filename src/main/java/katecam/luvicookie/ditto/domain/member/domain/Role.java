@@ -1,4 +1,4 @@
-package katecam.luvicookie.ditto.domain.user.domain;
+package katecam.luvicookie.ditto.domain.member.domain;
 
 
 import lombok.Getter;
