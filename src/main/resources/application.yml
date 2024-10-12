@@ -13,3 +13,6 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: validate
+
+  config:
+    import: classpath:/application-secret.yml
