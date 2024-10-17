@@ -19,7 +19,7 @@ public class StudyService {
     private final StudyRepository studyRepository;
 
     public StudyListResponse getStudyList(Pageable pageable, StudyCriteria studyCriteria) {
-        Page<StudyResponse> studyResponses = studyRepository.findAllByTopicContainsAndNameContainsAndIsOpenOrIsOpenIsNull(
+        Page<StudyResponse> studyResponses = studyRepository.findAllByTopicAndNameAndIsOpen(
                 studyCriteria.getTopic(),
                 studyCriteria.getName(),
                 studyCriteria.getIsOpen(),
