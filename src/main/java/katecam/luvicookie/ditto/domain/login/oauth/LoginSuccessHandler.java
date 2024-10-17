@@ -7,6 +7,7 @@ import katecam.luvicookie.ditto.domain.login.jwt.TokenProvider;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.member.domain.PrincipalDetail;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -16,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 
+@Slf4j
 @RequiredArgsConstructor
 public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
@@ -25,6 +27,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
         PrincipalDetail principal = (PrincipalDetail) authentication.getPrincipal();
         Member member = principal.getUser();
+
         Map<String, Object> responseMap = principal.getMemberInfo();
 
         String accessToken = TokenProvider.generateToken(responseMap, JwtConstants.ACCESS_EXP_TIME);
@@ -35,22 +38,27 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
             response.addHeader(JwtConstants.ACCESS, JwtConstants.JWT_TYPE + accessToken);
             response.addHeader(JwtConstants.REFRESH, JwtConstants.JWT_TYPE + refreshToken);
+            response.addHeader(JwtConstants.JWT_HEADER, JwtConstants.JWT_TYPE + accessToken);
+
             String redirectURL = UriComponentsBuilder.fromUriString("http://localhost:8080/api/auth")
-                    //.queryParam("email", member.getEmail()).build()
                     .encode(StandardCharsets.UTF_8)
                     .toUriString();
+            log.info(JwtConstants.JWT_TYPE + accessToken);
+
             getRedirectStrategy().sendRedirect(request, response, redirectURL);
 
         } else {
 
             response.addHeader(JwtConstants.ACCESS, JwtConstants.JWT_TYPE + accessToken);
             response.addHeader(JwtConstants.REFRESH, JwtConstants.JWT_TYPE + refreshToken);
+            response.addHeader(JwtConstants.JWT_HEADER, JwtConstants.JWT_TYPE + accessToken);
 
-            // 최초 로그인이 아닌 경우 로그인 성공 페이지로 이동
-            String redirectURL = UriComponentsBuilder.fromUriString("http://localhost:8080/api/auth/kakao")
+            /// 최초 로그인이 아닌 경우 로그인 성공 페이지로 이동
+            String redirectURL = UriComponentsBuilder.fromUriString("/api/auth/kakao")
                     .build()
                     .encode(StandardCharsets.UTF_8)
                     .toUriString();
+
             getRedirectStrategy().sendRedirect(request, response, redirectURL);
         }
     }

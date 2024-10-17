@@ -1,51 +1,59 @@
 package katecam.luvicookie.ditto.domain.member.controller;
 
-import katecam.luvicookie.ditto.domain.member.dto.memberDTO;
+import katecam.luvicookie.ditto.domain.member.domain.Member;
+import katecam.luvicookie.ditto.domain.member.domain.PrincipalDetail;
+import katecam.luvicookie.ditto.domain.member.dto.memberRequestDTO;
+import katecam.luvicookie.ditto.domain.member.dto.memberResponseDTO;
+import katecam.luvicookie.ditto.domain.member.dto.profileImageDTO;
 import katecam.luvicookie.ditto.domain.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.HashMap;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @Slf4j
 public class MemberController {
+    private final MemberService memberService;
+
+    public MemberController(MemberService memberService) {
+        this.memberService = memberService;
+    }
 
     @GetMapping("/user/login/kakao")
     public String login(){
-
         log.info("로그인");
         return "oauthLogin";
     }
 
-
-    @GetMapping("/api/auth")
-    public String signup(@RequestParam String socialId, Model model){
-        model.addAttribute("socialId", socialId);
-        log.info("signup");
-
-        return "signup";
+    @ResponseBody
+    @PostMapping("/api/auth")
+    public memberResponseDTO signup(@RequestBody memberRequestDTO memberRequestDTO){
+        Member member = memberService.registerMember(memberRequestDTO);
+        return new memberResponseDTO(member);
     }
 
-    /*@PostMapping("/api/auth")
-    public ResponseEntity<Object> SignUp(@RequestBody HashMap<String, String> map) {
-        log.info("save user");
-        Integer id = Integer.parseInt(map.get("id"));
-        String nickname = map.get("nickname");
-        String email = map.get("email");
-        String contact = map.get("contact");
-        String description = map.get("description");
-        String profileImage = map.get("profileImage");
-        memberDTO memberDTO = new memberDTO(email, profileImage);
-        MemberService.updateMember(memberDTO, id);
-        return ResponseEntity.ok().body(ApiUtils.success(null));
-    }*/
+    @ResponseBody
+    @GetMapping("/api/users")
+    public memberResponseDTO getUserInfo(@AuthenticationPrincipal PrincipalDetail user){
+        return new memberResponseDTO(user.getUser());
+    }
+
+    @ResponseBody
+    @PutMapping("/api/users/{userId}")
+    public memberResponseDTO updateUserInfo(@PathVariable Integer userId, @RequestBody memberRequestDTO memberRequestDTO){
+        Member member = memberService.updateMember(memberRequestDTO, userId);
+        return new memberResponseDTO(member);
+    }
+
+    @ResponseBody
+    @PostMapping("/api/users/profileImage")
+    public ResponseEntity<?> updateProfileImage(@AuthenticationPrincipal PrincipalDetail user, @RequestBody profileImageDTO profileImageDTO){
+        memberService.updateProfileImage(profileImageDTO, user.getId());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
 
 }

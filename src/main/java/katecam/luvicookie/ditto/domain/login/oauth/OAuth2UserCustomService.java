@@ -5,9 +5,11 @@ import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.member.domain.PrincipalDetail;
 import katecam.luvicookie.ditto.domain.member.domain.Role;
 import katecam.luvicookie.ditto.domain.member.repository.MemberRepository;
+import katecam.luvicookie.ditto.domain.member.service.PrincipalDetailsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -33,17 +35,20 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
 
         String name = kakaoUserInfo.getName();
         String email = kakaoUserInfo.getEmail();
+        String profileImage = kakaoUserInfo.getProfileImage();
+
         Member member = memberRepository.findByEmail(email)
-                .orElseGet(() -> saveSocialMember(email, name));
+                .orElseGet(() -> saveSocialMember(email, name, profileImage));
 
         return new PrincipalDetail(member, Collections.singleton(new SimpleGrantedAuthority(member.getRole().getValue())),
                 attributes);
     }
 
-    public Member saveSocialMember(String email, String name) {
+    public Member saveSocialMember(String email, String name, String profileImage) {
         Member newMember = Member.builder()
                     .email(email)
                     .name(name)
+                    .profileImage(profileImage)
                     .role(Role.GUEST)
                     .build();
         return memberRepository.save(newMember);
