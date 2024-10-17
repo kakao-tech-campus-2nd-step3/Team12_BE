@@ -24,10 +24,14 @@ public class PrincipalDetail implements OAuth2User, UserDetails {
         this.attributes = attributes;
     }
 
+    public PrincipalDetail(Member member) {
+        this.member = member;
+    }
+
     public Map<String, Object> getMemberInfo() {
         Map<String, Object> info = new HashMap<>();
         info.put("name", member.getName());
-        //info.put("email", user.getEmail());
+        info.put("email", member.getEmail());
         info.put("role", member.getRole());
         return info;
     }
