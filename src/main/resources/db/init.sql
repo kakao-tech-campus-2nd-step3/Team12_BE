@@ -8,7 +8,7 @@ CREATE TABLE member (
     profileImage VARCHAR(255)
 );
 
-CREATE TABLE team (
+CREATE TABLE study (
     id SERIAL PRIMARY KEY,
     name VARCHAR(127),
     description VARCHAR(255),
@@ -21,9 +21,9 @@ CREATE TABLE team (
 CREATE TABLE teammate (
     id SERIAL PRIMARY KEY,
     memberId INT NOT NULL,
-    teamId INT NOT NULL,
+    studyId INT NOT NULL,
     role VARCHAR(50),
     joinedAt DATE,
     CONSTRAINT FK_member_TO_teammate FOREIGN KEY (memberId) REFERENCES member (id),
-    CONSTRAINT FK_team_TO_teammate FOREIGN KEY (teamId) REFERENCES team (id)
+    CONSTRAINT FK_study_TO_teammate FOREIGN KEY (studyId) REFERENCES study (id)
 );

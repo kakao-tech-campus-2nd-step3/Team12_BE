@@ -1,16 +1,16 @@
 package katecam.luvicookie.ditto.domain.study.application;
 
 import katecam.luvicookie.ditto.domain.study.dao.StudyRepository;
-import katecam.luvicookie.ditto.domain.study.domain.Study;
 import katecam.luvicookie.ditto.domain.study.dto.request.StudyCreateRequest;
+import katecam.luvicookie.ditto.domain.study.dto.request.StudyCriteria;
 import katecam.luvicookie.ditto.domain.study.dto.response.StudyListResponse;
 import katecam.luvicookie.ditto.domain.study.dto.response.StudyResponse;
 import katecam.luvicookie.ditto.global.error.ErrorCode;
 import katecam.luvicookie.ditto.global.error.GlobalException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -18,11 +18,13 @@ public class StudyService {
 
     private final StudyRepository studyRepository;
 
-    public StudyListResponse getStudyList() {
-        List<Study> studies = studyRepository.findAll();
-        List<StudyResponse> studyResponses = studies.stream()
-                .map(StudyResponse::from)
-                .toList();
+    public StudyListResponse getStudyList(Pageable pageable, StudyCriteria studyCriteria) {
+        Page<StudyResponse> studyResponses = studyRepository.findAllByTopicAndNameAndIsOpen(
+                studyCriteria.getTopic(),
+                studyCriteria.getName(),
+                studyCriteria.getIsOpen(),
+                pageable)
+                .map(StudyResponse::from);
         return StudyListResponse.from(studyResponses);
     }
 
