@@ -1,12 +1,11 @@
 package katecam.luvicookie.ditto.domain.login.jwt.controller;
 
+import katecam.luvicookie.ditto.domain.login.TokenDTO;
 import katecam.luvicookie.ditto.domain.login.jwt.JwtConstants;
 import katecam.luvicookie.ditto.domain.login.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -15,9 +14,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class JwtController {
 
-    @RequestMapping("/user/reissue")
-    public Map<String, Object> refresh(@RequestHeader("Authorization") String authHeader, String refreshToken) {
-        log.info("Refresh Token = {}", refreshToken);
+    @GetMapping("/api/auth/reissue")
+    public Map<String, Object> refresh(@RequestHeader("Authorization") String authHeader, @RequestBody TokenDTO tokenDTO) {
+        log.info("Refresh Token = {}", tokenDTO.getToken());
+        String refreshToken = tokenDTO.getToken();
         if (authHeader == null) {
             throw new RuntimeException("Access Token 이 존재하지 않습니다");
         } else if (!authHeader.startsWith(JwtConstants.JWT_TYPE)) {

@@ -23,7 +23,7 @@ import java.util.Map;
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private final TokenProvider tokenProvider;
-    private static final String[] whitelist = {"/api/studies", "/api/auth", "/api/auth/kakao", "/user/login/kakao"};
+    private static final String[] whitelist = {"/api/studies", "/api/auth", "/api/auth/kakao", "/user/login/kakao", "/api/auth/reissue"};
 
     public TokenAuthenticationFilter(TokenProvider tokenProvider) {
         this.tokenProvider = tokenProvider;
