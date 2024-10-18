@@ -12,18 +12,22 @@ import katecam.luvicookie.ditto.domain.login.jwt.TokenProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.Map;
-
-import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.path;
 
 @Slf4j
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
-    private static final String[] whitelist = {"/signUp", "/login" , "/refresh", "/", "/index.html", "/oauthLogin"};
+
+    private final TokenProvider tokenProvider;
+    private static final String[] whitelist = {"/api/studies", "/api/auth", "/api/auth/kakao", "/user/login/kakao", "/api/auth/reissue"};
+
+    public TokenAuthenticationFilter(TokenProvider tokenProvider) {
+        this.tokenProvider = tokenProvider;
+    }
 
     private static void checkAuthorizationHeader(String header) {
         if(header == null) {
@@ -35,9 +39,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String requestURI = request.getRequestURI();
-
-        return Arrays.stream(whitelist).anyMatch(path::startsWith);
-        //return PatternMatchUtils.simpleMatch(whitelist, requestURI);
+        return PatternMatchUtils.simpleMatch(whitelist, requestURI);
     }
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -48,7 +50,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         try {
             checkAuthorizationHeader(authHeader);   // header 가 올바른 형식인지 체크
             String token = TokenProvider.getTokenFromHeader(authHeader);
-            Authentication authentication = TokenProvider.getAuthentication(token);
+            Authentication authentication = tokenProvider.getAuthentication(token);
 
             log.info("authentication = {}", authentication);
 

@@ -19,9 +19,9 @@ import java.time.LocalDate;
 @Table(name = "study")
 public class Study {
 
-    private static final int MAX_STUDY_NAME_LENGTH = 127;
+    public static final int MAX_STUDY_NAME_LENGTH = 127;
     private static final int MAX_STUDY_DESCRIPTION_LENGTH = 255;
-    private static final int MAX_STUDY_TOPIC_LENGTH = 25;
+    public static final int MAX_STUDY_TOPIC_LENGTH = 25;
     private static final int MAX_STUDY_PROFILE_IMAGE_LENGTH = 255;
 
     @Id

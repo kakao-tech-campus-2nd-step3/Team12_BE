@@ -7,9 +7,15 @@ import io.jsonwebtoken.security.Keys;
 import katecam.luvicookie.ditto.domain.member.domain.PrincipalDetail;
 import katecam.luvicookie.ditto.domain.member.domain.Role;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
+import katecam.luvicookie.ditto.domain.member.service.PrincipalDetailsService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -19,8 +25,14 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
+@Component
+@Slf4j
+@Configuration
+@RequiredArgsConstructor
 public class TokenProvider {
     public static String secretKey = JwtConstants.key;
+    private final PrincipalDetailsService principalDetailsService;
+
 
     public static String getTokenFromHeader(String header) {
         return header.split(" ")[1];
@@ -42,18 +54,15 @@ public class TokenProvider {
                 .compact();
     }
 
-    public static Authentication getAuthentication(String token) {
+    public Authentication getAuthentication(String token) {
         Map<String, Object> claims = validateToken(token);
 
         String name = (String) claims.get("name");
-        String role = (String) claims.get("role");
-        Role memberRole = Role.valueOf(role);
 
-        Member member = Member.builder().name(name).role(memberRole).build();
-        Set<SimpleGrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority(member.getRole().getValue()));
-        PrincipalDetail principalDetail = new PrincipalDetail(member, authorities);
+        UserDetails userDetails = principalDetailsService.loadUserByUsername(name);
 
-        return new UsernamePasswordAuthenticationToken(principalDetail, "", authorities);
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+
     }
 
     public static Map<String, Object> validateToken(String token) {
