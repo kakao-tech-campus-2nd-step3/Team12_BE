@@ -19,15 +19,21 @@ public class Member {
     private Integer id;
     @Column(name = "name")
     private String name;
-    @Column(name = "nickname")
-    private String nickname;
-    //최초 로그인인지 아닌지 알아보기 위한 용도
-    @Enumerated(EnumType.STRING)
-    private Role role;
     @Column(name = "email")
     private String email;
     @Column(name = "contact")
     private String contact;
+    @Column(name = "nickname")
+    private String nickname;
+    @Column(name = "description")
+    private String description;
+    @Column(name = "profileImage")
+    private String profileImage;
+    //최초 로그인인지 아닌지 알아보기 위한 용도
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+
     public void authorizeUser(){
         this.role = Role.USER;
     }
@@ -35,6 +41,7 @@ public class Member {
         return Member.builder()
                 .role(Role.USER)
                 .email(dto.getEmail())
+                .profileImage(dto.getProfileImage())
                 .build();
     }
 

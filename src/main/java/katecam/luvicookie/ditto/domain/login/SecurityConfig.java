@@ -1,11 +1,16 @@
 package katecam.luvicookie.ditto.domain.login;
 
+import katecam.luvicookie.ditto.domain.login.jwt.TokenProvider;
 import katecam.luvicookie.ditto.domain.login.oauth.LoginSuccessHandler;
 import katecam.luvicookie.ditto.domain.login.oauth.OAuth2UserCustomService;
+import katecam.luvicookie.ditto.domain.member.service.PrincipalDetailsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -26,6 +31,8 @@ import java.util.List;
 public class SecurityConfig {
 
     private final OAuth2UserCustomService oAuth2UserService;
+    private final TokenProvider tokenProvider;
+    private final PrincipalDetailsService principalDetailsService;
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {  //해당 URL은 필터 거치지 않겠다
         return (web -> web.ignoring().requestMatchers("/img/**", "/css/**", "/js/**", "/h2-console/**"));
@@ -53,8 +60,20 @@ public class SecurityConfig {
 
 
     @Bean
-    public TokenAuthenticationFilter TokenAuthenticationFilter() {
-        return new TokenAuthenticationFilter();
+    public TokenAuthenticationFilter TokenAuthenticationFilter(TokenProvider tokenProvider) {
+        return new TokenAuthenticationFilter(tokenProvider);
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(principalDetailsService);
+        return authProvider;
     }
 
     @Bean
@@ -75,10 +94,11 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                 authorizationManagerRequestMatcherRegistry.anyRequest().permitAll());
 
-        http.addFilterBefore(TokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(TokenAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
+
 
         http.oauth2Login(httpSecurityOAuth2LoginConfigurer ->
-                httpSecurityOAuth2LoginConfigurer.loginPage("/login")
+                httpSecurityOAuth2LoginConfigurer.loginPage("/api/auth/kakao")
                         .successHandler(LoginSuccessHandler())
                         .userInfoEndpoint(userInfoEndpointConfig ->
                                 userInfoEndpointConfig.userService(oAuth2UserService)));
