@@ -1,11 +1,27 @@
 package katecam.luvicookie.ditto.domain.study.dto.response;
 
+import lombok.Builder;
+import org.springframework.data.domain.Page;
+
 import java.util.List;
 
-public record StudyListResponse(List<StudyResponse> studies) {
+@Builder
+public record StudyListResponse(
+        List<StudyResponse> studies,
+        Boolean hasNextPage,
+        Integer currentPage,
+        Integer maxPage,
+        Integer totalItemCount
+) {
 
-    public static StudyListResponse from(List<StudyResponse> studies) {
-        return new StudyListResponse(studies);
+    public static StudyListResponse from(Page<StudyResponse> studyResponses) {
+        return StudyListResponse.builder()
+                .studies(studyResponses.toList())
+                .hasNextPage(studyResponses.hasNext())
+                .currentPage(studyResponses.getNumber())
+                .maxPage(studyResponses.getTotalPages())
+                .totalItemCount(studyResponses.getNumberOfElements())
+                .build();
     }
 
 }

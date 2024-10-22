@@ -4,15 +4,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import katecam.luvicookie.ditto.domain.study.domain.Study;
-import lombok.Builder;
 import lombok.Getter;
 
-@Getter
-@Builder
-public class StudyCreateRequest {
+import static katecam.luvicookie.ditto.domain.study.domain.Study.MAX_STUDY_NAME_LENGTH;
+import static katecam.luvicookie.ditto.domain.study.domain.Study.MAX_STUDY_TOPIC_LENGTH;
 
-    private static final int MAX_STUDY_NAME_LENGTH = 127;
-    private static final int MAX_STUDY_TOPIC_LENGTH = 25;
+@Getter
+public class StudyCreateRequest {
 
     @NotBlank(message = "스터디명을 입력해주세요.")
     @Size(max = MAX_STUDY_NAME_LENGTH, message = "스터디명을 {max}자 이하로 입력해주세요.")
