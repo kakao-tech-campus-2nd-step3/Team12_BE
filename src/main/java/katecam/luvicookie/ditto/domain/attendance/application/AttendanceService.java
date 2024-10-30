@@ -41,6 +41,25 @@ public class AttendanceService {
         attendanceRepository.save(attendance);
     }
 
+    public void updateAttendance(Integer studyId, Integer memberId, AttendanceUpdateRequest request) {
+        AttendanceDates attendanceDates = getAttendanceDatesByStudyIdAndDate(studyId, request.dateTime());
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND));
+
+        Attendance attendance = Attendance.builder()
+                .attendanceDates(attendanceDates)
+                .member(member)
+                .build();
+
+        if (request.isAttended()) {
+            attendanceRepository.save(attendance);
+            return;
+        }
+
+        attendanceRepository.delete(attendance);
+    }
+
     public AttendanceDateListResponse getAttendanceDateList(Integer studyId) {
         List<AttendanceDates> attendanceDatesList = attendanceDatesRepository.findAllByStudy_Id(studyId);
         return AttendanceDateListResponse.from(attendanceDatesList);

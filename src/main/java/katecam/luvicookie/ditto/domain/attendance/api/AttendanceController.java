@@ -49,8 +49,8 @@ public class AttendanceController {
             @RequestParam("memberId") Integer memberId,
             @RequestBody @Valid AttendanceUpdateRequest request
     ) {
-
-        return ResponseEntity.status(HttpStatus.CREATED)
+        attendanceService.updateAttendance(studyId, memberId, request);
+        return ResponseEntity.noContent()
                 .build();
     }
 
