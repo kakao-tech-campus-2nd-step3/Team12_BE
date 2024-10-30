@@ -4,6 +4,7 @@ import katecam.luvicookie.ditto.domain.attendance.dao.AttendanceDatesRepository;
 import katecam.luvicookie.ditto.domain.attendance.dao.AttendanceRepository;
 import katecam.luvicookie.ditto.domain.attendance.domain.Attendance;
 import katecam.luvicookie.ditto.domain.attendance.domain.AttendanceDates;
+import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceDateListResponse;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.member.repository.MemberRepository;
 import katecam.luvicookie.ditto.domain.study.dao.StudyRepository;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +39,11 @@ public class AttendanceService {
                 .build();
 
         attendanceRepository.save(attendance);
+    }
+
+    public AttendanceDateListResponse getAttendanceDateList(Integer studyId) {
+        List<AttendanceDates> attendanceDatesList = attendanceDatesRepository.findAllByStudy_Id(studyId);
+        return AttendanceDateListResponse.from(attendanceDatesList);
     }
 
     private AttendanceDates getAttendanceDatesByStudyId(Integer studyId) {

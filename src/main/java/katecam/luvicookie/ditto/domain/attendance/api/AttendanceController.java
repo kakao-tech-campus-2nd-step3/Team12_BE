@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import katecam.luvicookie.ditto.domain.attendance.application.AttendanceService;
 import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceDateRequest;
 import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceUpdateRequest;
+import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceDateListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,6 @@ public class AttendanceController {
             @RequestParam("studyId") Integer studyId,
             @RequestParam("memberId") Integer memberId
     ) {
-
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
     }
@@ -65,12 +65,10 @@ public class AttendanceController {
     }
 
     @GetMapping("/date")
-    public ResponseEntity<Void> getAttendanceDateList(
+    public ResponseEntity<AttendanceDateListResponse> getAttendanceDateList(
             @RequestParam("studyId") Integer studyId
     ) {
-
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .build();
+        return ResponseEntity.ok(attendanceService.getAttendanceDateList(studyId));
     }
 
     @DeleteMapping("/date")
