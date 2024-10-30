@@ -12,6 +12,7 @@ import jakarta.persistence.Table;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -33,5 +34,11 @@ public class Attendance extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "date_id", nullable = false)
     private AttendanceDates attendanceDates;
+
+    @Builder
+    public Attendance(Member member, AttendanceDates attendanceDates) {
+        this.member = member;
+        this.attendanceDates = attendanceDates;
+    }
 
 }

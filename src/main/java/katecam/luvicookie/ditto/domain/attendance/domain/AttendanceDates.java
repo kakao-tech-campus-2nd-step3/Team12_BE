@@ -12,6 +12,7 @@ import jakarta.persistence.Table;
 import katecam.luvicookie.ditto.domain.study.domain.Study;
 import katecam.luvicookie.ditto.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -34,5 +35,11 @@ public class AttendanceDates extends BaseTimeEntity {
 
     @Column(name = "attendance_date", nullable = false)
     private LocalDateTime attendanceDate;
+
+    @Builder
+    public AttendanceDates(Study study, LocalDateTime attendanceDate) {
+        this.study = study;
+        this.attendanceDate = attendanceDate;
+    }
 
 }

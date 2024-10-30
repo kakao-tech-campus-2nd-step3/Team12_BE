@@ -31,7 +31,7 @@ CREATE TABLE teammate (
 CREATE TABLE attendance_dates (
     id SERIAL PRIMARY KEY,
     study_id INT NOT NULL,
-    attendance_date DATE NOT NULL,
+    attendance_date TIMESTAMP NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT FK_study_TO_attendance_dates FOREIGN KEY (study_id) REFERENCES study (id)
 );
