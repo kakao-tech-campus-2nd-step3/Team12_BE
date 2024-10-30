@@ -25,10 +25,10 @@ public class AttendanceService {
     private final AttendanceRepository attendanceRepository;
     private final MemberRepository memberRepository;
     private final StudyRepository studyRepository;
-    private static final int ATTENDANCE_MINUTE_INTERVAL = 1;
+    private static final int ATTENDANCE_INTERVAL_MINUTE = 1;
 
     public void createAttendance(Integer studyId, Integer memberId) {
-        AttendanceDates attendanceDates = getAttendanceDatesByStudyId(studyId);
+        AttendanceDates attendanceDates = getAttendanceDatesByStudyIdAndDate(studyId, LocalDateTime.now());
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND));
@@ -46,10 +46,8 @@ public class AttendanceService {
         return AttendanceDateListResponse.from(attendanceDatesList);
     }
 
-    private AttendanceDates getAttendanceDatesByStudyId(Integer studyId) {
-        LocalDateTime start = LocalDateTime.now();
-        LocalDateTime end = start.plusMinutes(ATTENDANCE_MINUTE_INTERVAL);
-        return attendanceDatesRepository.findByStudy_IdAndAttendanceDateBetween(studyId, start, end)
+    private AttendanceDates getAttendanceDatesByStudyIdAndDate(Integer studyId, LocalDateTime attendanceDate) {
+        return attendanceDatesRepository.findByStudy_IdAndAttendanceDateBetween(studyId, attendanceDate, attendanceDate.plusMinutes(ATTENDANCE_INTERVAL_MINUTE))
                 .orElseThrow(() -> new GlobalException(ErrorCode.DATE_UNABLE_TO_ATTEND));
     }
 
@@ -66,9 +64,7 @@ public class AttendanceService {
     }
 
     public void deleteAttendanceDate(Integer studyId, LocalDateTime attendanceDate) {
-        AttendanceDates attendanceDates = attendanceDatesRepository.findByStudy_IdAndAttendanceDateBetween(studyId, attendanceDate, attendanceDate.plusMinutes(ATTENDANCE_MINUTE_INTERVAL))
-                .orElseThrow(() -> new GlobalException(ErrorCode.DATE_UNABLE_TO_ATTEND));
-
+        AttendanceDates attendanceDates = getAttendanceDatesByStudyIdAndDate(studyId, attendanceDate);
         attendanceDatesRepository.delete(attendanceDates);
     }
 
