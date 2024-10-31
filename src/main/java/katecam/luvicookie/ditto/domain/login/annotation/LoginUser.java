@@ -1,4 +1,4 @@
-package gift.annotation;
+package katecam.luvicookie.ditto.domain.login.annotation;
 
 
 import java.lang.annotation.ElementType;

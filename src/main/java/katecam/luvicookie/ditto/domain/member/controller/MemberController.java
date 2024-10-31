@@ -1,5 +1,7 @@
 package katecam.luvicookie.ditto.domain.member.controller;
 
+import katecam.luvicookie.ditto.domain.login.UrlResponse;
+import katecam.luvicookie.ditto.domain.login.annotation.LoginUser;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.member.domain.PrincipalDetail;
 import katecam.luvicookie.ditto.domain.member.dto.memberRequestDTO;
@@ -26,7 +28,15 @@ public class MemberController {
     public String login(){
         log.info("로그인");
         return "oauthLogin";
+        //"/oauth2/authorization/kakao"
     }
+
+   /* @GetMapping("/api/auth/kakao")
+    public String kakaoLogin(){
+
+        return "redirect:/oauth2/authorization/kakao";
+    }*/
+
 
     @ResponseBody
     @PostMapping("/api/auth")
@@ -37,8 +47,8 @@ public class MemberController {
 
     @ResponseBody
     @GetMapping("/api/users")
-    public memberResponseDTO getUserInfo(@AuthenticationPrincipal PrincipalDetail user){
-        return new memberResponseDTO(user.getUser());
+    public memberResponseDTO getUserInfo(@LoginUser Member member){
+        return new memberResponseDTO(member);
     }
 
     @ResponseBody
@@ -50,8 +60,8 @@ public class MemberController {
 
     @ResponseBody
     @PostMapping("/api/users/profileImage")
-    public ResponseEntity<?> updateProfileImage(@AuthenticationPrincipal PrincipalDetail user, @RequestBody profileImageDTO profileImageDTO){
-        memberService.updateProfileImage(profileImageDTO, user.getId());
+    public ResponseEntity<?> updateProfileImage(@LoginUser Member member, @RequestBody profileImageDTO profileImageDTO){
+        memberService.updateProfileImage(profileImageDTO, member.getId());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

@@ -46,11 +46,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
         String authHeader = request.getHeader(JwtConstants.JWT_HEADER);
 
-
         try {
             checkAuthorizationHeader(authHeader);   // header 가 올바른 형식인지 체크
-            String token = TokenProvider.getTokenFromHeader(authHeader);
-            Authentication authentication = tokenProvider.getAuthentication(token);
+            Authentication authentication = tokenProvider.getAuthentication(authHeader);
 
             log.info("authentication = {}", authentication);
 
@@ -58,18 +56,14 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);    // 다음 필터로 이동
         } catch (Exception e) {
-            Gson gson = new Gson();
-            String json = "";
+            response.setContentType("application/json; charset=UTF-8");
+
             if (e instanceof ExpiredJwtException) {
-                json = gson.toJson(Map.of("Token_Expired", e.getMessage()));
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token_Expired: " + e.getMessage());
             } else {
-                json = gson.toJson(Map.of("error", e.getMessage()));
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Error: " + e.getMessage());
             }
 
-            response.setContentType("application/json; charset=UTF-8");
-            PrintWriter printWriter = response.getWriter();
-            printWriter.println(json);
-            printWriter.close();
         }
     }
 

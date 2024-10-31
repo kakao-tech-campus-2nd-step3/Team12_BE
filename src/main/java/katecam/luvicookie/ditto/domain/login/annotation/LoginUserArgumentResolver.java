@@ -1,29 +1,30 @@
-package gift.annotation;
+package katecam.luvicookie.ditto.domain.login.annotation;
 
-import gift.jwt.JWTService;
-import gift.user.IntegratedUser;
-import gift.user.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import katecam.luvicookie.ditto.domain.login.jwt.TokenProvider;
+import katecam.luvicookie.ditto.domain.member.domain.Member;
+import katecam.luvicookie.ditto.domain.member.service.MemberService;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import java.util.Objects;
+
 public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private final UserService userService;
-    private final JWTService jwtService;
+    private final MemberService memberService;
 
-    public LoginUserArgumentResolver(UserService userService, JWTService jwtService) {
-        this.userService = userService;
-        this.jwtService = jwtService;
+
+    public LoginUserArgumentResolver(MemberService memberService) {
+        this.memberService = memberService;
     }
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         boolean hasLoginUserAnnotation = parameter.hasParameterAnnotation(LoginUser.class);
-        boolean assignableFrom = IntegratedUser.class.isAssignableFrom(parameter.getParameterType());
+        boolean assignableFrom = Member.class.isAssignableFrom(parameter.getParameterType());
         return hasLoginUserAnnotation && assignableFrom;
     }
 
@@ -33,9 +34,7 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
         String accessToken = request.getHeader("Authorization");
 
         if(accessToken == null) return null;
-        if(jwtService.isKakaoUser(accessToken)){
-            return (IntegratedUser) userService.findByKakaoSocialID(Long.valueOf(jwtService.getClaims(accessToken))).orElseThrow();
-        }
-        return (IntegratedUser) userService.getUserById(Long.valueOf(jwtService.getClaims(accessToken)));
+
+        return memberService.findMemberById(Integer.valueOf(Objects.requireNonNull(TokenProvider.getClaims(accessToken))));
     }
 }
