@@ -8,6 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AttendanceDatesRepository extends JpaRepository<AttendanceDates, Integer> {
-    List<AttendanceDates> findAllByStudy_Id(Integer studyId);
+    List<AttendanceDates> findAllByStudy_IdOrderByAttendanceDateAsc(Integer studyId);
     Optional<AttendanceDates> findByStudy_IdAndAttendanceDateBetween(Integer studyId, LocalDateTime start, LocalDateTime end);
 }

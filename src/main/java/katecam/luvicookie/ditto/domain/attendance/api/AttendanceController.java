@@ -5,6 +5,7 @@ import katecam.luvicookie.ditto.domain.attendance.application.AttendanceService;
 import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceDateRequest;
 import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceUpdateRequest;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceDateListResponse;
+import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,12 +36,11 @@ public class AttendanceController {
     }
 
     @GetMapping
-    public ResponseEntity<Void> getAttendanceList(
+    public ResponseEntity<AttendanceListResponse> getAttendanceList(
             @RequestParam("studyId") Integer studyId,
-            @RequestParam("memberId") Integer memberId
+            @RequestParam(name = "memberId", required = false) Integer memberId
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .build();
+        return ResponseEntity.ok(attendanceService.getAttendanceList(studyId, memberId));
     }
 
     @PutMapping
