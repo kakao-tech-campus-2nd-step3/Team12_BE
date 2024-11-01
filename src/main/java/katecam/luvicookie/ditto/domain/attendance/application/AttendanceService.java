@@ -8,8 +8,8 @@ import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceUpdateRe
 import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceDateListResponse;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceListResponse;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.MemberAttendanceResponse;
+import katecam.luvicookie.ditto.domain.member.dao.MemberRepository;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
-import katecam.luvicookie.ditto.domain.member.repository.MemberRepository;
 import katecam.luvicookie.ditto.domain.study.dao.StudyRepository;
 import katecam.luvicookie.ditto.domain.study.domain.Study;
 import katecam.luvicookie.ditto.global.error.ErrorCode;
