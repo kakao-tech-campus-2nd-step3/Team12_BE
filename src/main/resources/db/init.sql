@@ -5,7 +5,8 @@ CREATE TABLE member (
     contact VARCHAR(25),
     nickname VARCHAR(255),
     description VARCHAR(255),
-    profile_image VARCHAR(255)
+    profile_image VARCHAR(255),
+    role VARCHAR(50)
 );
 
 CREATE TABLE study (

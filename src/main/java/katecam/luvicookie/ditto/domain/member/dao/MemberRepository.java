@@ -1,4 +1,4 @@
-package katecam.luvicookie.ditto.domain.member.repository;
+package katecam.luvicookie.ditto.domain.member.dao;
 
 
 import katecam.luvicookie.ditto.domain.member.domain.Member;

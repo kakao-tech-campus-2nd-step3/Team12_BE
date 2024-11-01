@@ -27,7 +27,7 @@ public class Member {
     private String nickname;
     @Column(name = "description")
     private String description;
-    @Column(name = "profileImage")
+    @Column(name = "profile_image")
     private String profileImage;
     //최초 로그인인지 아닌지 알아보기 위한 용도
     @Enumerated(EnumType.STRING)

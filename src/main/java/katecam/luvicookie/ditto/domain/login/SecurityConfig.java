@@ -3,7 +3,7 @@ package katecam.luvicookie.ditto.domain.login;
 import katecam.luvicookie.ditto.domain.login.jwt.TokenProvider;
 import katecam.luvicookie.ditto.domain.login.oauth.LoginSuccessHandler;
 import katecam.luvicookie.ditto.domain.login.oauth.OAuth2UserCustomService;
-import katecam.luvicookie.ditto.domain.member.service.PrincipalDetailsService;
+import katecam.luvicookie.ditto.domain.member.application.PrincipalDetailsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
