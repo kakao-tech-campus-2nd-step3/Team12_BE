@@ -21,7 +21,6 @@ public class StudyResponse {
                 .studyId(study.getId())
                 .name(study.getName())
                 .description(study.getDescription())
-                .createdAt(study.getCreatedAt())
                 .isOpen(study.getIsOpen())
                 .topic(study.getTopic())
                 .profileImage(study.getProfileImage())
