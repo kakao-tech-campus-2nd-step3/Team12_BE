@@ -5,25 +5,43 @@ CREATE TABLE member (
     contact VARCHAR(25),
     nickname VARCHAR(255),
     description VARCHAR(255),
-    profileImage VARCHAR(255)
+    profile_image VARCHAR(255),
+    role VARCHAR(50)
 );
 
 CREATE TABLE study (
     id SERIAL PRIMARY KEY,
     name VARCHAR(127),
     description VARCHAR(255),
-    createdAt DATE,
-    isOpen BOOLEAN,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_open BOOLEAN,
     topic VARCHAR(25),
-    profileImage VARCHAR(255)
+    profile_image VARCHAR(255)
 );
 
 CREATE TABLE teammate (
     id SERIAL PRIMARY KEY,
-    memberId INT NOT NULL,
-    studyId INT NOT NULL,
+    member_id INT NOT NULL,
+    study_id INT NOT NULL,
     role VARCHAR(50),
-    joinedAt DATE,
-    CONSTRAINT FK_member_TO_teammate FOREIGN KEY (memberId) REFERENCES member (id),
-    CONSTRAINT FK_study_TO_teammate FOREIGN KEY (studyId) REFERENCES study (id)
+    joined_at DATE,
+    CONSTRAINT FK_member_TO_teammate FOREIGN KEY (member_id) REFERENCES member (id),
+    CONSTRAINT FK_study_TO_teammate FOREIGN KEY (study_id) REFERENCES study (id)
+);
+
+CREATE TABLE attendance_dates (
+    id SERIAL PRIMARY KEY,
+    study_id INT NOT NULL,
+    attendance_date TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT FK_study_TO_attendance_dates FOREIGN KEY (study_id) REFERENCES study (id)
+);
+
+CREATE TABLE attendance (
+    id SERIAL PRIMARY KEY,
+    member_id INT NOT NULL,
+    date_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT FK_member_TO_attendance FOREIGN KEY (member_id) REFERENCES member (id),
+    CONSTRAINT FK_dates_TO_attendance FOREIGN KEY (date_id) REFERENCES attendance_dates (id)
 );

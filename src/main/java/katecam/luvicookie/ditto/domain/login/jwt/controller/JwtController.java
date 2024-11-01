@@ -1,48 +1,71 @@
 package katecam.luvicookie.ditto.domain.login.jwt.controller;
 
-import katecam.luvicookie.ditto.domain.login.TokenDTO;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import katecam.luvicookie.ditto.domain.login.jwt.JwtConstants;
 import katecam.luvicookie.ditto.domain.login.jwt.TokenProvider;
+import katecam.luvicookie.ditto.domain.member.domain.Member;
+import katecam.luvicookie.ditto.domain.member.application.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
+import java.util.Arrays;
+import java.util.Objects;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 public class JwtController {
 
+    private final MemberService memberService;
+
     @GetMapping("/api/auth/reissue")
-    public Map<String, Object> refresh(@RequestHeader("Authorization") String authHeader, @RequestBody TokenDTO tokenDTO) {
-        log.info("Refresh Token = {}", tokenDTO.getToken());
-        String refreshToken = tokenDTO.getToken();
-        if (authHeader == null) {
-            throw new RuntimeException("Access Token 이 존재하지 않습니다");
-        } else if (!authHeader.startsWith(JwtConstants.JWT_TYPE)) {
-            throw new RuntimeException("BEARER 로 시작하지 않는 올바르지 않은 토큰 형식입니다");
+    public ResponseEntity<?> reissueToken(HttpServletRequest request) {
+        // 리프레시 토큰을 쿠키에서 추출
+        String refreshToken = extractRefreshToken(request);
+
+        // 리프레시 토큰 유효성 검사
+        if (refreshToken == null || !TokenProvider.validateToken(refreshToken)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
         }
 
-        String accessToken = TokenProvider.getTokenFromHeader(authHeader);
+        // 리프레시 토큰에서 사용자 정보 추출
+        Integer memberId = Integer.valueOf(Objects.requireNonNull(TokenProvider.getClaims(refreshToken)));
+        Member member = memberService.findMemberById(memberId);
 
-        // Access Token 의 만료 여부 확인
-        if (!TokenProvider.isExpired(accessToken)) {
-            return Map.of("Access Token", accessToken, "Refresh Token", refreshToken);
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid member");
         }
 
-        // refreshToken 검증 후 새로운 토큰 생성 후 전달
-        Map<String, Object> claims = TokenProvider.validateToken(refreshToken);
-        String newAccessToken = TokenProvider.generateToken(claims, JwtConstants.ACCESS_EXP_TIME);
+        String newAccessToken = TokenProvider.generateToken(member, JwtConstants.ACCESS_EXP_TIME);
+        String newRefreshToken = TokenProvider.generateToken(member, JwtConstants.REFRESH_EXP_TIME);
 
-        String newRefreshToken = refreshToken;
-        long expTime = TokenProvider.tokenRemainTime((Integer) claims.get("exp"));   // Refresh Token 남은 만료 시간
-        log.info("Refresh Token Remain Expire Time = {}", expTime);
-        // Refresh Token 의 만료 시간이 한 시간도 남지 않은 경우
-        if (expTime <= 60) {
-            newRefreshToken = TokenProvider.generateToken(claims, JwtConstants.REFRESH_EXP_TIME);
-        }
+        // 새 리프레시 토큰을 쿠키에 설정
+        ResponseCookie refreshTokenCookie = TokenProvider.createCookie(newRefreshToken);
 
-        return Map.of("accessToken", newAccessToken, "refreshToken", newRefreshToken);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
+                .header(JwtConstants.ACCESS, JwtConstants.JWT_TYPE + newAccessToken)
+                .body("Token reissued successfully");
     }
+
+    private String extractRefreshToken(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return null; // 쿠키가 없을 경우 null 반환
+        }
+
+        return Arrays.stream(cookies)
+                .filter(cookie -> "RefreshToken".equals(cookie.getName()))
+                .map(Cookie::getValue)
+                .findAny()
+                .orElse(null);
+    }
+
 }
