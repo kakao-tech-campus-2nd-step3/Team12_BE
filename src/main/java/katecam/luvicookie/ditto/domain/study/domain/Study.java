@@ -6,18 +6,17 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import katecam.luvicookie.ditto.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "study")
-public class Study {
+public class Study extends BaseTimeEntity {
 
     public static final int MAX_STUDY_NAME_LENGTH = 127;
     private static final int MAX_STUDY_DESCRIPTION_LENGTH = 255;
@@ -34,9 +33,6 @@ public class Study {
 
     @Column(name = "description", nullable = false, length = MAX_STUDY_DESCRIPTION_LENGTH)
     private String description;
-
-    @Column(name = "created_at", nullable = false)
-    private LocalDate createdAt;
 
     @Column(name = "is_open", nullable = false)
     private Boolean isOpen;
