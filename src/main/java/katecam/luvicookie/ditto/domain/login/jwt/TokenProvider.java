@@ -55,7 +55,8 @@ public class TokenProvider {
 
 
     public Authentication getAuthentication(String token) {
-        String claims = getClaims(token);
+        String tokenFromHeader = getTokenFromHeader(token);
+        String claims = getClaims(tokenFromHeader);
         Member member = memberService.findMemberById(Integer.valueOf(claims));
 
         PrincipalDetail principalDetail = new PrincipalDetail(member);
@@ -63,17 +64,18 @@ public class TokenProvider {
 
     }
 
-    public static Map<String, Object> validateToken(String token) {
-        Map<String, Object> claim = null;
-
+    public static boolean validateToken(String token) {
         SecretKey key = Keys.hmacShaKeyFor(TokenProvider.secretKey.getBytes(StandardCharsets.UTF_8));
-        claim = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token) // 파싱 및 검증, 실패 시 에러
-                .getBody();
 
-        return claim;
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            return false; // 토큰이 유효하지 않은 경우
+        }
     }
 
     public static boolean isExpired(String token) {
@@ -92,12 +94,11 @@ public class TokenProvider {
     }
 
     public static String getClaims(String jwt) {
-        String tokenFromHeader = getTokenFromHeader(jwt);
         try{
             return Jwts.parserBuilder()
                     .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
                     .build()
-                    .parseClaimsJws(tokenFromHeader)
+                    .parseClaimsJws(jwt)
                     .getBody()
                     .getSubject();
 
@@ -108,7 +109,7 @@ public class TokenProvider {
     }
 
     public static ResponseCookie createCookie(String refreshToken) { // 수정
-        String cookieName = "RefreshToken";
+        String cookieName = JwtConstants.REFRESH;
 
         ResponseCookie cookie = ResponseCookie.from(cookieName, refreshToken)
                 .httpOnly(true)

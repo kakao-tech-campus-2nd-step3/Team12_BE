@@ -35,6 +35,6 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
 
         if(accessToken == null) return null;
 
-        return memberService.findMemberById(Integer.valueOf(Objects.requireNonNull(TokenProvider.getClaims(accessToken))));
+        return memberService.findMemberById(Integer.valueOf(Objects.requireNonNull(TokenProvider.getClaims(TokenProvider.getTokenFromHeader(accessToken)))));
     }
 }
