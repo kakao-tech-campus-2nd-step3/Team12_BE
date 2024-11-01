@@ -1,7 +1,7 @@
 package katecam.luvicookie.ditto.domain.notice.application;
 
 import katecam.luvicookie.ditto.domain.member.domain.Member;
-import katecam.luvicookie.ditto.domain.member.repository.MemberRepository;
+import katecam.luvicookie.ditto.domain.member.dao.MemberRepository;
 import katecam.luvicookie.ditto.domain.notice.dao.NoticeRepository;
 import katecam.luvicookie.ditto.domain.notice.domain.Notice;
 import katecam.luvicookie.ditto.domain.notice.dto.NoticeCreateRequest;

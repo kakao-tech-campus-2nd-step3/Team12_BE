@@ -3,7 +3,7 @@ package katecam.luvicookie.ditto.domain.login.annotation;
 import jakarta.servlet.http.HttpServletRequest;
 import katecam.luvicookie.ditto.domain.login.jwt.TokenProvider;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
-import katecam.luvicookie.ditto.domain.member.service.MemberService;
+import katecam.luvicookie.ditto.domain.member.application.MemberService;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;

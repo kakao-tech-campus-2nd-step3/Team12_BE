@@ -1,14 +1,9 @@
-package katecam.luvicookie.ditto.domain.member.service;
+package katecam.luvicookie.ditto.domain.member.application;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import katecam.luvicookie.ditto.domain.login.jwt.TokenProvider;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
-import katecam.luvicookie.ditto.domain.member.dto.memberDTO;
 import katecam.luvicookie.ditto.domain.member.dto.memberRequestDTO;
 import katecam.luvicookie.ditto.domain.member.dto.profileImageDTO;
-import katecam.luvicookie.ditto.domain.member.repository.MemberRepository;
+import katecam.luvicookie.ditto.domain.member.dao.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
