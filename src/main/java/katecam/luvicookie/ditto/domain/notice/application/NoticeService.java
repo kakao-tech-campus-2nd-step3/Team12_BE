@@ -1,7 +1,5 @@
 package katecam.luvicookie.ditto.domain.notice.application;
 
-import katecam.luvicookie.ditto.domain.member.domain.Member;
-import katecam.luvicookie.ditto.domain.member.dao.MemberRepository;
 import katecam.luvicookie.ditto.domain.notice.dao.NoticeRepository;
 import katecam.luvicookie.ditto.domain.notice.domain.Notice;
 import katecam.luvicookie.ditto.domain.notice.dto.NoticeCreateRequest;
@@ -16,55 +14,48 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-
 @Service
 @RequiredArgsConstructor
 public class NoticeService {
 
     private final NoticeRepository noticeRepository;
-    private final MemberRepository memberRepository;
-    public void create(NoticeCreateRequest noticeCreateRequest, Member member) {
+
+    public void create(NoticeCreateRequest noticeCreateRequest, TeamMate teamMate) {
         Notice notice = noticeCreateRequest.toEntity();
-        LocalDate now = LocalDate.now();
-        notice.setCreatedAt(now);
-        notice.setWriter_id(member.getId());
+        notice.setTeamMate(teamMate);
         noticeRepository.save(notice);
     }
 
     public NoticeResponse getNotice(Integer noticeId) {
         Notice notice = noticeRepository.findById(noticeId).orElseThrow(() -> new GlobalException(ErrorCode.NOTICE_NOT_FOUND));
-        Member member = memberRepository.findById(notice.getWriter_id()).orElseThrow(() -> new GlobalException(ErrorCode.NOTICE_NOT_FOUND));
-        NoticeResponse noticeResponse = NoticeResponse.from(notice);
-        noticeResponse.setNickName(member.getNickname());
-        return noticeResponse;
+        return NoticeResponse.from(notice);
     }
 
 
     public NoticeListResponse getNotices(Pageable pageable) {
         Page<NoticeResponse> noticeResponses = noticeRepository.findAll(pageable)
-                .map(notice -> {
-                    NoticeResponse response = NoticeResponse.from(notice);
-                    Member member = memberRepository.findById(notice.getWriter_id())
-                            .orElseThrow();
-                    response.setNickName(member.getNickname()); // 원하는 닉네임을 설정
-                    return response;
-                });
+                .map(NoticeResponse::from);
         return NoticeListResponse.from(noticeResponses);
     }
 
     @Transactional
-    public NoticeResponse updateNotice(Integer noticeId, NoticeUpdateRequest noticeUpdateRequest) {
+    public NoticeResponse updateNotice(Integer noticeId, NoticeUpdateRequest noticeUpdateRequest, TeamMate teamMate) {
         Notice notice = noticeRepository.findById(noticeId).orElseThrow(() -> new GlobalException(ErrorCode.NOTICE_NOT_FOUND));
+        isWriterMatches(notice, teamMate);
         notice.updateNotice(noticeUpdateRequest);
-        Member member = memberRepository.findById(notice.getWriter_id()).orElseThrow(() -> new GlobalException(ErrorCode.NOTICE_NOT_FOUND));
-        NoticeResponse noticeResponse = NoticeResponse.from(notice);
-        noticeResponse.setNickName(member.getNickname());
-        return noticeResponse;
+        return NoticeResponse.from(notice);
     }
 
-    public void deleteNotice(Integer noticeId) {
-        noticeRepository.findById(noticeId).orElseThrow(() -> new GlobalException(ErrorCode.NOTICE_NOT_FOUND));
+    public void deleteNotice(Integer noticeId, TeamMate teamMate) {
+        Notice notice = noticeRepository.findById(noticeId).orElseThrow(() -> new GlobalException(ErrorCode.NOTICE_NOT_FOUND));
+        isWriterMatches(notice, teamMate);
         noticeRepository.deleteById(noticeId);
     }
+
+    public void isWriterMatches(Notice notice, TeamMate teamMate){
+        if(notice.getTeamMate().getMember() != teamMate){
+             throw new GlobalException((ErrorCode.WRITER_NOT_MATCH));
+        }
+    }
+
 }

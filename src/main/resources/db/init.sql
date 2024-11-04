@@ -45,3 +45,12 @@ CREATE TABLE attendance (
     CONSTRAINT FK_member_TO_attendance FOREIGN KEY (member_id) REFERENCES member (id),
     CONSTRAINT FK_dates_TO_attendance FOREIGN KEY (date_id) REFERENCES attendance_dates (id)
 );
+
+CREATE TABLE notice (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    teammate_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT FK_teammate_TO_notice FOREIGN KEY (teammate_id) REFERENCES teammate(id)
+);

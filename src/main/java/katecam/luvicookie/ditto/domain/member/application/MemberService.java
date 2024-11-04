@@ -1,9 +1,11 @@
 package katecam.luvicookie.ditto.domain.member.application;
 
+import katecam.luvicookie.ditto.domain.member.dao.MemberRepository;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.member.dto.memberRequestDTO;
 import katecam.luvicookie.ditto.domain.member.dto.profileImageDTO;
-import katecam.luvicookie.ditto.domain.member.dao.MemberRepository;
+import katecam.luvicookie.ditto.global.error.ErrorCode;
+import katecam.luvicookie.ditto.global.error.GlobalException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -58,7 +60,7 @@ public class MemberService {
 
     public Member findMemberById(Integer memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("해당사용자가없습니다"));
+                .orElseThrow(() -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND));
     }
 
 }
