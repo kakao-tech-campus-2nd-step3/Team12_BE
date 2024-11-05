@@ -35,9 +35,8 @@ public class MemberService {
     }
 
     @Transactional
-    public Member updateMember(memberRequestDTO memberDTO, Integer memberId){
+    public Member updateMember(memberRequestDTO memberDTO, Member member){
 
-        Member member = findMemberById(memberId);
         member.authorizeUser();
 
         if(memberDTO.getName() != null) member.setName(memberDTO.getName());

@@ -28,12 +28,6 @@ public class MemberController {
         //"/oauth2/authorization/kakao"
     }
 
-   /* @GetMapping("/api/auth/kakao")
-    public String kakaoLogin(){
-
-        return "redirect:/oauth2/authorization/kakao";
-    }*/
-
 
     @ResponseBody
     @PostMapping("/api/auth")
@@ -49,10 +43,10 @@ public class MemberController {
     }
 
     @ResponseBody
-    @PutMapping("/api/users/{userId}")
-    public memberResponseDTO updateUserInfo(@PathVariable Integer userId, @RequestBody memberRequestDTO memberRequestDTO){
-        Member member = memberService.updateMember(memberRequestDTO, userId);
-        return new memberResponseDTO(member);
+    @PutMapping("/api/users")
+    public memberResponseDTO updateUserInfo(@LoginUser Member member, @RequestBody memberRequestDTO memberRequestDTO){
+        Member updateMember = memberService.updateMember(memberRequestDTO, member);
+        return new memberResponseDTO(updateMember);
     }
 
     @ResponseBody
