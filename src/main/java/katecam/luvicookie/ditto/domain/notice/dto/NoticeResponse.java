@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Builder
 @Getter
@@ -15,15 +16,15 @@ public class NoticeResponse {
     private String title;
     private String nickName;
     private String content;
-    private LocalDateTime createdAt;
+    private String createdAt;
 
     public static NoticeResponse from(Notice notice) {
         return NoticeResponse.builder()
                 .id(notice.getId())
                 .title(notice.getTitle())
                 .content(notice.getContent())
-                .createdAt(notice.getCreatedAt())
-                .nickName(notice.getTeamMate().getMember().getNickName())
+                .createdAt(notice.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                .nickName(notice.getMember().getNickname())
                 .build();
 
     }
