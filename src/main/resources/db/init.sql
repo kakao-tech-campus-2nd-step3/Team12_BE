@@ -54,3 +54,13 @@ CREATE TABLE notice (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT FK_teammate_TO_notice FOREIGN KEY (teammate_id) REFERENCES teammate(id)
 );
+
+CREATE TABLE assignment (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    study_id INT NOT NULL,
+    content TEXT NOT NULL,
+    deadline TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT FK_study_TO_assignment FOREIGN KEY (study_id) REFERENCES study(id)
+);
