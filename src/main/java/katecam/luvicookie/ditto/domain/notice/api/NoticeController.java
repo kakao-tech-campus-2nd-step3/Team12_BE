@@ -1,5 +1,8 @@
 package katecam.luvicookie.ditto.domain.notice.api;
 
+import jakarta.validation.Valid;
+import katecam.luvicookie.ditto.domain.login.annotation.LoginUser;
+import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.notice.application.NoticeService;
 import katecam.luvicookie.ditto.domain.notice.dto.NoticeCreateRequest;
 import katecam.luvicookie.ditto.domain.notice.dto.NoticeListResponse;
@@ -20,9 +23,12 @@ public class NoticeController {
     private final NoticeService noticeService;
 
     @PostMapping()
-    public ResponseEntity<Void> createNotice(@RequestBody NoticeCreateRequest noticeCreateRequest){
-        //teammate를 받아와야 함
-        noticeService.create(noticeCreateRequest);
+    public ResponseEntity<Void> createNotice(
+            @RequestParam("studyId") Integer studyId,
+            @LoginUser Member member,
+            @RequestBody @Valid NoticeCreateRequest noticeCreateRequest){
+
+        noticeService.create(noticeCreateRequest, studyId, member);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
     }
@@ -40,16 +46,21 @@ public class NoticeController {
     }
 
     @PutMapping("/{noticeId}")
-    public ResponseEntity<NoticeResponse> updateNotice(@PathVariable Integer noticeId, @RequestBody NoticeUpdateRequest noticeUpdateRequest){
-        //teammate를 받아와야 함 - 자신의 글일때만 수정
-        NoticeResponse noticeResponse = noticeService.updateNotice(noticeId, noticeUpdateRequest);
+    public ResponseEntity<NoticeResponse> updateNotice(
+            @PathVariable Integer noticeId,
+            @LoginUser Member member,
+            @RequestBody NoticeUpdateRequest noticeUpdateRequest){
+
+        NoticeResponse noticeResponse = noticeService.updateNotice(noticeId, noticeUpdateRequest, member);
         return ResponseEntity.ok(noticeResponse);
     }
 
     @DeleteMapping("/{noticeId}")
-    public ResponseEntity<Void> deleteNotice(@PathVariable Integer noticeId){
-        //teammate를 받아와야 함 - 자신의 글일때만 삭제
-        noticeService.deleteNotice(noticeId);
+    public ResponseEntity<Void> deleteNotice(
+            @PathVariable Integer noticeId,
+            @LoginUser Member member){
+
+        noticeService.deleteNotice(noticeId, member);
         return ResponseEntity.noContent()
                 .build();
     }

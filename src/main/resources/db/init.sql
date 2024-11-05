@@ -50,9 +50,11 @@ CREATE TABLE notice (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
-    teammate_id INT NOT NULL,
+    study_id INT NOT NULL,
+    member_id INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT FK_teammate_TO_notice FOREIGN KEY (teammate_id) REFERENCES teammate(id)
+    CONSTRAINT FK_study_TO_notice FOREIGN KEY (study_id) REFERENCES study(id),
+    CONSTRAINT FK_member_TO_notice FOREIGN KEY (member_id) REFERENCES member(id)
 );
 
 CREATE TABLE assignment (

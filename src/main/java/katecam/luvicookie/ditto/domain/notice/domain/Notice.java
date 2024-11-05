@@ -1,7 +1,9 @@
 package katecam.luvicookie.ditto.domain.notice.domain;
 
 import jakarta.persistence.*;
+import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.notice.dto.NoticeUpdateRequest;
+import katecam.luvicookie.ditto.domain.study.domain.Study;
 import katecam.luvicookie.ditto.global.entity.BaseTimeEntity;
 import lombok.*;
 
@@ -20,15 +22,19 @@ public class Notice extends BaseTimeEntity {
     @Column(name = "content", nullable = false)
     private String content;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "teammate_id", nullable = false)
-    private TeamMate teamMate;
+    @JoinColumn(name = "study_id", nullable = false)
+    private Study study;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
 
     @Builder
-    public Notice(String title, String content, TeamMate teamMate){
+    public Notice(String title, String content, Study study, Member member){
         this.title = title;
         this.content = content;
-        this.teamMate = teamMate;
+        this.study = study;
+        this.member = member;
     }
 
     public void updateNotice(NoticeUpdateRequest noticeUpdateRequest){
