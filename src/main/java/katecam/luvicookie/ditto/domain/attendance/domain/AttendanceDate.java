@@ -21,8 +21,8 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "attendance_dates")
-public class AttendanceDates extends BaseTimeEntity {
+@Table(name = "attendance_date")
+public class AttendanceDate extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,13 +33,17 @@ public class AttendanceDates extends BaseTimeEntity {
     @JoinColumn(name = "study_id", nullable = false)
     private Study study;
 
-    @Column(name = "attendance_date", nullable = false)
-    private LocalDateTime attendanceDate;
+    @Column(name = "attendance_time", nullable = false)
+    private LocalDateTime attendanceTime;
+
+    @Column(name = "attendance_deadline", nullable = false)
+    private LocalDateTime attendanceDeadline;
 
     @Builder
-    public AttendanceDates(Study study, LocalDateTime attendanceDate) {
+    public AttendanceDate(Study study, LocalDateTime attendanceTime, LocalDateTime attendanceDeadline) {
         this.study = study;
-        this.attendanceDate = attendanceDate;
+        this.attendanceTime = attendanceTime;
+        this.attendanceDeadline = attendanceDeadline;
     }
 
 }
