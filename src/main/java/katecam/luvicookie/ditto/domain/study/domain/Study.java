@@ -54,7 +54,6 @@ public class Study extends BaseTimeEntity {
         this.isOpen = isOpen;
         this.topic = topic;
         this.profileImage = profileImage;
-        this.inviteToken = null;
     }
 
 }
