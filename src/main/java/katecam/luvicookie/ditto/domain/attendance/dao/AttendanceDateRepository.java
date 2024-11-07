@@ -14,7 +14,7 @@ public interface AttendanceDateRepository extends JpaRepository<AttendanceDate, 
 
     @Query(value = "select d from AttendanceDate d " +
             "where d.study.id = :studyId " +
-            "and :dateTime >= d.attendanceTime " +
-            "and :dateTime <= d.attendanceDeadline ")
+            "and :dateTime >= d.startTime " +
+            "and :dateTime <= d.deadline ")
     Optional<AttendanceDate> findByStudy_IdAndAttendanceTime(@Param("studyId") Integer studyId, @Param("dateTime") LocalDateTime dateTime);
 }

@@ -10,7 +10,7 @@ public record AttendanceDateListResponse (
 ) {
     public static AttendanceDateListResponse from(List<AttendanceDate> attendanceDates) {
         List<String> attendanceDateList = attendanceDates.stream()
-                .map(attendanceDate -> attendanceDate.getAttendanceTime()
+                .map(attendanceDate -> attendanceDate.getStartTime()
                         .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
                 )
                 .toList();
