@@ -4,7 +4,6 @@ import katecam.luvicookie.ditto.domain.attendance.dao.AttendanceDateRepository;
 import katecam.luvicookie.ditto.domain.attendance.dao.AttendanceRepository;
 import katecam.luvicookie.ditto.domain.attendance.domain.Attendance;
 import katecam.luvicookie.ditto.domain.attendance.domain.AttendanceDate;
-import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceUpdateRequest;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceDateListResponse;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceListResponse;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.MemberAttendanceResponse;
@@ -54,7 +53,7 @@ public class AttendanceService {
             // Teammate 테이블 필요
         }
 
-        List<AttendanceDate> attendanceDateList = attendanceDateRepository.findAllByStudy_IdOrderByAttendanceTimeAsc(studyId);
+        List<AttendanceDate> attendanceDateList = attendanceDateRepository.findAllByStudy_IdOrderByStartTimeAsc(studyId);
         Map<Integer, MemberAttendanceResponse> memberAttendances = new HashMap<>();
         for (Integer id : memberIds) {
             // 해당 스터디에 대한 회원 출석 필터링
@@ -90,7 +89,7 @@ public class AttendanceService {
     }
 
     public AttendanceDateListResponse getAttendanceDateList(Integer studyId) {
-        List<AttendanceDate> attendanceDateList = attendanceDateRepository.findAllByStudy_IdOrderByAttendanceTimeAsc(studyId);
+        List<AttendanceDate> attendanceDateList = attendanceDateRepository.findAllByStudy_IdOrderByStartTimeAsc(studyId);
         return AttendanceDateListResponse.from(attendanceDateList);
     }
 
@@ -99,16 +98,16 @@ public class AttendanceService {
                 .orElseThrow(() -> new GlobalException(ErrorCode.DATE_UNABLE_TO_ATTEND));
     }
 
-    public void createAttendanceDate(Integer studyId, LocalDateTime attendanceTime, Integer intervalMinutes) {
+    public void createAttendanceDate(Integer studyId, LocalDateTime startTime, Integer intervalMinutes) {
         Study study = studyRepository.findById(studyId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.STUDY_NOT_FOUND));
 
-        LocalDateTime attendanceDeadline = attendanceTime.plusMinutes(intervalMinutes);
+        LocalDateTime deadline = startTime.plusMinutes(intervalMinutes);
 
         AttendanceDate attendanceDate = AttendanceDate.builder()
                 .study(study)
-                .attendanceTime(attendanceTime)
-                .attendanceDeadline(attendanceDeadline)
+                .startTime(startTime)
+                .deadline(deadline)
                 .build();
 
         attendanceDateRepository.save(attendanceDate);
