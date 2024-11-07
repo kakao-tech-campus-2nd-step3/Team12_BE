@@ -1,10 +1,19 @@
 package katecam.luvicookie.ditto.domain.notice.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import katecam.luvicookie.ditto.domain.notice.dto.NoticeUpdateRequest;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,18 +27,18 @@ public class Notice {
     private Integer id;
     @Column(name = "title", nullable = false)
     private String title;
-    @Column(name = "writerid", nullable = false)
-    private Integer writer_id;
+    @Column(name = "member_id", nullable = false)
+    private Integer memberId;
     @Column(name = "content", nullable = false)
     private String content;
-    @Column(name = "createdat", nullable = false)
-    private LocalDate createdAt;
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 
     @Builder
-    public Notice(String title, String content, Integer writer_id, LocalDate createdAt){
+    public Notice(String title, String content, Integer memberId, LocalDateTime createdAt){
         this.title = title;
         this.content = content;
-        this.writer_id = writer_id;
+        this.memberId = memberId;
         this.createdAt = createdAt;
     }
 

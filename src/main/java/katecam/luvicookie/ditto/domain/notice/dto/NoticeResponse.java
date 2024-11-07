@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Builder
 @Getter
@@ -15,7 +15,7 @@ public class NoticeResponse {
     private String title;
     private String nickName;
     private String content;
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     public static NoticeResponse from(Notice notice) {
         return NoticeResponse.builder()
