@@ -12,15 +12,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/studies")
@@ -42,28 +44,23 @@ public class StudyController {
         return ResponseEntity.ok(studyService.getStudy(studyId));
     }
 
-    @PostMapping
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Void> createStudy(
-            @RequestBody @Valid StudyCreateRequest request,
-            @LoginUser Member member
+            @LoginUser Member member,
+            @RequestPart @Valid StudyCreateRequest request,
+            @RequestPart MultipartFile profileImage
     ) {
-        if (member.isGuest()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .build();
-        }
-
-        studyService.create(request);
+        studyService.create(member, request, profileImage);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
     }
 
     @DeleteMapping("/{studyId}")
     public ResponseEntity<Void> deleteStudy(
-            @PathVariable Integer studyId,
-            @LoginUser Member member
+            @LoginUser Member member,
+            @PathVariable Integer studyId
     ) {
-        // Todo - 멤버가 해당 스터디의 조장인지 검증
-        studyService.delete(studyId);
+        studyService.delete(member, studyId);
         return ResponseEntity.noContent()
                 .build();
     }

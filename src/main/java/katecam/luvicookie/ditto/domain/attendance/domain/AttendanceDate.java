@@ -33,17 +33,17 @@ public class AttendanceDate extends BaseTimeEntity {
     @JoinColumn(name = "study_id", nullable = false)
     private Study study;
 
-    @Column(name = "attendance_time", nullable = false)
-    private LocalDateTime attendanceTime;
+    @Column(name = "start_time", nullable = false)
+    private LocalDateTime startTime;
 
-    @Column(name = "attendance_deadline", nullable = false)
-    private LocalDateTime attendanceDeadline;
+    @Column(name = "deadline", nullable = false)
+    private LocalDateTime deadline;
 
     @Builder
-    public AttendanceDate(Study study, LocalDateTime attendanceTime, LocalDateTime attendanceDeadline) {
+    public AttendanceDate(Study study, LocalDateTime startTime, LocalDateTime deadline) {
         this.study = study;
-        this.attendanceTime = attendanceTime;
-        this.attendanceDeadline = attendanceDeadline;
+        this.startTime = startTime;
+        this.deadline = deadline;
     }
 
 }

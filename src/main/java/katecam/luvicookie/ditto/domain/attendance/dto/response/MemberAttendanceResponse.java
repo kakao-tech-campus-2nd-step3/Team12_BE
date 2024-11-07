@@ -13,7 +13,7 @@ public record MemberAttendanceResponse(
     public static MemberAttendanceResponse from(List<AttendanceDate> studyAttendanceDateList, List<Attendance> memberAttendanceList) {
         List<String> memberAttendanceDateList = memberAttendanceList.stream()
                 .map(attendance -> attendance.getAttendanceDate()
-                        .getAttendanceTime()
+                        .getStartTime()
                         .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
                 )
                 .toList();
