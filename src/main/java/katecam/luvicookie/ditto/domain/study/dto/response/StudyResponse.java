@@ -2,10 +2,12 @@ package katecam.luvicookie.ditto.domain.study.dto.response;
 
 import katecam.luvicookie.ditto.domain.study.domain.Study;
 import lombok.Builder;
+import lombok.Getter;
 
 import java.time.LocalDate;
 
 @Builder
+@Getter
 public class StudyResponse {
 
     private Integer studyId;
