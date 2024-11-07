@@ -39,7 +39,6 @@ public class StudyService {
     }
 
     public void delete(Integer studyId) {
-        // 조장 검증 코드 필요
         studyRepository.deleteById(studyId);
     }
 
