@@ -7,7 +7,7 @@ spring:
     hikari:
       maximum-pool-size: 4
     username: ditto
-    password: kakao2024
+    password: ${DB_PASSWORD}
 
   jpa:
     show-sql: true
@@ -20,5 +20,5 @@ spring:
 file:
   path: "src/main/resources/static/files/"
   upload:
-    path: "/Users/won-yunseo/Documents/files/"
+    path: "/opt/app/files/"
 
