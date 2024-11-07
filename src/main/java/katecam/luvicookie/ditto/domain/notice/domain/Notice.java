@@ -20,30 +20,35 @@ import java.time.LocalDateTime;
 @Entity
 @Setter
 @Table(name = "notice")
-public class Notice {
+public class Notice extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false)
     private Integer id;
     @Column(name = "title", nullable = false)
     private String title;
-    @Column(name = "member_id", nullable = false)
-    private Integer memberId;
     @Column(name = "content", nullable = false)
     private String content;
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "study_id", nullable = false)
+    private Study study;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
+
 
     @Builder
-    public Notice(String title, String content, Integer memberId, LocalDateTime createdAt){
+    public Notice(String title, String content, Study study, Member member){
         this.title = title;
         this.content = content;
-        this.memberId = memberId;
-        this.createdAt = createdAt;
+        this.study = study;
+        this.member = member;
     }
 
     public void updateNotice(NoticeUpdateRequest noticeUpdateRequest){
-        this.title = noticeUpdateRequest.getTitle();
-        this.content = noticeUpdateRequest.getContent();
+        if(title!=null)
+            this.title = noticeUpdateRequest.getTitle();
+        if(content!=null)
+            this.content = noticeUpdateRequest.getContent();
     }
 }
