@@ -10,6 +10,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -44,16 +45,10 @@ public class Assignment extends BaseTimeEntity {
             this.title = assignmentRequest.getTitle();
         if(assignmentRequest.getContent() != null)
             this.content = assignmentRequest.getContent();
-        if(assignmentRequest.getDeadline() != null)
-            this.deadline = assignmentRequest.getDeadline();
-    }
-
-    public Assignment toEntity(){
-        return Assignment.builder()
-                .title(title)
-                .content(content)
-                .deadline(deadline)
-                .build();
+        if(assignmentRequest.getDeadline() != null){
+            DateTimeFormatter format1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            this.deadline = LocalDateTime.parse(assignmentRequest.getDeadline(), format1);
+        }
     }
 
 }

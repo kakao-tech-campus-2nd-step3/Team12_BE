@@ -4,6 +4,7 @@ import katecam.luvicookie.ditto.domain.assignment.domain.Assignment;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Builder
 public class AssignmentResponse {
@@ -11,16 +12,17 @@ public class AssignmentResponse {
     public String title;
     public String content;
     public Integer studyId;
-    private LocalDateTime createdAt;
-    private LocalDateTime deadline;
+    public String createdAt;
+    public String deadline;
 
     public static AssignmentResponse from(Assignment assignment) {
         return AssignmentResponse.builder()
                 .id(assignment.getId())
                 .title(assignment.getTitle())
                 .content(assignment.getContent())
-                .createdAt(assignment.getCreatedAt())
+                .createdAt(assignment.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
                 .studyId(assignment.getStudy().getId())
+                .deadline(assignment.getDeadline().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
                 .build();
     }
 }

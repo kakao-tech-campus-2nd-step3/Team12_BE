@@ -5,6 +5,7 @@ import katecam.luvicookie.ditto.domain.assignment.domain.Assignment;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 public class AssignmentRequest {
@@ -14,13 +15,16 @@ public class AssignmentRequest {
     @NotBlank(message = "설명을 입력해주세요")
     private String content;
     @NotBlank(message = "마감기한을 입력해주세요")
-    private LocalDateTime deadline;
+    private String deadline;
 
     public Assignment toEntity(){
+        DateTimeFormatter format1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        LocalDateTime strDeadline = LocalDateTime.parse(deadline, format1);
+
         return Assignment.builder()
                 .title(title)
                 .content(content)
-                .deadline(deadline)
+                .deadline(strDeadline)
                 .build();
     }
 }
