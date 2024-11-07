@@ -26,16 +26,13 @@ public class StudyCreateRequest {
     @Size(max = MAX_STUDY_TOPIC_LENGTH, message = "스터디 주제를 {max}자 이하로 입력해주세요.")
     private String topic;
 
-    @NotBlank(message = "스터디 프로필 이미지를 입력해주세요.")
-    private String profileImage;
-
-    public Study toEntity() {
+    public Study toEntity(String imageUrl) {
         return Study.builder()
                 .name(name)
                 .description(description)
                 .isOpen(isOpen)
                 .topic(topic)
-                .profileImage(profileImage)
+                .profileImage(imageUrl)
                 .build();
     }
 
