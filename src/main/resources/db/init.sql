@@ -66,3 +66,13 @@ CREATE TABLE assignment (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT FK_study_TO_assignment FOREIGN KEY (study_id) REFERENCES study(id)
 );
+
+CREATE TABLE assignment_file (
+    id SERIAL PRIMARY KEY,
+    file_name VARCHAR(255) NOT NULL,
+    assignment_id INT NOT NULL,
+    member_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT FK_assignment_TO_assignment_file FOREIGN KEY (assignment_id) REFERENCES assignment(id),
+    CONSTRAINT FK_member_TO_assignment_file FOREIGN KEY (member_id) REFERENCES member(id)
+);

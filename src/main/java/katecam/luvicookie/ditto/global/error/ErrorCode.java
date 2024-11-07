@@ -13,7 +13,8 @@ public enum ErrorCode {
     NOTICE_NOT_FOUND("존재하지 않는 공지입니다." ,HttpStatus.NOT_FOUND),
     DATE_UNABLE_TO_ATTEND("현재 출석할 수 없습니다.", HttpStatus.BAD_REQUEST),
     ASSIGNMENT_NOT_FOUND("존재하지 않는 과제입니다.", HttpStatus.NOT_FOUND),
-    WRITER_NOT_MATCH("작성자가 일치하지 않습니다.", HttpStatus.FORBIDDEN)
+    WRITER_NOT_MATCH("작성자가 일치하지 않습니다.", HttpStatus.FORBIDDEN),
+    FILE_NOT_FOUND("존재하지 않는 파일입니다.", HttpStatus.NOT_FOUND)
     ;
 
     private final String message;

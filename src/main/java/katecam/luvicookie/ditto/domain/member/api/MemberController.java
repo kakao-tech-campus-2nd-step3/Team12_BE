@@ -1,25 +1,27 @@
 package katecam.luvicookie.ditto.domain.member.api;
 
+import katecam.luvicookie.ditto.domain.assignment.application.AssignmentService;
 import katecam.luvicookie.ditto.domain.login.annotation.LoginUser;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.member.dto.memberRequestDTO;
 import katecam.luvicookie.ditto.domain.member.dto.memberResponseDTO;
 import katecam.luvicookie.ditto.domain.member.dto.profileImageDTO;
 import katecam.luvicookie.ditto.domain.member.application.MemberService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @Slf4j
+@RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
-
-    public MemberController(MemberService memberService) {
-        this.memberService = memberService;
-    }
 
     @GetMapping("/user/login/kakao")
     public String login(){
@@ -27,7 +29,6 @@ public class MemberController {
         return "oauthLogin";
         //"/oauth2/authorization/kakao"
     }
-
 
     @ResponseBody
     @PostMapping("/api/auth")
