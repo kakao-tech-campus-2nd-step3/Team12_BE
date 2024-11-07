@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AttendanceDateRepository extends JpaRepository<AttendanceDate, Integer> {
-    List<AttendanceDate> findAllByStudy_IdOrderByAttendanceTimeAsc(Integer studyId);
+    List<AttendanceDate> findAllByStudy_IdOrderByStartTimeAsc(Integer studyId);
 
     @Query(value = "select d from AttendanceDate d " +
             "where d.study.id = :studyId " +
