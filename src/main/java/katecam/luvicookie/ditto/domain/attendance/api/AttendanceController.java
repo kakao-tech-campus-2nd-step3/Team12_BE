@@ -1,8 +1,9 @@
 package katecam.luvicookie.ditto.domain.attendance.api;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
 import katecam.luvicookie.ditto.domain.attendance.application.AttendanceService;
-import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceDateRequest;
+import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceDateCreateRequest;
 import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceUpdateRequest;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceDateListResponse;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceListResponse;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/attendance")
@@ -49,7 +52,7 @@ public class AttendanceController {
             @RequestParam("memberId") Integer memberId,
             @RequestBody @Valid AttendanceUpdateRequest request
     ) {
-        attendanceService.updateAttendance(studyId, memberId, request);
+        attendanceService.updateAttendance(studyId, memberId, request.dateTime(), request.isAttended());
         return ResponseEntity.noContent()
                 .build();
     }
@@ -57,9 +60,9 @@ public class AttendanceController {
     @PostMapping("/date")
     public ResponseEntity<Void> createAttendanceDate(
             @RequestParam("studyId") Integer studyId,
-            @RequestBody @Valid AttendanceDateRequest request
+            @RequestBody @Valid AttendanceDateCreateRequest request
     ) {
-        attendanceService.createAttendanceDate(studyId, request.dateTime());
+        attendanceService.createAttendanceDate(studyId, request.startTime(), request.intervalMinutes());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
     }
@@ -74,9 +77,11 @@ public class AttendanceController {
     @DeleteMapping("/date")
     public ResponseEntity<Void> deleteAttendanceDate(
             @RequestParam("studyId") Integer studyId,
-            @RequestBody @Valid AttendanceDateRequest request
+            @RequestBody
+            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
+            LocalDateTime attendanceTime
     ) {
-        attendanceService.deleteAttendanceDate(studyId, request.dateTime());
+        attendanceService.deleteAttendanceDate(studyId, attendanceTime);
         return ResponseEntity.noContent()
                 .build();
     }
