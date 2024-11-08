@@ -32,9 +32,6 @@ public class AssignmentService {
     private final AssignmentFileRepository assignmentFileRepository;
     private final AwsFileService awsFileService;
 
-    @Value("${file.upload.path}")
-    private String filepath;
-
     public AssignmentCreateResponse create(AssignmentRequest assignmentRequest, Integer studyId) {
         //teammate.role이 팀장인지 아닌지
         Assignment assignment = assignmentRequest.toEntity();
