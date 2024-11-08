@@ -1,6 +1,5 @@
 package katecam.luvicookie.ditto.domain.assignment.dto;
 
-import katecam.luvicookie.ditto.domain.notice.dto.NoticeResponse;
 import lombok.Builder;
 import org.springframework.data.domain.Page;
 

@@ -4,8 +4,8 @@ import jakarta.validation.Valid;
 import katecam.luvicookie.ditto.domain.login.annotation.LoginUser;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.study.application.StudyService;
-import katecam.luvicookie.ditto.domain.study.dto.request.StudyCreateRequest;
 import katecam.luvicookie.ditto.domain.study.dto.request.StudyCriteria;
+import katecam.luvicookie.ditto.domain.study.dto.request.StudyRequest;
 import katecam.luvicookie.ditto.domain.study.dto.response.StudyListResponse;
 import katecam.luvicookie.ditto.domain.study.dto.response.StudyResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,7 +49,7 @@ public class StudyController {
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Void> createStudy(
             @LoginUser Member member,
-            @RequestPart @Valid StudyCreateRequest request,
+            @RequestPart @Valid StudyRequest request,
             @RequestPart MultipartFile profileImage
     ) {
         studyService.create(member, request, profileImage);
@@ -61,6 +63,28 @@ public class StudyController {
             @PathVariable Integer studyId
     ) {
         studyService.delete(member, studyId);
+        return ResponseEntity.noContent()
+                .build();
+    }
+
+    @PutMapping("/{studyId}")
+    public ResponseEntity<Void> updateStudy(
+            @LoginUser Member member,
+            @PathVariable Integer studyId,
+            @RequestBody @Valid StudyRequest request
+    ) {
+        studyService.update(member, studyId, request);
+        return ResponseEntity.noContent()
+                .build();
+    }
+
+    @PutMapping("/{studyId}/profileImage")
+    public ResponseEntity<Void> updateStudyProfileImage(
+            @LoginUser Member member,
+            @PathVariable Integer studyId,
+            @RequestPart MultipartFile profileImage
+    ) {
+        studyService.updateProfileImage(member, studyId, profileImage);
         return ResponseEntity.noContent()
                 .build();
     }

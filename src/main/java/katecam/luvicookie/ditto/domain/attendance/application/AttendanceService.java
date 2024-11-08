@@ -11,10 +11,14 @@ import katecam.luvicookie.ditto.domain.member.dao.MemberRepository;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.study.dao.StudyRepository;
 import katecam.luvicookie.ditto.domain.study.domain.Study;
+import katecam.luvicookie.ditto.domain.studymember.dao.StudyMemberRepository;
+import katecam.luvicookie.ditto.domain.studymember.domain.StudyMember;
+import katecam.luvicookie.ditto.domain.studymember.domain.StudyMemberRole;
 import katecam.luvicookie.ditto.global.error.ErrorCode;
 import katecam.luvicookie.ditto.global.error.GlobalException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -24,13 +28,16 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AttendanceService {
 
     private final AttendanceDateRepository attendanceDateRepository;
     private final AttendanceRepository attendanceRepository;
     private final MemberRepository memberRepository;
     private final StudyRepository studyRepository;
+    private final StudyMemberRepository studyMemberRepository;
 
+    @Transactional
     public void createAttendance(Integer studyId, Integer memberId) {
         AttendanceDate attendanceDate = getAttendanceDatesByStudyIdAndTime(studyId, LocalDateTime.now());
 
@@ -48,9 +55,11 @@ public class AttendanceService {
     public AttendanceListResponse getAttendanceList(Integer studyId, Integer memberId) {
         List<Integer> memberIds = Arrays.asList(memberId);
         if (memberId == null) {
-            memberIds.clear();
-            // Todo - 같은 스터디 멤버 ids 삽입
-            // Teammate 테이블 필요
+            memberIds = studyMemberRepository.findAllByStudyIdAndRoleIn(studyId, Arrays.asList(StudyMemberRole.LEADER, StudyMemberRole.MEMBER))
+                    .stream()
+                    .map(StudyMember::getMember)
+                    .map(Member::getId)
+                    .toList();
         }
 
         List<AttendanceDate> attendanceDateList = attendanceDateRepository.findAllByStudy_IdOrderByStartTimeAsc(studyId);
@@ -69,6 +78,7 @@ public class AttendanceService {
         return AttendanceListResponse.from(attendanceDateList, memberAttendances);
     }
 
+    @Transactional
     public void updateAttendance(Integer studyId, Integer memberId, LocalDateTime dateTime, Boolean isAttended) {
         AttendanceDate attendanceDate = getAttendanceDatesByStudyIdAndTime(studyId, dateTime);
 
@@ -98,6 +108,7 @@ public class AttendanceService {
                 .orElseThrow(() -> new GlobalException(ErrorCode.DATE_UNABLE_TO_ATTEND));
     }
 
+    @Transactional
     public void createAttendanceDate(Integer studyId, LocalDateTime startTime, Integer intervalMinutes) {
         Study study = studyRepository.findById(studyId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.STUDY_NOT_FOUND));
@@ -113,6 +124,7 @@ public class AttendanceService {
         attendanceDateRepository.save(attendanceDate);
     }
 
+    @Transactional
     public void deleteAttendanceDate(Integer studyId, LocalDateTime attendanceDate) {
         AttendanceDate attendanceDates = getAttendanceDatesByStudyIdAndTime(studyId, attendanceDate);
         attendanceDateRepository.delete(attendanceDates);
