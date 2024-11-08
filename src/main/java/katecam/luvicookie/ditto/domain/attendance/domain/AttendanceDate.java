@@ -9,18 +9,20 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import katecam.luvicookie.ditto.domain.member.domain.Member;
+import katecam.luvicookie.ditto.domain.study.domain.Study;
 import katecam.luvicookie.ditto.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "attendance")
-public class Attendance extends BaseTimeEntity {
+@Table(name = "attendance_date")
+public class AttendanceDate extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,17 +30,20 @@ public class Attendance extends BaseTimeEntity {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+    @JoinColumn(name = "study_id", nullable = false)
+    private Study study;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "date_id", nullable = false)
-    private AttendanceDate attendanceDate;
+    @Column(name = "start_time", nullable = false)
+    private LocalDateTime startTime;
+
+    @Column(name = "deadline", nullable = false)
+    private LocalDateTime deadline;
 
     @Builder
-    public Attendance(Member member, AttendanceDate attendanceDate) {
-        this.member = member;
-        this.attendanceDate = attendanceDate;
+    public AttendanceDate(Study study, LocalDateTime startTime, LocalDateTime deadline) {
+        this.study = study;
+        this.startTime = startTime;
+        this.deadline = deadline;
     }
 
 }
