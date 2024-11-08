@@ -1,6 +1,7 @@
 package katecam.luvicookie.ditto.domain.assignment.api;
 
 import katecam.luvicookie.ditto.domain.assignment.application.AssignmentService;
+import katecam.luvicookie.ditto.domain.assignment.dto.AssignmentCreateResponse;
 import katecam.luvicookie.ditto.domain.assignment.dto.AssignmentFileResponse;
 import katecam.luvicookie.ditto.domain.assignment.dto.AssignmentListResponse;
 import katecam.luvicookie.ditto.domain.assignment.dto.AssignmentRequest;
@@ -11,7 +12,6 @@ import katecam.luvicookie.ditto.domain.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -106,4 +107,5 @@ public class AssignmentController {
             @PathVariable Integer fileId) throws IOException {
         return assignmentService.download(fileId);
     }
+
 }
