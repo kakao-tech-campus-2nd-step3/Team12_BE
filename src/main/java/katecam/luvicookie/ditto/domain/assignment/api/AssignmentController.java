@@ -65,7 +65,6 @@ public class AssignmentController {
     //수정
     @PutMapping("/{assignmentId}")
     public ResponseEntity<AssignmentResponse> updateAssignment(@PathVariable Integer assignmentId, @RequestBody AssignmentRequest assignmentRequest){
-
         return ResponseEntity.ok(
                 assignmentService.update(assignmentId, assignmentRequest));
     }
@@ -73,7 +72,6 @@ public class AssignmentController {
     //삭제
     @DeleteMapping("/{assignmentId}")
     public ResponseEntity<Void> deleteAssignment(@PathVariable Integer assignmentId){
-
         assignmentService.delete(assignmentId);
         return ResponseEntity.noContent()
                 .build();

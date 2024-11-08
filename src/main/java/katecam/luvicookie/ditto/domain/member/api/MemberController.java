@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-
 @Controller
 @Slf4j
 @RequiredArgsConstructor
@@ -61,6 +59,5 @@ public class MemberController {
         memberService.updateProfileImage(profileImage, member.getId());
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 
 }
