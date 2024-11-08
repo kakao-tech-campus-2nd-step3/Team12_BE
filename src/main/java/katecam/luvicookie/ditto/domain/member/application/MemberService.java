@@ -59,7 +59,7 @@ public class MemberService {
         member.authorizeUser();
 
         try {
-            String imageUrl = awsFileService.saveStudyProfileImage(profileImage);
+            String imageUrl = awsFileService.saveMemberProfileImage(profileImage);
             member.setProfileImage(imageUrl);
         } catch (IOException exception) {
             throw new GlobalException(ErrorCode.FILE_UPLOAD_FAILED);
