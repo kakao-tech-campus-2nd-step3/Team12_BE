@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -19,13 +20,19 @@ public class AssignmentFileResponse {
 
     public static AssignmentFileResponse from(List<AssignmentFile> assignmentFiles) {
         List<FileResponse> fileResponses = assignmentFiles.stream()
-                .map(assignmentFile -> FileResponse.builder()
-                                        .fileName(assignmentFile.getFileName())
-                                        .id(assignmentFile.getId())
-                                        .build()
-                ).toList();
+                .map(FileResponse::from).toList();
         return AssignmentFileResponse.builder()
                 .files(fileResponses)
                 .build();
     }
+
+    public static AssignmentFileResponse from(AssignmentFile assignmentFile) {
+        List<FileResponse> fileResponses = new ArrayList<>();
+        fileResponses.add(FileResponse.from(assignmentFile));
+        return AssignmentFileResponse.builder()
+                .files(fileResponses)
+                .build();
+    }
+
+
 }

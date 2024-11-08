@@ -14,6 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 import java.util.List;
 
@@ -51,9 +54,11 @@ public class MemberController {
     }
 
     @ResponseBody
-    @PostMapping("/api/users/profileImage")
-    public ResponseEntity<?> updateProfileImage(@LoginUser Member member, @RequestBody profileImageDTO profileImageDTO){
-        memberService.updateProfileImage(profileImageDTO, member.getId());
+    @PutMapping("/api/users/profileImage")
+    public ResponseEntity<?> updateProfileImage(
+            @LoginUser Member member,
+            @RequestPart MultipartFile profileImage){
+        memberService.updateProfileImage(profileImage, member.getId());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

@@ -21,7 +21,8 @@ public enum ErrorCode {
     FILE_NOT_FOUND("존재하지 않는 파일입니다.", HttpStatus.NOT_FOUND),
     FILE_CONVERT_FAILED("파일을 변환할 수 없습니다.", HttpStatus.BAD_REQUEST),
     AUTHENTICATION_FAILED("로그인을 다시 시도해주세요.", HttpStatus.FORBIDDEN),
-    FILE_UPLOAD_FAILED("파일 업로드 도중 문제가 발생했습니다. 다시 시도해주세요.", HttpStatus.INTERNAL_SERVER_ERROR);
+    FILE_UPLOAD_FAILED("파일 업로드 도중 문제가 발생했습니다. 다시 시도해주세요.", HttpStatus.INTERNAL_SERVER_ERROR)
+    ;
 
     private final String message;
     private final HttpStatus httpStatus;

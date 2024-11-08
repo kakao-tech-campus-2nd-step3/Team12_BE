@@ -17,6 +17,8 @@ public class AssignmentFile extends BaseTimeEntity {
     private Integer id;
     @Column(name = "file_name", nullable = false)
     private String fileName;
+    @Column(name = "file_url", nullable = false)
+    private String fileUrl;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assignment_id", nullable = false)
     private Assignment assignment;
@@ -25,10 +27,11 @@ public class AssignmentFile extends BaseTimeEntity {
     private Member member;
 
     @Builder
-    public AssignmentFile(String fileName, Assignment assignment, Member member){
+    public AssignmentFile(String fileName, Assignment assignment, Member member, String fileUrl){
         this.fileName = fileName;
         this.assignment = assignment;
         this.member = member;
+        this.fileUrl = fileUrl;
     }
 
 }
