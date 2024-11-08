@@ -56,4 +56,15 @@ public class Study extends BaseTimeEntity {
         this.profileImage = profileImage;
     }
 
+    public void update(Study study) {
+        this.name = study.getName();
+        this.description = study.getDescription();
+        this.isOpen = study.getIsOpen();
+        this.topic = study.getTopic();
+    }
+
+    public void changeProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+
 }
