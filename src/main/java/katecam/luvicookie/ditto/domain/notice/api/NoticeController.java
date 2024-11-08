@@ -6,8 +6,8 @@ import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.notice.application.NoticeService;
 import katecam.luvicookie.ditto.domain.notice.dto.NoticeCreateRequest;
 import katecam.luvicookie.ditto.domain.notice.dto.NoticeListResponse;
-import katecam.luvicookie.ditto.domain.notice.dto.NoticeUpdateRequest;
 import katecam.luvicookie.ditto.domain.notice.dto.NoticeResponse;
+import katecam.luvicookie.ditto.domain.notice.dto.NoticeUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -23,10 +23,12 @@ public class NoticeController {
     private final NoticeService noticeService;
 
     @PostMapping()
-    public ResponseEntity<Void> createNotice(@LoginUser Member member, @RequestBody NoticeCreateRequest noticeCreateRequest){
+    public ResponseEntity<Void> createNotice(
+            @RequestParam("studyId") Integer studyId,
+            @LoginUser Member member,
+            @RequestBody @Valid NoticeCreateRequest noticeCreateRequest){
 
-        //조장인지 확인
-        noticeService.create(noticeCreateRequest, member);
+        noticeService.create(noticeCreateRequest, studyId, member);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
     }
@@ -44,16 +46,21 @@ public class NoticeController {
     }
 
     @PutMapping("/{noticeId}")
-    public ResponseEntity<NoticeResponse> updateNotice(@PathVariable Integer noticeId, @RequestBody NoticeUpdateRequest noticeUpdateRequest){
-        //조장인지 확인
-        NoticeResponse noticeResponse = noticeService.updateNotice(noticeId, noticeUpdateRequest);
+    public ResponseEntity<NoticeResponse> updateNotice(
+            @PathVariable Integer noticeId,
+            @LoginUser Member member,
+            @RequestBody NoticeUpdateRequest noticeUpdateRequest){
+
+        NoticeResponse noticeResponse = noticeService.updateNotice(noticeId, noticeUpdateRequest, member);
         return ResponseEntity.ok(noticeResponse);
     }
 
     @DeleteMapping("/{noticeId}")
-    public ResponseEntity<Void> deleteNotice(@PathVariable Integer noticeId){
-        //조장인지 확인
-        noticeService.deleteNotice(noticeId);
+    public ResponseEntity<Void> deleteNotice(
+            @PathVariable Integer noticeId,
+            @LoginUser Member member){
+
+        noticeService.deleteNotice(noticeId, member);
         return ResponseEntity.noContent()
                 .build();
     }
