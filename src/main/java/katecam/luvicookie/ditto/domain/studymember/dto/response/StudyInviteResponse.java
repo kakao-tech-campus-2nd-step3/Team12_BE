@@ -8,9 +8,4 @@ public record StudyInviteResponse(
     @JsonProperty("token")
     String token
 ) {
-
-    public StudyInviteResponse(Integer studyId, String token) {
-        this.studyId = studyId;
-        this.token = token;
-    }
 }
