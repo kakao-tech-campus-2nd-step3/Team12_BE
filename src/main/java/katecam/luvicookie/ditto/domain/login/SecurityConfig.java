@@ -1,6 +1,7 @@
 package katecam.luvicookie.ditto.domain.login;
 
 import katecam.luvicookie.ditto.domain.login.jwt.TokenProvider;
+import katecam.luvicookie.ditto.domain.login.oauth.LoginFailHandler;
 import katecam.luvicookie.ditto.domain.login.oauth.LoginSuccessHandler;
 import katecam.luvicookie.ditto.domain.login.oauth.OAuth2UserCustomService;
 import katecam.luvicookie.ditto.domain.member.application.PrincipalDetailsService;
@@ -60,6 +61,12 @@ public class SecurityConfig {
 
 
     @Bean
+    public LoginFailHandler LoginFailHandler() {
+        return new LoginFailHandler();
+    }
+
+
+    @Bean
     public TokenAuthenticationFilter TokenAuthenticationFilter(TokenProvider tokenProvider) {
         return new TokenAuthenticationFilter(tokenProvider);
     }
@@ -100,6 +107,7 @@ public class SecurityConfig {
         http.oauth2Login(httpSecurityOAuth2LoginConfigurer ->
                 httpSecurityOAuth2LoginConfigurer.loginPage("/api/auth/kakao")
                         .successHandler(LoginSuccessHandler())
+                        .failureHandler(LoginFailHandler())
                         .userInfoEndpoint(userInfoEndpointConfig ->
                                 userInfoEndpointConfig.userService(oAuth2UserService)));
 
