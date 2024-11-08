@@ -5,6 +5,7 @@ import katecam.luvicookie.ditto.domain.assignment.dto.AssignmentFileResponse;
 import katecam.luvicookie.ditto.domain.assignment.dto.AssignmentListResponse;
 import katecam.luvicookie.ditto.domain.assignment.dto.AssignmentRequest;
 import katecam.luvicookie.ditto.domain.assignment.dto.AssignmentResponse;
+import katecam.luvicookie.ditto.domain.file.application.AwsFileService;
 import katecam.luvicookie.ditto.domain.login.annotation.LoginUser;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import lombok.RequiredArgsConstructor;
@@ -23,12 +24,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/assignments")
 public class AssignmentController {
 
     private final AssignmentService assignmentService;
+    private final AwsFileService awsFileService;
+
     //전체 조회
     @GetMapping
     public ResponseEntity<AssignmentListResponse> getAssignments(
@@ -48,13 +53,12 @@ public class AssignmentController {
 
     //등록
     @PostMapping
-    public ResponseEntity<Void> createAssignment(
+    public ResponseEntity<AssignmentCreateResponse> createAssignment(
             @RequestParam("studyId") Integer studyId,
             @RequestBody AssignmentRequest assignmentRequest){
 
-        assignmentService.create(assignmentRequest, studyId);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .build();
+        AssignmentCreateResponse assignmentCreateResponse = assignmentService.create(assignmentRequest, studyId);
+        return ResponseEntity.ok(assignmentCreateResponse);
     }
 
     //수정
@@ -79,9 +83,10 @@ public class AssignmentController {
     public ResponseEntity<AssignmentFileResponse> submitAssignment(
             @LoginUser Member member,
             @PathVariable Integer assignmentId,
-            @RequestParam(value = "file") MultipartFile[] files){
+            @RequestPart MultipartFile file) throws IOException {
 
-        AssignmentFileResponse assignmentFileResponse = assignmentService.uploadAssignments(member, assignmentId, files);
+        AssignmentFileResponse assignmentFileResponse = assignmentService.uploadAssignments(member, assignmentId, file);
+        awsFileService.saveAssignment(file);
         return ResponseEntity.ok(assignmentFileResponse);
     }
 
@@ -98,8 +103,7 @@ public class AssignmentController {
     //다운로드
     @GetMapping("/files/download/{fileId}")
     public ResponseEntity<byte[]> downloadAssignment(
-            @PathVariable Integer fileId){
-
-        return assignmentService.downloadFile(fileId);
+            @PathVariable Integer fileId) throws IOException {
+        return assignmentService.download(fileId);
     }
 }

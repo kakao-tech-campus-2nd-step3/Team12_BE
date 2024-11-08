@@ -5,7 +5,6 @@ import katecam.luvicookie.ditto.domain.member.application.MemberService;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.member.dto.memberRequestDTO;
 import katecam.luvicookie.ditto.domain.member.dto.memberResponseDTO;
-import katecam.luvicookie.ditto.domain.member.dto.profileImageDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -15,7 +14,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Controller
 @Slf4j
@@ -51,9 +54,11 @@ public class MemberController {
     }
 
     @ResponseBody
-    @PostMapping("/api/users/profileImage")
-    public ResponseEntity<?> updateProfileImage(@LoginUser Member member, @RequestBody profileImageDTO profileImageDTO){
-        memberService.updateProfileImage(profileImageDTO, member.getId());
+    @PutMapping("/api/users/profileImage")
+    public ResponseEntity<?> updateProfileImage(
+            @LoginUser Member member,
+            @RequestPart MultipartFile profileImage){
+        memberService.updateProfileImage(profileImage, member.getId());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

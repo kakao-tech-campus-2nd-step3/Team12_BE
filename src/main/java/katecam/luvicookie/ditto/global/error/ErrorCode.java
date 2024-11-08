@@ -28,7 +28,8 @@ public enum ErrorCode {
 
     // 500 - Internal Server Error
     FILE_CONVERT_FAILED("파일을 변환할 수 없습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
-    FILE_UPLOAD_FAILED("파일 업로드 도중 문제가 발생했습니다. 다시 시도해주세요.", HttpStatus.INTERNAL_SERVER_ERROR);
+    FILE_UPLOAD_FAILED("파일 업로드 도중 문제가 발생했습니다. 다시 시도해주세요.", HttpStatus.INTERNAL_SERVER_ERROR)
+    ;
 
     private final String message;
     private final HttpStatus httpStatus;
