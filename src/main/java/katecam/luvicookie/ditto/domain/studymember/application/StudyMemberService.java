@@ -31,14 +31,14 @@ public class StudyMemberService {
     }
 
     public StudyMemberResponse updateStudyMember(Integer studyId, Integer memberId, StudyMemberRole role) {
-        StudyMember studyMember = studyMemberRepository.findByStudyIdAndMemberId(studyId, memberId);
+        StudyMember studyMember = studyMemberRepository.findByStudyIdAndMember_Id(studyId, memberId);
         studyMember.setRole(role);
         studyMemberRepository.save(studyMember);
         return new StudyMemberResponse(studyMember);
     }
 
     public void deleteStudyMember(Integer studyId, Integer memberId) {
-        studyMemberRepository.deleteByStudyIdAndMemberId(studyId, memberId);
+        studyMemberRepository.deleteByStudyIdAndMember_Id(studyId, memberId);
     }
 
     public List<StudyMemberResponse> getStudyMemberApplyList(Integer studyId) {
