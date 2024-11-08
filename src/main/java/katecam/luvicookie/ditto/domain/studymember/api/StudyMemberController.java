@@ -2,10 +2,8 @@ package katecam.luvicookie.ditto.domain.studymember.api;
 
 
 import jakarta.validation.Valid;
-import java.util.List;
 import katecam.luvicookie.ditto.domain.login.annotation.LoginUser;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
-import katecam.luvicookie.ditto.domain.study.dto.response.StudyListResponse;
 import katecam.luvicookie.ditto.domain.studymember.application.StudyMemberService;
 import katecam.luvicookie.ditto.domain.studymember.domain.StudyMemberRole;
 import katecam.luvicookie.ditto.domain.studymember.dto.request.StudyMemberApplyRequest;
@@ -15,14 +13,9 @@ import katecam.luvicookie.ditto.domain.studymember.dto.response.StudyInviteRespo
 import katecam.luvicookie.ditto.domain.studymember.dto.response.StudyMemberResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/studies/{studyId}/members")

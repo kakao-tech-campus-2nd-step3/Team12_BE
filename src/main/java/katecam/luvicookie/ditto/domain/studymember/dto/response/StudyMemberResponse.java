@@ -1,19 +1,17 @@
 package katecam.luvicookie.ditto.domain.studymember.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
-import katecam.luvicookie.ditto.domain.member.dto.memberResponseDTO;
 import katecam.luvicookie.ditto.domain.studymember.domain.StudyMember;
 
+import java.time.format.DateTimeFormatter;
+
 public record StudyMemberResponse(
-    @JsonProperty("member")
-    MemberResponse member,
-    @JsonProperty("role")
-    String role,
-    @JsonProperty("joined_at")
-    String joinedAt
+        @JsonProperty("member")
+        MemberResponse member,
+        @JsonProperty("role")
+        String role,
+        @JsonProperty("joined_at")
+        String joinedAt
 ) {
 
     public StudyMemberResponse(StudyMember studyMember) {

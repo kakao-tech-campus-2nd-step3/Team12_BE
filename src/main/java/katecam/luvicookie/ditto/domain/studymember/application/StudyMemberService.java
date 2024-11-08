@@ -1,8 +1,5 @@
 package katecam.luvicookie.ditto.domain.studymember.application;
 
-import java.util.Arrays;
-import java.util.List;
-
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.study.dao.StudyRepository;
 import katecam.luvicookie.ditto.domain.study.domain.Study;
@@ -16,6 +13,9 @@ import katecam.luvicookie.ditto.global.error.GlobalException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class StudyMemberService {
@@ -25,9 +25,9 @@ public class StudyMemberService {
 
     public List<StudyMemberResponse> getStudyMemberList(Integer studyId) {
         return studyMemberRepository.findAllByStudyIdAndRoleIn(studyId, Arrays.asList(StudyMemberRole.LEADER, StudyMemberRole.MEMBER))
-            .stream()
-            .map(StudyMemberResponse::new)
-            .toList();
+                .stream()
+                .map(StudyMemberResponse::new)
+                .toList();
     }
 
     public StudyMemberResponse updateStudyMember(Integer studyId, Integer memberId, StudyMemberRole role) {
@@ -43,9 +43,9 @@ public class StudyMemberService {
 
     public List<StudyMemberResponse> getStudyMemberApplyList(Integer studyId) {
         return studyMemberRepository.findAllByStudyIdAndRoleIn(studyId, List.of(StudyMemberRole.APPLICANT))
-            .stream()
-            .map(StudyMemberResponse::new)
-            .toList();
+                .stream()
+                .map(StudyMemberResponse::new)
+                .toList();
     }
 
     public StudyMemberResponse createStudyMember(Integer studyId, Member member, StudyMemberRole role, String message) {

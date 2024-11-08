@@ -6,9 +6,10 @@ import katecam.luvicookie.ditto.global.error.ErrorCode;
 import katecam.luvicookie.ditto.global.error.GlobalException;
 
 public record StudyMemberRoleRequest(
-    @NotBlank(message = "스터디 역할을 입력해주세요.")
-    String role
+        @NotBlank(message = "스터디 역할을 입력해주세요.")
+        String role
 ) {
+
     public StudyMemberRole toStudyMemberRole() {
         return switch (role) {
             case "스터디장" -> StudyMemberRole.LEADER;
