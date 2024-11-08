@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 import lombok.Setter;
 
 @Getter
-@Setter(AccessLevel.PUBLIC)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "study_member")
@@ -50,5 +49,9 @@ public class StudyMember extends BaseTimeEntity {
         this.role = role;
         this.joinedAt = joinedAt;
         this.message = message;
+    }
+
+    public void setRole(StudyMemberRole role) {
+        this.role = role;
     }
 }
