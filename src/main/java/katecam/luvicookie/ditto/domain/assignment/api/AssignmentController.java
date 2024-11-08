@@ -1,10 +1,7 @@
 package katecam.luvicookie.ditto.domain.assignment.api;
 
 import katecam.luvicookie.ditto.domain.assignment.application.AssignmentService;
-import katecam.luvicookie.ditto.domain.assignment.dto.AssignmentFileResponse;
-import katecam.luvicookie.ditto.domain.assignment.dto.AssignmentListResponse;
-import katecam.luvicookie.ditto.domain.assignment.dto.AssignmentRequest;
-import katecam.luvicookie.ditto.domain.assignment.dto.AssignmentResponse;
+import katecam.luvicookie.ditto.domain.assignment.dto.*;
 import katecam.luvicookie.ditto.domain.file.application.AwsFileService;
 import katecam.luvicookie.ditto.domain.login.annotation.LoginUser;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
@@ -45,13 +42,12 @@ public class AssignmentController {
 
     //등록
     @PostMapping
-    public ResponseEntity<Void> createAssignment(
+    public ResponseEntity<AssignmentCreateResponse> createAssignment(
             @RequestParam("studyId") Integer studyId,
             @RequestBody AssignmentRequest assignmentRequest){
 
-        assignmentService.create(assignmentRequest, studyId);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .build();
+        AssignmentCreateResponse assignmentCreateResponse = assignmentService.create(assignmentRequest, studyId);
+        return ResponseEntity.ok(assignmentCreateResponse);
     }
 
     //수정

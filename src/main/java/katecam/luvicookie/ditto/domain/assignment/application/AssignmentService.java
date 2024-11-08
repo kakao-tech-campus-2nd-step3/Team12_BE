@@ -35,12 +35,13 @@ public class AssignmentService {
     @Value("${file.upload.path}")
     private String filepath;
 
-    public void create(AssignmentRequest assignmentRequest, Integer studyId) {
+    public AssignmentCreateResponse create(AssignmentRequest assignmentRequest, Integer studyId) {
         //teammate.role이 팀장인지 아닌지
         Assignment assignment = assignmentRequest.toEntity();
         Study study = studyRepository.findById(studyId).orElseThrow(() -> new GlobalException(ErrorCode.STUDY_NOT_FOUND));
         assignment.setStudy(study);
         assignmentRepository.save(assignment);
+        return AssignmentCreateResponse.from(assignment);
     }
 
     @Transactional
