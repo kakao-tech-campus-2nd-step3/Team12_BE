@@ -4,8 +4,8 @@ import jakarta.validation.Valid;
 import katecam.luvicookie.ditto.domain.login.annotation.LoginUser;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.study.application.StudyService;
-import katecam.luvicookie.ditto.domain.study.dto.request.StudyRequest;
 import katecam.luvicookie.ditto.domain.study.dto.request.StudyCriteria;
+import katecam.luvicookie.ditto.domain.study.dto.request.StudyRequest;
 import katecam.luvicookie.ditto.domain.study.dto.response.StudyListResponse;
 import katecam.luvicookie.ditto.domain.study.dto.response.StudyResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,16 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
