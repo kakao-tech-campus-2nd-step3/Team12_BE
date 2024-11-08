@@ -20,12 +20,7 @@ public class AssignmentFileResponse {
 
     public static AssignmentFileResponse from(List<AssignmentFile> assignmentFiles) {
         List<FileResponse> fileResponses = assignmentFiles.stream()
-                .map(assignmentFile -> FileResponse.builder()
-                                        .fileName(assignmentFile.getFileName())
-                                        .fileUrl(assignmentFile.getFileUrl())
-                                        .id(assignmentFile.getId())
-                                        .build()
-                ).toList();
+                .map(FileResponse::from).toList();
         return AssignmentFileResponse.builder()
                 .files(fileResponses)
                 .build();
@@ -33,15 +28,11 @@ public class AssignmentFileResponse {
 
     public static AssignmentFileResponse from(AssignmentFile assignmentFile) {
         List<FileResponse> fileResponses = new ArrayList<>();
-        FileResponse fileResponse = FileResponse.builder()
-                .id(assignmentFile.getId())
-                .fileName(assignmentFile.getFileName())
-                .fileUrl(assignmentFile.getFileUrl())
-                .build();
-        fileResponses.add(fileResponse);
+        fileResponses.add(FileResponse.from(assignmentFile));
         return AssignmentFileResponse.builder()
                 .files(fileResponses)
                 .build();
     }
+
 
 }

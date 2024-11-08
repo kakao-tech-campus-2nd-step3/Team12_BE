@@ -7,7 +7,6 @@ import lombok.Setter;
 
 @Builder
 @Getter
-@Setter
 public class AssignmentCreateResponse {
     Integer id;
 
