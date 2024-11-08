@@ -12,16 +12,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 public interface StudyMemberRepository extends JpaRepository<StudyMember, Integer> {
-
     List<StudyMember> findAllByStudyIdAndRoleIn(Integer studyId, List<StudyMemberRole> roles);
-
-    @Query("SELECT sm FROM StudyMember sm WHERE sm.studyId = :studyId AND sm.member.id = :memberId")
-    StudyMember findByStudyIdAndMemberId(Integer studyId, Integer memberId);
-
-    @Modifying
-    @Transactional
-    @Query("DELETE FROM StudyMember sm WHERE sm.studyId = :studyId AND sm.member.id = :memberId")
-    void deleteByStudyIdAndMemberId(Integer studyId, Integer memberId);
-
+    StudyMember findByStudyIdAndMember_Id(Integer studyId, Integer memberId);
+    void deleteByStudyIdAndMember_Id(Integer studyId, Integer memberId);
     boolean existsByStudyIdAndMemberAndRoleIn(Integer studyId, Member member, List<StudyMemberRole> roles);
 }
