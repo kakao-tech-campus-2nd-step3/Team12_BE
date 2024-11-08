@@ -54,7 +54,7 @@ public class MemberController {
     }
 
     @ResponseBody
-    @PostMapping("/api/users/profileImage")
+    @PutMapping("/api/users/profileImage")
     public ResponseEntity<?> updateProfileImage(
             @LoginUser Member member,
             @RequestPart MultipartFile profileImage){
