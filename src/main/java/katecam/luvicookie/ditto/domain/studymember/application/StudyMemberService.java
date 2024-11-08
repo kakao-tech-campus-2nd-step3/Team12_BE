@@ -60,14 +60,18 @@ public class StudyMemberService {
     }
 
     public StudyInviteResponse getStudyInviteToken(Integer studyId) {
-        Study study = studyRepository.findById(studyId).get();
+        Study study = studyRepository.findById(studyId)
+                .orElseThrow(() -> new GlobalException(ErrorCode.STUDY_NOT_FOUND));
+
         return new StudyInviteResponse(studyId, study.getInviteToken());
     }
 
     public StudyMemberResponse joinStudyMember(Integer studyId, Member member, String token) {
-        Study study = studyRepository.findById(studyId).get();
-        if (!token.equals(study.getInviteToken())) {
-            throw new GlobalException(ErrorCode.STUDY_NOT_FOUND);
+        Study study = studyRepository.findById(studyId)
+                .orElseThrow(() -> new GlobalException(ErrorCode.STUDY_NOT_FOUND));
+
+        if (!study.getInviteToken().equals(token)) {
+            throw new GlobalException(ErrorCode.INVALID_TOKEN);
         }
         return createStudyMember(studyId, member, StudyMemberRole.MEMBER, null);
     }
