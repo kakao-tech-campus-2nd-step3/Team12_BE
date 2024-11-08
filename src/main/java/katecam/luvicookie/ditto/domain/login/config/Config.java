@@ -3,8 +3,10 @@ package katecam.luvicookie.ditto.domain.login.config;
 
 import katecam.luvicookie.ditto.domain.login.annotation.LoginUserArgumentResolver;
 import katecam.luvicookie.ditto.domain.member.application.MemberService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
@@ -12,6 +14,15 @@ import java.util.List;
 @Configuration
 public class Config implements WebMvcConfigurer {
     private final MemberService memberService;
+
+    @Value("${file.path}")
+    private String filepath;
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/file/**")
+                .addResourceLocations("file:" + filepath);
+    }
 
     public Config(MemberService memberService) {
         this.memberService = memberService;
