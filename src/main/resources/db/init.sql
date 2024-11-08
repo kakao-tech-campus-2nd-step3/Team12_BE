@@ -32,10 +32,11 @@ CREATE TABLE study_member (
     CONSTRAINT FK_study_TO_teammate FOREIGN KEY (study_id) REFERENCES study (id)
 );
 
-CREATE TABLE attendance_dates (
+CREATE TABLE attendance_date (
     id SERIAL PRIMARY KEY,
     study_id INT NOT NULL,
-    attendance_date TIMESTAMP NOT NULL,
+    start_time TIMESTAMP NOT NULL,
+    deadline TIMESTAMP NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT FK_study_TO_attendance_dates FOREIGN KEY (study_id) REFERENCES study (id)
 );
