@@ -9,6 +9,7 @@ import katecam.luvicookie.ditto.domain.study.dto.request.StudyCriteria;
 import katecam.luvicookie.ditto.domain.study.dto.response.StudyListResponse;
 import katecam.luvicookie.ditto.domain.study.dto.response.StudyResponse;
 import katecam.luvicookie.ditto.domain.studymember.application.StudyMemberService;
+import katecam.luvicookie.ditto.domain.studymember.domain.StudyMemberRole;
 import katecam.luvicookie.ditto.global.error.ErrorCode;
 import katecam.luvicookie.ditto.global.error.GlobalException;
 import lombok.RequiredArgsConstructor;
@@ -46,16 +47,17 @@ public class StudyService {
 
     public void create(Member member, StudyRequest request, MultipartFile profileImage) {
         try {
-            // Todo - 스터디 조장 설정
             String imageUrl = awsFileService.saveStudyProfileImage(profileImage);
-            studyRepository.save(request.toEntity(imageUrl));
+            Study study = request.toEntity(imageUrl);
+            studyRepository.save(study);
+            studyMemberService.createStudyMember(study.getId(), member, StudyMemberRole.LEADER, "");
         } catch (IOException exception) {
             throw new GlobalException(ErrorCode.FILE_UPLOAD_FAILED);
         }
     }
 
     public void delete(Member member, Integer studyId) {
-        // Todo - 멤버가 해당 스터디의 조장인지 검증
+        studyMemberService.validateStudyLeader(studyId, member);
         studyRepository.deleteById(studyId);
     }
 
