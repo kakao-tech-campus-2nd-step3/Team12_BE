@@ -16,15 +16,18 @@ CREATE TABLE study (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     is_open BOOLEAN,
     topic VARCHAR(25),
-    profile_image VARCHAR(255)
+    profile_image VARCHAR(255),
+    invite_token VARCHAR(48) DEFAULT md5(random()::text)
 );
 
-CREATE TABLE teammate (
+CREATE TABLE study_member (
     id SERIAL PRIMARY KEY,
     member_id INT NOT NULL,
     study_id INT NOT NULL,
     role VARCHAR(50),
     joined_at DATE,
+    message VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT FK_member_TO_teammate FOREIGN KEY (member_id) REFERENCES member (id),
     CONSTRAINT FK_study_TO_teammate FOREIGN KEY (study_id) REFERENCES study (id)
 );
