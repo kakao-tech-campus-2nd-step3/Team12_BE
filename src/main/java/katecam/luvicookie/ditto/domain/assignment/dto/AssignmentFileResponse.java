@@ -22,6 +22,7 @@ public class AssignmentFileResponse {
         List<FileResponse> fileResponses = assignmentFiles.stream()
                 .map(assignmentFile -> FileResponse.builder()
                                         .fileName(assignmentFile.getFileName())
+                                        .fileUrl(assignmentFile.getFileUrl())
                                         .id(assignmentFile.getId())
                                         .build()
                 ).toList();
@@ -35,6 +36,7 @@ public class AssignmentFileResponse {
         FileResponse fileResponse = FileResponse.builder()
                 .id(assignmentFile.getId())
                 .fileName(assignmentFile.getFileName())
+                .fileUrl(assignmentFile.getFileUrl())
                 .build();
         fileResponses.add(fileResponse);
         return AssignmentFileResponse.builder()

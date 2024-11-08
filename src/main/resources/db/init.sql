@@ -70,6 +70,7 @@ CREATE TABLE assignment (
 CREATE TABLE assignment_file (
     id SERIAL PRIMARY KEY,
     file_name VARCHAR(255) NOT NULL,
+    file_url VARCHAR(255) NOT NULL,
     assignment_id INT NOT NULL,
     member_id INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

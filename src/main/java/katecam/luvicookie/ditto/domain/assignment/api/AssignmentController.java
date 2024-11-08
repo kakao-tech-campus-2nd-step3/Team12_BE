@@ -95,10 +95,8 @@ public class AssignmentController {
 
     //다운로드
     @GetMapping("/files/download/{fileId}")
-    public ResponseEntity<Void> downloadAssignment(
-            @PathVariable Integer fileId){
-        return ResponseEntity.noContent()
-                .build();
-        //return assignmentService.downloadFile(fileId);
+    public ResponseEntity<byte[]> downloadAssignment(
+            @PathVariable Integer fileId) throws IOException {
+        return assignmentService.download(fileId);
     }
 }

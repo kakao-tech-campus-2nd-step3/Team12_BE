@@ -12,28 +12,16 @@ import katecam.luvicookie.ditto.domain.study.domain.Study;
 import katecam.luvicookie.ditto.global.error.ErrorCode;
 import katecam.luvicookie.ditto.global.error.GlobalException;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -96,11 +84,16 @@ public class AssignmentService {
     public AssignmentFileResponse uploadAssignments(Member member, Integer assignmentId, MultipartFile file) throws IOException {
 
         Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(() -> new GlobalException(ErrorCode.ASSIGNMENT_NOT_FOUND));
-        String saved = awsFileService.saveAssignment(file);
+        FileResponse fileResponse = awsFileService.saveAssignment(file);
 
-        AssignmentFile assignmentFile = new AssignmentFile(saved, assignment, member);
+        AssignmentFile assignmentFile = new AssignmentFile(fileResponse.getFileName(), assignment, member, fileResponse.getFileUrl());
         assignmentFileRepository.save(assignmentFile);
         return AssignmentFileResponse.from(assignmentFile);
+    }
+
+    public ResponseEntity<byte[]> download(Integer fileId) throws IOException {
+        AssignmentFile assignmentFile = assignmentFileRepository.findById(fileId).orElseThrow(() -> new GlobalException(ErrorCode.FILE_NOT_FOUND));
+        return awsFileService.downloadFile(assignmentFile.getFileName());
     }
 
 }
