@@ -3,9 +3,7 @@ package katecam.luvicookie.ditto.domain.assignment.dto;
 import katecam.luvicookie.ditto.domain.assignment.domain.Assignment;
 import lombok.Builder;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 @Builder
 public class AssignmentResponse {

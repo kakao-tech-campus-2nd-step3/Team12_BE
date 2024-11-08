@@ -10,5 +10,5 @@ import java.util.List;
 
 @Repository
 public interface AssignmentFileRepository extends JpaRepository<AssignmentFile, Integer> {
-    public List<AssignmentFile> findAllByAssignmentAndMember(Assignment assignment, Member member);
+    List<AssignmentFile> findAllByAssignmentAndMember(Assignment assignment, Member member);
 }

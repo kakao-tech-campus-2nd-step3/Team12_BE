@@ -1,7 +1,5 @@
 package katecam.luvicookie.ditto.domain.login;
 
-import com.nimbusds.jose.shaded.gson.Gson;
-
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -16,8 +14,6 @@ import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Map;
 
 @Slf4j
 public class TokenAuthenticationFilter extends OncePerRequestFilter {

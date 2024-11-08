@@ -1,5 +1,6 @@
 package katecam.luvicookie.ditto.domain.study.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import katecam.luvicookie.ditto.domain.study.domain.Study;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 @Getter
 public class StudyResponse {
 
+    @JsonProperty("id")
     private Integer studyId;
     private String name;
     private String description;
