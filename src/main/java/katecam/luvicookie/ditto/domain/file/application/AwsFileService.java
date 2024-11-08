@@ -28,11 +28,18 @@ public class AwsFileService {
 
     private static final String STUDY_IMG_DIR = "study";
     private static final String MEMBER_IMG_DIR = "member";
+    private static final String ASSIGNMENT_DIR = "assignment";
 
     public String saveMemberProfileImage(MultipartFile multipartFile) throws IOException {
         File uploadFile = convert(multipartFile)
                 .orElseThrow(() -> new GlobalException(ErrorCode.FILE_CONVERT_FAILED));
         return upload(uploadFile, MEMBER_IMG_DIR);
+    }
+
+    public String saveAssignment(MultipartFile multipartFile) throws IOException {
+        File uploadFile = convert(multipartFile)
+                .orElseThrow(() -> new GlobalException(ErrorCode.FILE_CONVERT_FAILED));
+        return upload(uploadFile, ASSIGNMENT_DIR);
     }
 
     public String saveStudyProfileImage(MultipartFile multipartFile) throws IOException {
