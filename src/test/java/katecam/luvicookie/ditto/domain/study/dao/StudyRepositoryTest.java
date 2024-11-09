@@ -42,8 +42,10 @@ class StudyRepositoryTest {
     @Test
     @DisplayName("스터디 검색 필터링 인자가 없어도 스터디 검색을 성공해야 한다")
     void should_successfully_search_study_when_query_parameters_are_null() {
+        String name = "3220ae3584858d7798de655286eeab1f";
+
         Study study = Study.builder()
-                .name("스터디")
+                .name(name)
                 .description("스터디 소개")
                 .topic("스터디 주제")
                 .isOpen(true)
@@ -52,7 +54,7 @@ class StudyRepositoryTest {
 
         Study savedStudy = studyRepository.save(study);
 
-        Page<Study> studies = studyRepository.findAllByTopicAndNameAndIsOpen(null, null, true, PageRequest.of(0, 10));
+        Page<Study> studies = studyRepository.findAllByTopicAndNameAndIsOpen(null, name.substring(3, 10), true, PageRequest.of(0, 10));
         List<Study> studyList = studies.toList();
 
         assertThat(studyList.isEmpty()).isFalse();

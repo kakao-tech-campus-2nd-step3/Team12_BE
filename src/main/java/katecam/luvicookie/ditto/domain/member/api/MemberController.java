@@ -1,25 +1,28 @@
 package katecam.luvicookie.ditto.domain.member.api;
 
 import katecam.luvicookie.ditto.domain.login.annotation.LoginUser;
+import katecam.luvicookie.ditto.domain.member.application.MemberService;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.member.dto.memberRequestDTO;
 import katecam.luvicookie.ditto.domain.member.dto.memberResponseDTO;
-import katecam.luvicookie.ditto.domain.member.dto.profileImageDTO;
-import katecam.luvicookie.ditto.domain.member.application.MemberService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @Slf4j
+@RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
-
-    public MemberController(MemberService memberService) {
-        this.memberService = memberService;
-    }
 
     @GetMapping("/user/login/kakao")
     public String login(){
@@ -27,13 +30,6 @@ public class MemberController {
         return "oauthLogin";
         //"/oauth2/authorization/kakao"
     }
-
-   /* @GetMapping("/api/auth/kakao")
-    public String kakaoLogin(){
-
-        return "redirect:/oauth2/authorization/kakao";
-    }*/
-
 
     @ResponseBody
     @PostMapping("/api/auth")
@@ -49,18 +45,19 @@ public class MemberController {
     }
 
     @ResponseBody
-    @PutMapping("/api/users/{userId}")
-    public memberResponseDTO updateUserInfo(@PathVariable Integer userId, @RequestBody memberRequestDTO memberRequestDTO){
-        Member member = memberService.updateMember(memberRequestDTO, userId);
-        return new memberResponseDTO(member);
+    @PutMapping("/api/users")
+    public memberResponseDTO updateUserInfo(@LoginUser Member member, @RequestBody memberRequestDTO memberRequestDTO){
+        Member updateMember = memberService.updateMember(memberRequestDTO, member);
+        return new memberResponseDTO(updateMember);
     }
 
     @ResponseBody
-    @PostMapping("/api/users/profileImage")
-    public ResponseEntity<?> updateProfileImage(@LoginUser Member member, @RequestBody profileImageDTO profileImageDTO){
-        memberService.updateProfileImage(profileImageDTO, member.getId());
+    @PutMapping("/api/users/profileImage")
+    public ResponseEntity<?> updateProfileImage(
+            @LoginUser Member member,
+            @RequestPart MultipartFile profileImage){
+        memberService.updateProfileImage(profileImage, member.getId());
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 
 }

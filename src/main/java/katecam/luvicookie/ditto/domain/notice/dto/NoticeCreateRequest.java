@@ -1,13 +1,8 @@
 package katecam.luvicookie.ditto.domain.notice.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import katecam.luvicookie.ditto.domain.notice.domain.Notice;
 import lombok.Getter;
-
-import java.time.LocalDate;
-
-import static katecam.luvicookie.ditto.domain.study.domain.Study.MAX_STUDY_TOPIC_LENGTH;
 
 @Getter
 public class NoticeCreateRequest {

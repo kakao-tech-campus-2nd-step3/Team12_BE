@@ -10,7 +10,7 @@ import static katecam.luvicookie.ditto.domain.study.domain.Study.MAX_STUDY_NAME_
 import static katecam.luvicookie.ditto.domain.study.domain.Study.MAX_STUDY_TOPIC_LENGTH;
 
 @Getter
-public class StudyCreateRequest {
+public class StudyRequest {
 
     @NotBlank(message = "스터디명을 입력해주세요.")
     @Size(max = MAX_STUDY_NAME_LENGTH, message = "스터디명을 {max}자 이하로 입력해주세요.")
@@ -26,16 +26,22 @@ public class StudyCreateRequest {
     @Size(max = MAX_STUDY_TOPIC_LENGTH, message = "스터디 주제를 {max}자 이하로 입력해주세요.")
     private String topic;
 
-    @NotBlank(message = "스터디 프로필 이미지를 입력해주세요.")
-    private String profileImage;
-
     public Study toEntity() {
         return Study.builder()
                 .name(name)
                 .description(description)
                 .isOpen(isOpen)
                 .topic(topic)
-                .profileImage(profileImage)
+                .build();
+    }
+
+    public Study toEntity(String imageUrl) {
+        return Study.builder()
+                .name(name)
+                .description(description)
+                .isOpen(isOpen)
+                .topic(topic)
+                .profileImage(imageUrl)
                 .build();
     }
 

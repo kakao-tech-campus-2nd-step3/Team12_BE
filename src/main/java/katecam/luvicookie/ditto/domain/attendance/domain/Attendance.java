@@ -33,12 +33,12 @@ public class Attendance extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "date_id", nullable = false)
-    private AttendanceDates attendanceDates;
+    private AttendanceDate attendanceDate;
 
     @Builder
-    public Attendance(Member member, AttendanceDates attendanceDates) {
+    public Attendance(Member member, AttendanceDate attendanceDate) {
         this.member = member;
-        this.attendanceDates = attendanceDates;
+        this.attendanceDate = attendanceDate;
     }
 
 }
