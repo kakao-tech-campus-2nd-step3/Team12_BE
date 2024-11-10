@@ -6,6 +6,6 @@ public class JwtConstants {
     public static final int REFRESH_EXP_TIME_MINUTES = 6 * 24;
     public static final String JWT_HEADER = "Authorization";
     public static final String JWT_TYPE = "Bearer ";
-    public static final String ACCESS = "AccessToken";
-    public static final String REFRESH = "RefreshToken";
+    public static final String ACCESS = "accessToken";
+    public static final String REFRESH = "refreshToken";
 }
