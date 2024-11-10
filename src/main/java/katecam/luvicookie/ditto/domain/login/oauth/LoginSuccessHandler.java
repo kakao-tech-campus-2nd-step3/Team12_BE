@@ -14,6 +14,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -25,6 +26,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
         PrincipalDetail principal = (PrincipalDetail) authentication.getPrincipal();
         Member member = principal.getUser();
+        String redirectUri = getRedirectUri(request.getQueryString());
 
         String accessToken = TokenProvider.generateToken(member, JwtConstants.ACCESS_EXP_TIME_MINUTES);
         String refreshToken = TokenProvider.generateToken(member, JwtConstants.REFRESH_EXP_TIME_MINUTES);
@@ -35,7 +37,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
             response.addHeader(JwtConstants.ACCESS, JwtConstants.JWT_TYPE + accessToken);
             response.addHeader("Set-Cookie", TokenProvider.createCookie(refreshToken).toString());
 
-            String redirectURL = UriComponentsBuilder.fromUriString("/api/auth")
+            String redirectURL = UriComponentsBuilder.fromUriString(redirectUri + "/api/auth")
                     .encode(StandardCharsets.UTF_8)
                     .toUriString();
             log.info(JwtConstants.JWT_TYPE + accessToken);
@@ -48,13 +50,21 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
             response.addHeader("Set-Cookie", TokenProvider.createCookie(refreshToken).toString());
 
             /// 최초 로그인이 아닌 경우 로그인 성공 페이지로 이동
-            String redirectURL = UriComponentsBuilder.fromUriString("/api/auth/kakao")
+            String redirectURL = UriComponentsBuilder.fromUriString(redirectUri + "/api/auth/kakao")
                     .build()
                     .encode(StandardCharsets.UTF_8)
                     .toUriString();
 
             getRedirectStrategy().sendRedirect(request, response, redirectURL);
         }
+    }
+
+    public String getRedirectUri(String queryString){
+        String[] split = queryString.split("&");
+        String[] query = split[0].split("=");
+        if(Objects.equals(query[0], "clientUri"))
+            return query[1];
+        return null;
     }
 
 }
