@@ -1,15 +1,8 @@
 package katecam.luvicookie.ditto.domain.member.dto;
 
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+public record memberDTO (
+    String email,
+    String profileImage
 
-@Setter
-@Getter
-@NoArgsConstructor
-public class memberDTO {
-    private String email;
-    private String profileImage;
-
-}
+){}

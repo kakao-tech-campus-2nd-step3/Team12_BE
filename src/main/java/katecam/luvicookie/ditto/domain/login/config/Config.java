@@ -15,15 +15,6 @@ import java.util.List;
 public class Config implements WebMvcConfigurer {
     private final MemberService memberService;
 
-    @Value("${file.path}")
-    private String filepath;
-
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/file/**")
-                .addResourceLocations("file:" + filepath);
-    }
-
     public Config(MemberService memberService) {
         this.memberService = memberService;
     }
