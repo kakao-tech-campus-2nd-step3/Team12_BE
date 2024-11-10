@@ -55,24 +55,30 @@ public class AssignmentController {
     //등록
     @PostMapping
     public ResponseEntity<AssignmentCreateResponse> createAssignment(
+            @LoginUser Member member,
             @RequestParam("studyId") Integer studyId,
             @RequestBody AssignmentRequest assignmentRequest){
 
-        AssignmentCreateResponse assignmentCreateResponse = assignmentService.create(assignmentRequest, studyId);
+        AssignmentCreateResponse assignmentCreateResponse = assignmentService.create(assignmentRequest, studyId, member);
         return ResponseEntity.ok(assignmentCreateResponse);
     }
 
     //수정
     @PutMapping("/{assignmentId}")
-    public ResponseEntity<AssignmentResponse> updateAssignment(@PathVariable Integer assignmentId, @RequestBody AssignmentRequest assignmentRequest){
+    public ResponseEntity<AssignmentResponse> updateAssignment(
+            @PathVariable Integer assignmentId,
+            @LoginUser Member member,
+            @RequestBody AssignmentRequest assignmentRequest){
         return ResponseEntity.ok(
-                assignmentService.update(assignmentId, assignmentRequest));
+                assignmentService.update(assignmentId, assignmentRequest, member));
     }
 
     //삭제
     @DeleteMapping("/{assignmentId}")
-    public ResponseEntity<Void> deleteAssignment(@PathVariable Integer assignmentId){
-        assignmentService.delete(assignmentId);
+    public ResponseEntity<Void> deleteAssignment(
+            @LoginUser Member member,
+            @PathVariable Integer assignmentId){
+        assignmentService.delete(assignmentId, member);
         return ResponseEntity.noContent()
                 .build();
     }

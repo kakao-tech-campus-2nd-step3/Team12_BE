@@ -9,6 +9,7 @@ import katecam.luvicookie.ditto.domain.file.application.AwsFileService;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.study.dao.StudyRepository;
 import katecam.luvicookie.ditto.domain.study.domain.Study;
+import katecam.luvicookie.ditto.domain.studymember.application.StudyMemberService;
 import katecam.luvicookie.ditto.global.error.ErrorCode;
 import katecam.luvicookie.ditto.global.error.GlobalException;
 import lombok.RequiredArgsConstructor;
@@ -30,9 +31,10 @@ public class AssignmentService {
     private final StudyRepository studyRepository;
     private final AssignmentFileRepository assignmentFileRepository;
     private final AwsFileService awsFileService;
+    private final StudyMemberService studyMemberService;
 
-    public AssignmentCreateResponse create(AssignmentRequest assignmentRequest, Integer studyId) {
-        //teammate.role이 팀장인지 아닌지
+    public AssignmentCreateResponse create(AssignmentRequest assignmentRequest, Integer studyId, Member member) {
+        studyMemberService.validateStudyLeader(studyId, member);
         Assignment assignment = assignmentRequest.toEntity();
         Study study = studyRepository.findById(studyId).orElseThrow(() -> new GlobalException(ErrorCode.STUDY_NOT_FOUND));
         assignment.setStudy(study);
@@ -41,15 +43,17 @@ public class AssignmentService {
     }
 
     @Transactional
-    public AssignmentResponse update(Integer assignmentId, AssignmentRequest assignmentRequest) {
-        //teammate.role이 팀장인지 아닌지
+    public AssignmentResponse update(Integer assignmentId, AssignmentRequest assignmentRequest, Member member) {
         Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(() -> new GlobalException(ErrorCode.ASSIGNMENT_NOT_FOUND));
+        studyMemberService.validateStudyLeader(assignment.getStudy().getId(), member);
         assignment.updateAssignment(assignmentRequest);
         return AssignmentResponse.from(assignment);
     }
 
-    public void delete(Integer assignmentId) {
-        //teammate.role이 팀장인지 아닌지
+    public void delete(Integer assignmentId, Member member) {
+        Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(() -> new GlobalException(ErrorCode.ASSIGNMENT_NOT_FOUND));
+        studyMemberService.validateStudyLeader(assignment.getStudy().getId(), member);
+
         if(assignmentRepository.existsById(assignmentId)){
             assignmentRepository.deleteById(assignmentId);
         }
