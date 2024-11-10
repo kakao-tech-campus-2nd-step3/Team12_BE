@@ -38,8 +38,9 @@ public class NoticeService {
     }
 
 
-    public NoticeListResponse getNotices(Pageable pageable) {
-        Page<NoticeResponse> noticeResponses = noticeRepository.findAll(pageable)
+    public NoticeListResponse getNotices(Pageable pageable, Integer studyId) {
+        Study study = studyRepository.findById(studyId).orElseThrow(() -> new GlobalException(ErrorCode.STUDY_NOT_FOUND));
+        Page<NoticeResponse> noticeResponses = noticeRepository.findAllByStudy(pageable, study)
                 .map(NoticeResponse::from);
         return NoticeListResponse.from(noticeResponses);
     }

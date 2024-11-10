@@ -40,8 +40,11 @@ public class NoticeController {
     }
 
     @GetMapping()
-    public ResponseEntity<NoticeListResponse> getNoticeList(@PageableDefault Pageable pageable){
-        NoticeListResponse noticeListResponse = noticeService.getNotices(pageable);
+    public ResponseEntity<NoticeListResponse> getNoticeList(
+            @PageableDefault Pageable pageable,
+            @RequestParam("studyId") Integer studyId
+            ){
+        NoticeListResponse noticeListResponse = noticeService.getNotices(pageable, studyId);
         return ResponseEntity.ok(noticeListResponse);
     }
 
