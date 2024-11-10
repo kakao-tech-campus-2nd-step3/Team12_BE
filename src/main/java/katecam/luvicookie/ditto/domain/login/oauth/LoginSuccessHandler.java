@@ -26,8 +26,8 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         PrincipalDetail principal = (PrincipalDetail) authentication.getPrincipal();
         Member member = principal.getUser();
 
-        String accessToken = TokenProvider.generateToken(member, JwtConstants.ACCESS_EXP_TIME);
-        String refreshToken = TokenProvider.generateToken(member, JwtConstants.REFRESH_EXP_TIME);
+        String accessToken = TokenProvider.generateToken(member, JwtConstants.ACCESS_EXP_TIME_MINUTES);
+        String refreshToken = TokenProvider.generateToken(member, JwtConstants.REFRESH_EXP_TIME_MINUTES);
 
         // 최초 로그인인 경우 추가 정보 입력을 위한 회원가입 페이지로 리다이렉트
         if (member.isGuest()) {

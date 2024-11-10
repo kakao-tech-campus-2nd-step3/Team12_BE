@@ -22,7 +22,6 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Setter
 @Table(name = "notice")
 public class Notice extends BaseTimeEntity {
     @Id
@@ -48,11 +47,17 @@ public class Notice extends BaseTimeEntity {
         this.member = member;
     }
 
-    public void updateNotice(NoticeUpdateRequest noticeUpdateRequest){
-        if(title!=null)
-            this.title = noticeUpdateRequest.getTitle();
-        if(content!=null)
-            this.content = noticeUpdateRequest.getContent();
+    public void setNoticeInfo(Study study, Member member){
+        this.study = study;
+        this.member = member;
+    }
+
+    public void updateNoticeTitle(String title){
+        this.title = title;
+    }
+
+    public void updateNoticeContent(String content){
+        this.content = content;
     }
 
 }

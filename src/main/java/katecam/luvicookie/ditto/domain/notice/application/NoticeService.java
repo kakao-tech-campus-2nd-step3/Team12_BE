@@ -8,6 +8,7 @@ import katecam.luvicookie.ditto.domain.notice.dto.NoticeListResponse;
 import katecam.luvicookie.ditto.domain.notice.dto.NoticeResponse;
 import katecam.luvicookie.ditto.domain.notice.dto.NoticeUpdateRequest;
 import katecam.luvicookie.ditto.domain.study.dao.StudyRepository;
+import katecam.luvicookie.ditto.domain.study.domain.Study;
 import katecam.luvicookie.ditto.global.error.ErrorCode;
 import katecam.luvicookie.ditto.global.error.GlobalException;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,9 @@ public class NoticeService {
 
     public void create(NoticeCreateRequest noticeCreateRequest, Integer studyId, Member member) {
         Notice notice = noticeCreateRequest.toEntity();
-        notice.setStudy(studyRepository.findById(studyId)
-                .orElseThrow(() -> new GlobalException(ErrorCode.STUDY_NOT_FOUND)));
-        notice.setMember(member);
+        Study study = studyRepository.findById(studyId)
+                .orElseThrow(() -> new GlobalException(ErrorCode.STUDY_NOT_FOUND));
+        notice.setNoticeInfo(study, member);
         noticeRepository.save(notice);
     }
 
@@ -47,7 +48,10 @@ public class NoticeService {
     public NoticeResponse updateNotice(Integer noticeId, NoticeUpdateRequest noticeUpdateRequest, Member member) {
         Notice notice = noticeRepository.findById(noticeId).orElseThrow(() -> new GlobalException(ErrorCode.NOTICE_NOT_FOUND));
         isWriterMatches(notice, member);
-        notice.updateNotice(noticeUpdateRequest);
+        if(notice.getTitle()!=null)
+            notice.updateNoticeTitle(noticeUpdateRequest.getTitle());
+        if(notice.getContent()!=null)
+            notice.updateNoticeContent(noticeUpdateRequest.getContent());
         return NoticeResponse.from(notice);
     }
 

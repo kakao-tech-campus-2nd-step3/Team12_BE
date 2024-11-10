@@ -3,7 +3,8 @@ package katecam.luvicookie.ditto.domain.member.application;
 import katecam.luvicookie.ditto.domain.file.application.AwsFileService;
 import katecam.luvicookie.ditto.domain.member.dao.MemberRepository;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
-import katecam.luvicookie.ditto.domain.member.dto.memberRequestDTO;
+import katecam.luvicookie.ditto.domain.member.dto.memberCreateRequestDTO;
+import katecam.luvicookie.ditto.domain.member.dto.memberUpdateRequestDTO;
 import katecam.luvicookie.ditto.global.error.ErrorCode;
 import katecam.luvicookie.ditto.global.error.GlobalException;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ public class MemberService {
     private final AwsFileService awsFileService;
 
     @Transactional
-    public Member registerMember(memberRequestDTO memberDTO){
+    public Member registerMember(memberCreateRequestDTO memberDTO){
         log.info(String.valueOf(memberDTO.getEmail()));
         log.info(memberDTO.getEmail());
 
@@ -39,7 +40,7 @@ public class MemberService {
     }
 
     @Transactional
-    public Member updateMember(memberRequestDTO memberDTO, Member member){
+    public Member updateMember(memberUpdateRequestDTO memberDTO, Member member){
         member.authorizeUser();
 
         if(memberDTO.getName() != null) member.setName(memberDTO.getName());

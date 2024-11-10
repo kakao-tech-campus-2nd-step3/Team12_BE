@@ -9,7 +9,6 @@ import lombok.*;
 @Getter
 @Setter
 @Entity
-@Builder
 @AllArgsConstructor
 public class Member {
 
@@ -33,19 +32,23 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Builder
+    public Member(String name, String email, String contact, String nickname, String description, String profileImage, Role role){
+        this.name = name;
+        this.email = email;
+        this.contact = contact;
+        this.nickname = nickname;
+        this.description = description;
+        this.profileImage = profileImage;
+        this.role = role;
+    }
+
 
     public void authorizeUser(){
         this.role = Role.USER;
     }
-    public static Member toEntity(memberDTO dto){
-        return Member.builder()
-                .role(Role.USER)
-                .email(dto.getEmail())
-                .profileImage(dto.getProfileImage())
-                .build();
-    }
 
     public boolean isGuest() {
-        return role.equals(Role.GUEST);
+        return Role.GUEST.equals(role);
     }
 }

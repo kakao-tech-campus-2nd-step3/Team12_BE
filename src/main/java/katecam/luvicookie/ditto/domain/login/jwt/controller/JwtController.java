@@ -26,7 +26,8 @@ public class JwtController {
     private final MemberService memberService;
 
     @GetMapping("/api/auth/reissue")
-    public ResponseEntity<?> reissueToken(HttpServletRequest request) {
+    public ResponseEntity<String> reissueToken(HttpServletRequest request) {
+
         // 리프레시 토큰을 쿠키에서 추출
         String refreshToken = extractRefreshToken(request);
 
@@ -43,8 +44,8 @@ public class JwtController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid member");
         }
 
-        String newAccessToken = TokenProvider.generateToken(member, JwtConstants.ACCESS_EXP_TIME);
-        String newRefreshToken = TokenProvider.generateToken(member, JwtConstants.REFRESH_EXP_TIME);
+        String newAccessToken = TokenProvider.generateToken(member, JwtConstants.ACCESS_EXP_TIME_MINUTES);
+        String newRefreshToken = TokenProvider.generateToken(member, JwtConstants.REFRESH_EXP_TIME_MINUTES);
 
         // 새 리프레시 토큰을 쿠키에 설정
         ResponseCookie refreshTokenCookie = TokenProvider.createCookie(newRefreshToken);
