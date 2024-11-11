@@ -3,10 +3,14 @@ package katecam.luvicookie.ditto.domain.attendance.api;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
 import katecam.luvicookie.ditto.domain.attendance.application.AttendanceService;
+import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceCodeRequest;
 import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceDateCreateRequest;
 import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceUpdateRequest;
+import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceCodeResponse;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceDateListResponse;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceListResponse;
+import katecam.luvicookie.ditto.domain.login.annotation.LoginUser;
+import katecam.luvicookie.ditto.domain.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,60 +34,75 @@ public class AttendanceController {
 
     @PostMapping
     public ResponseEntity<Void> createAttendance(
+            @LoginUser Member member,
             @RequestParam("studyId") Integer studyId,
-            @RequestParam("memberId") Integer memberId
+            @RequestBody @Valid AttendanceCodeRequest request
     ) {
-        attendanceService.createAttendance(studyId, memberId);
+        attendanceService.createAttendance(member, studyId, request.code(), request.dateId());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
     }
 
     @GetMapping
     public ResponseEntity<AttendanceListResponse> getAttendanceList(
+            @LoginUser Member member,
             @RequestParam("studyId") Integer studyId,
             @RequestParam(name = "memberId", required = false) Integer memberId
     ) {
-        return ResponseEntity.ok(attendanceService.getAttendanceList(studyId, memberId));
+        return ResponseEntity.ok(attendanceService.getAttendanceList(member, studyId, memberId));
     }
 
     @PutMapping
     public ResponseEntity<Void> updateAttendance(
+            @LoginUser Member member,
             @RequestParam("studyId") Integer studyId,
             @RequestParam("memberId") Integer memberId,
             @RequestBody @Valid AttendanceUpdateRequest request
     ) {
-        attendanceService.updateAttendance(studyId, memberId, request.dateTime(), request.isAttended());
+        attendanceService.updateAttendance(member, studyId, memberId, request.dateTime(), request.isAttended());
         return ResponseEntity.noContent()
                 .build();
     }
 
     @PostMapping("/date")
     public ResponseEntity<Void> createAttendanceDate(
+            @LoginUser Member member,
             @RequestParam("studyId") Integer studyId,
             @RequestBody @Valid AttendanceDateCreateRequest request
     ) {
-        attendanceService.createAttendanceDate(studyId, request.startTime(), request.intervalMinutes());
+        attendanceService.createAttendanceDate(member, studyId, request.startTime(), request.intervalMinutes());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
     }
 
     @GetMapping("/date")
     public ResponseEntity<AttendanceDateListResponse> getAttendanceDateList(
+            @LoginUser Member member,
             @RequestParam("studyId") Integer studyId
     ) {
-        return ResponseEntity.ok(attendanceService.getAttendanceDateList(studyId));
+        return ResponseEntity.ok(attendanceService.getAttendanceDateList(member, studyId));
     }
 
     @DeleteMapping("/date")
     public ResponseEntity<Void> deleteAttendanceDate(
+            @LoginUser Member member,
             @RequestParam("studyId") Integer studyId,
             @RequestBody
             @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
             LocalDateTime attendanceTime
     ) {
-        attendanceService.deleteAttendanceDate(studyId, attendanceTime);
+        attendanceService.deleteAttendanceDate(member, studyId, attendanceTime);
         return ResponseEntity.noContent()
                 .build();
+    }
+
+    @GetMapping("/code")
+    public ResponseEntity<AttendanceCodeResponse> requestAttendanceCode(
+            @LoginUser Member member,
+            @RequestParam("studyId") Integer studyId,
+            @RequestParam("dateId") Integer dateId
+    ) {
+        return ResponseEntity.ok(attendanceService.getAttendanceCode(member, studyId, dateId));
     }
 
 }

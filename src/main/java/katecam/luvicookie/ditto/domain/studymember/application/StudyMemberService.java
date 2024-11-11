@@ -31,7 +31,8 @@ public class StudyMemberService {
     }
 
     public StudyMemberResponse updateStudyMember(Integer studyId, Integer memberId, StudyMemberRole role) {
-        StudyMember studyMember = studyMemberRepository.findByStudyIdAndMember_Id(studyId, memberId);
+        StudyMember studyMember = studyMemberRepository.findByStudyIdAndMember_Id(studyId, memberId)
+                .orElseThrow(() -> new GlobalException(ErrorCode.STUDY_MEMBER_NOT_FOUND));
         studyMember.setRole(role);
         studyMemberRepository.save(studyMember);
         return new StudyMemberResponse(studyMember);

@@ -24,6 +24,8 @@ import java.time.LocalDateTime;
 @Table(name = "attendance_date")
 public class AttendanceDate extends BaseTimeEntity {
 
+    public static final int ATTENDANCE_CODE_LENGTH = 5;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false)
@@ -39,11 +41,23 @@ public class AttendanceDate extends BaseTimeEntity {
     @Column(name = "deadline", nullable = false)
     private LocalDateTime deadline;
 
+    @Column(name = "code", nullable = false, length = ATTENDANCE_CODE_LENGTH)
+    private String code;
+
     @Builder
     public AttendanceDate(Study study, LocalDateTime startTime, LocalDateTime deadline) {
         this.study = study;
         this.startTime = startTime;
         this.deadline = deadline;
+    }
+
+    public boolean isDifferentCode(String code) {
+        return !this.code.equals(code);
+    }
+
+    public boolean isUnableToAttend() {
+        LocalDateTime currentTime = LocalDateTime.now();
+        return currentTime.isAfter(startTime) && currentTime.isBefore(deadline);
     }
 
 }
