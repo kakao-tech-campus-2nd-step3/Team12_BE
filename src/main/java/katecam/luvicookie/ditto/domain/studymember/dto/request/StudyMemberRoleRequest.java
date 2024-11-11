@@ -10,14 +10,4 @@ public record StudyMemberRoleRequest(
         String role
 ) {
 
-    public StudyMemberRole toStudyMemberRole() {
-        return switch (role) {
-            case "스터디장" -> StudyMemberRole.LEADER;
-            case "스터디원" -> StudyMemberRole.MEMBER;
-            case "신청" -> StudyMemberRole.APPLICANT;
-            case "거절" -> StudyMemberRole.REJECTED;
-            case "탈퇴" -> StudyMemberRole.WITHDRAWN;
-            default -> throw new GlobalException(ErrorCode.INVALID_ROLE);
-        };
-    }
 }
