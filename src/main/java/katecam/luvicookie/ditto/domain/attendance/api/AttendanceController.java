@@ -3,8 +3,10 @@ package katecam.luvicookie.ditto.domain.attendance.api;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
 import katecam.luvicookie.ditto.domain.attendance.application.AttendanceService;
+import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceCodeRequest;
 import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceDateCreateRequest;
 import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceUpdateRequest;
+import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceCodeResponse;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceDateListResponse;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceListResponse;
 import katecam.luvicookie.ditto.domain.login.annotation.LoginUser;
@@ -87,6 +89,15 @@ public class AttendanceController {
         attendanceService.deleteAttendanceDate(studyId, attendanceTime);
         return ResponseEntity.noContent()
                 .build();
+    }
+
+    @GetMapping("/code")
+    public ResponseEntity<AttendanceCodeResponse> requestAttendanceCode(
+            @LoginUser Member member,
+            @RequestParam("studyId") Integer studyId,
+            @RequestParam("dateId") Integer dateId
+    ) {
+        return ResponseEntity.ok(attendanceService.getAttendanceCode(member, studyId, dateId));
     }
 
 }

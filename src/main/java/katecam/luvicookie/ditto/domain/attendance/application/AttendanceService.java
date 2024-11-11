@@ -133,9 +133,20 @@ public class AttendanceService {
     }
 
     @Transactional
-    public void deleteAttendanceDate(Integer studyId, LocalDateTime attendanceDate) {
-        AttendanceDate attendanceDates = getAttendanceDatesByStudyIdAndTime(studyId, attendanceDate);
-        attendanceDateRepository.delete(attendanceDates);
+    public void deleteAttendanceDate(Member member, Integer studyId, LocalDateTime startTime) {
+        studyMemberService.validateStudyLeader(studyId, member);
+
+        AttendanceDate attendanceDate = getAttendanceDatesByStudyIdAndTime(studyId, startTime);
+        attendanceDateRepository.delete(attendanceDate);
+    }
+
+    public AttendanceCodeResponse getAttendanceCode(Member member, Integer studyId, Integer dateId) {
+        studyMemberService.validateStudyLeader(studyId, member);
+
+        AttendanceDate attendanceDate = attendanceDateRepository.findById(dateId)
+                .orElseThrow(() -> new GlobalException(ErrorCode.DATE_NOT_FOUND));
+
+        return AttendanceCodeResponse.from(attendanceDate.getCode());
     }
 
 }
