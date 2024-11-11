@@ -12,6 +12,7 @@ public enum ErrorCode {
     DATE_UNABLE_TO_ATTEND("현재 출석할 수 없습니다.", HttpStatus.BAD_REQUEST),
     INVALID_TOKEN("유효하지 않은 초대 토큰입니다", HttpStatus.BAD_REQUEST),
     INVALID_ROLE("잘못된 스터디 권한입니다", HttpStatus.BAD_REQUEST),
+    ALREADY_STUDY_MEMBER("이미 가입된 스터디입니다", HttpStatus.BAD_REQUEST),
 
     // 403 - Forbidden
     NOT_STUDY_LEADER("스터디장이 아닙니다.", HttpStatus.FORBIDDEN),

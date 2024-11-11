@@ -32,7 +32,7 @@ public class StudyMemberController {
         return ResponseEntity.ok(memberResponseList);
     }
 
-    @PutMapping
+    @PutMapping("/{memberId}")
     public ResponseEntity<StudyMemberResponse> putStudyMember(@LoginUser Member member, @PathVariable Integer studyId, @PathVariable Integer memberId, @Valid @RequestBody StudyMemberRoleRequest studyMemberRequest) {
         studyMemberService.validateStudyLeader(studyId, member);
         StudyMemberResponse memberResponse = studyMemberService.updateStudyMember(studyId, memberId, studyMemberRequest.toStudyMemberRole());
@@ -54,8 +54,8 @@ public class StudyMemberController {
     }
 
     @PostMapping("/apply")
-    public ResponseEntity<Object> postStudyMemberRequest(@LoginUser Member member, @Valid @RequestBody StudyMemberApplyRequest request) {
-        StudyMemberResponse memberResponse = studyMemberService.createStudyMember(request.studyId(), member, StudyMemberRole.APPLICANT, request.message());
+    public ResponseEntity<Object> postStudyMemberRequest(@LoginUser Member member, @PathVariable Integer studyId, @Valid @RequestBody StudyMemberApplyRequest request) {
+        StudyMemberResponse memberResponse = studyMemberService.createStudyMember(studyId, member, StudyMemberRole.APPLICANT, request.message());
         return ResponseEntity.ok(memberResponse);
     }
 

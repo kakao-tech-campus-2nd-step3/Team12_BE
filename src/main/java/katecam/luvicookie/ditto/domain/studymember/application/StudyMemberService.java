@@ -1,5 +1,6 @@
 package katecam.luvicookie.ditto.domain.studymember.application;
 
+import java.time.LocalDateTime;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.study.dao.StudyRepository;
 import katecam.luvicookie.ditto.domain.study.domain.Study;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +33,7 @@ public class StudyMemberService {
                 .toList();
     }
 
+    @Transactional
     public StudyMemberResponse updateStudyMember(Integer studyId, Integer memberId, StudyMemberRole role) {
         StudyMember studyMember = studyMemberRepository.findByStudyIdAndMember_Id(studyId, memberId);
         studyMember.setRole(role);
@@ -38,6 +41,7 @@ public class StudyMemberService {
         return new StudyMemberResponse(studyMember);
     }
 
+    @Transactional
     public void deleteStudyMember(Integer studyId, Integer memberId) {
         studyMemberRepository.deleteByStudyIdAndMember_Id(studyId, memberId);
     }
@@ -49,11 +53,14 @@ public class StudyMemberService {
                 .toList();
     }
 
+    @Transactional
     public StudyMemberResponse createStudyMember(Integer studyId, Member member, StudyMemberRole role, String message) {
+        validateNotStudyMember(studyId, member);
         StudyMember studyMember = StudyMember.builder()
                 .studyId(studyId)
                 .member(member)
                 .role(role)
+                .joinedAt(LocalDateTime.now())
                 .message(message)
                 .build();
         studyMemberRepository.save(studyMember);
@@ -67,6 +74,7 @@ public class StudyMemberService {
         return new StudyInviteResponse(studyId, study.getInviteToken());
     }
 
+    @Transactional
     public StudyMemberResponse joinStudyMember(Integer studyId, Member member, String token) {
         Study study = studyRepository.findById(studyId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.STUDY_NOT_FOUND));
@@ -74,7 +82,7 @@ public class StudyMemberService {
         if (!study.getInviteToken().equals(token)) {
             throw new GlobalException(ErrorCode.INVALID_TOKEN);
         }
-        return createStudyMember(studyId, member, StudyMemberRole.MEMBER, null);
+        return createStudyMember(studyId, member, StudyMemberRole.MEMBER, "초대 링크로 가입한 맴버입니다");
     }
 
     public void validateStudyLeader(Integer studyId, Member member) {
@@ -88,6 +96,13 @@ public class StudyMemberService {
         boolean isMember = studyMemberRepository.existsByStudyIdAndMemberAndRoleIn(studyId, member, Arrays.asList(StudyMemberRole.LEADER, StudyMemberRole.MEMBER));
         if (!isMember) {
             throw new GlobalException(ErrorCode.NOT_STUDY_MEMBER);
+        }
+    }
+
+    public void validateNotStudyMember(Integer studyId, Member member) {
+        boolean isMember = studyMemberRepository.existsByStudyIdAndMemberAndRoleIn(studyId, member, Arrays.asList(StudyMemberRole.LEADER, StudyMemberRole.MEMBER));
+        if (isMember) {
+            throw new GlobalException(ErrorCode.ALREADY_STUDY_MEMBER);
         }
     }
 }
