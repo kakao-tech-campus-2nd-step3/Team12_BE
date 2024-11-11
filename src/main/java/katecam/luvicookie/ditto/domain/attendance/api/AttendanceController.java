@@ -7,6 +7,8 @@ import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceDateCrea
 import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceUpdateRequest;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceDateListResponse;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceListResponse;
+import katecam.luvicookie.ditto.domain.login.annotation.LoginUser;
+import katecam.luvicookie.ditto.domain.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,10 +32,11 @@ public class AttendanceController {
 
     @PostMapping
     public ResponseEntity<Void> createAttendance(
+            @LoginUser Member member,
             @RequestParam("studyId") Integer studyId,
-            @RequestParam("memberId") Integer memberId
+            @RequestBody @Valid AttendanceCodeRequest request
     ) {
-        attendanceService.createAttendance(studyId, memberId);
+        attendanceService.createAttendance(member, studyId, request.code(), request.dateId());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
     }

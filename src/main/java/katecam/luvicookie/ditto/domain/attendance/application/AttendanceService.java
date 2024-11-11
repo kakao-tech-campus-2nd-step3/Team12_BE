@@ -7,10 +7,10 @@ import katecam.luvicookie.ditto.domain.attendance.domain.AttendanceDate;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceDateListResponse;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceListResponse;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.MemberAttendanceResponse;
-import katecam.luvicookie.ditto.domain.member.dao.MemberRepository;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.study.dao.StudyRepository;
 import katecam.luvicookie.ditto.domain.study.domain.Study;
+import katecam.luvicookie.ditto.domain.studymember.application.StudyMemberService;
 import katecam.luvicookie.ditto.domain.studymember.dao.StudyMemberRepository;
 import katecam.luvicookie.ditto.domain.studymember.domain.StudyMember;
 import katecam.luvicookie.ditto.domain.studymember.domain.StudyMemberRole;
@@ -33,16 +33,24 @@ public class AttendanceService {
 
     private final AttendanceDateRepository attendanceDateRepository;
     private final AttendanceRepository attendanceRepository;
-    private final MemberRepository memberRepository;
     private final StudyRepository studyRepository;
     private final StudyMemberRepository studyMemberRepository;
+    private final StudyMemberService studyMemberService;
 
     @Transactional
-    public void createAttendance(Integer studyId, Integer memberId) {
-        AttendanceDate attendanceDate = getAttendanceDatesByStudyIdAndTime(studyId, LocalDateTime.now());
+    public void createAttendance(Member member, Integer studyId, String code, Integer dateId) {
+        studyMemberService.validateStudyMember(studyId, member);
 
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND));
+        AttendanceDate attendanceDate = attendanceDateRepository.findById(dateId)
+                .orElseThrow(() -> new GlobalException(ErrorCode.DATE_NOT_FOUND));
+
+        if (attendanceDate.isUnableToAttend()) {
+            throw new GlobalException(ErrorCode.DATE_UNABLE_TO_ATTEND);
+        }
+
+        if (attendanceDate.isDifferentCode(code)) {
+            throw new GlobalException(ErrorCode.CODE_MISMATCH);
+        }
 
         Attendance attendance = Attendance.builder()
                 .attendanceDate(attendanceDate)
