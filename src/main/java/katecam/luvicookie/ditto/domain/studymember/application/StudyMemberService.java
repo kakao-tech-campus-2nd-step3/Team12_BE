@@ -7,6 +7,7 @@ import katecam.luvicookie.ditto.domain.studymember.dao.StudyMemberRepository;
 import katecam.luvicookie.ditto.domain.studymember.domain.StudyMember;
 import katecam.luvicookie.ditto.domain.studymember.domain.StudyMemberRole;
 import katecam.luvicookie.ditto.domain.studymember.dto.response.StudyInviteResponse;
+import katecam.luvicookie.ditto.domain.studymember.dto.response.StudyMemberApplyResponse;
 import katecam.luvicookie.ditto.domain.studymember.dto.response.StudyMemberResponse;
 import katecam.luvicookie.ditto.global.error.ErrorCode;
 import katecam.luvicookie.ditto.global.error.GlobalException;
@@ -41,10 +42,10 @@ public class StudyMemberService {
         studyMemberRepository.deleteByStudyIdAndMember_Id(studyId, memberId);
     }
 
-    public List<StudyMemberResponse> getStudyMemberApplyList(Integer studyId) {
+    public List<StudyMemberApplyResponse> getStudyMemberApplyList(Integer studyId) {
         return studyMemberRepository.findAllByStudyIdAndRoleIn(studyId, List.of(StudyMemberRole.APPLICANT))
                 .stream()
-                .map(StudyMemberResponse::new)
+                .map(StudyMemberApplyResponse::new)
                 .toList();
     }
 
