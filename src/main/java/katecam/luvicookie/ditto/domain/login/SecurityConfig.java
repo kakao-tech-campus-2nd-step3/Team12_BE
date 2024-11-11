@@ -105,7 +105,10 @@ public class SecurityConfig {
 
 
         http.oauth2Login(httpSecurityOAuth2LoginConfigurer ->
-                httpSecurityOAuth2LoginConfigurer.loginPage("/api/auth/kakao")
+                httpSecurityOAuth2LoginConfigurer
+                        .redirectionEndpoint((endPoint) -> endPoint
+                                .baseUri("/api/login/oauth2/code/kakao"))
+                        .loginPage("/user/login/kakao")
                         .successHandler(LoginSuccessHandler())
                         .failureHandler(LoginFailHandler())
                         .userInfoEndpoint(userInfoEndpointConfig ->
