@@ -10,6 +10,8 @@ import java.util.List;
 public interface StudyMemberRepository extends JpaRepository<StudyMember, Integer> {
     List<StudyMember> findAllByStudyIdAndRoleIn(Integer studyId, List<StudyMemberRole> roles);
 
+    List<StudyMember> findAllByMember_Id(Integer memberId);
+
     StudyMember findByStudyIdAndMember_Id(Integer studyId, Integer memberId);
 
     void deleteByStudyIdAndMember_Id(Integer studyId, Integer memberId);

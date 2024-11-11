@@ -6,6 +6,8 @@ import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.member.dto.memberCreateRequestDTO;
 import katecam.luvicookie.ditto.domain.member.dto.memberResponseDTO;
 import katecam.luvicookie.ditto.domain.member.dto.memberUpdateRequestDTO;
+import katecam.luvicookie.ditto.domain.study.application.StudyService;
+import katecam.luvicookie.ditto.domain.study.dto.response.StudyResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,11 +21,14 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Controller
 @Slf4j
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
+    private final StudyService studyService;
 
     // TODO
     @GetMapping("/user/login/kakao")
@@ -59,6 +64,14 @@ public class MemberController {
             @RequestPart MultipartFile profileImage){
         memberService.updateProfileImage(profileImage, member.getId());
         return ResponseEntity.ok(new ResponseEntity<>(HttpStatus.OK));
+    }
+
+    @ResponseBody
+    @GetMapping("/api/users/studies")
+    public ResponseEntity<List<StudyResponse>> getUserStudyList(
+            @LoginUser Member member
+    ) {
+        return ResponseEntity.ok(studyService.getStudyListByMemberId(member.getId()));
     }
 
 }

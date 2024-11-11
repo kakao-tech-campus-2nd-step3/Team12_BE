@@ -9,6 +9,7 @@ import katecam.luvicookie.ditto.domain.study.dto.request.StudyCriteria;
 import katecam.luvicookie.ditto.domain.study.dto.response.StudyListResponse;
 import katecam.luvicookie.ditto.domain.study.dto.response.StudyResponse;
 import katecam.luvicookie.ditto.domain.studymember.application.StudyMemberService;
+import katecam.luvicookie.ditto.domain.studymember.dao.StudyMemberRepository;
 import katecam.luvicookie.ditto.domain.studymember.domain.StudyMemberRole;
 import katecam.luvicookie.ditto.global.error.ErrorCode;
 import katecam.luvicookie.ditto.global.error.GlobalException;
@@ -20,14 +21,17 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class StudyService {
 
     private final StudyRepository studyRepository;
     private final AwsFileService awsFileService;
     private final StudyMemberService studyMemberService;
+    private final StudyMemberRepository studyMemberRepository;
 
     public StudyListResponse getStudyList(Pageable pageable, StudyCriteria studyCriteria) {
         Page<StudyResponse> studyResponses = studyRepository.findAllByTopicAndNameAndIsOpen(
@@ -45,6 +49,16 @@ public class StudyService {
                 .orElseThrow(() -> new GlobalException(ErrorCode.STUDY_NOT_FOUND));
     }
 
+    public List<StudyResponse> getStudyListByMemberId(Integer memberId) {
+        return studyMemberRepository.findAllByMember_Id(memberId)
+                .stream()
+                .map(studyMember -> studyRepository.findById(studyMember.getStudyId())
+                        .orElseThrow(() -> new GlobalException(ErrorCode.STUDY_NOT_FOUND)))
+                .map(StudyResponse::from)
+                .toList();
+    }
+
+    @Transactional
     public void create(Member member, StudyRequest request, MultipartFile profileImage) {
         try {
             String imageUrl = awsFileService.saveStudyProfileImage(profileImage);
@@ -56,6 +70,7 @@ public class StudyService {
         }
     }
 
+    @Transactional
     public void delete(Member member, Integer studyId) {
         studyMemberService.validateStudyLeader(studyId, member);
         studyRepository.deleteById(studyId);
