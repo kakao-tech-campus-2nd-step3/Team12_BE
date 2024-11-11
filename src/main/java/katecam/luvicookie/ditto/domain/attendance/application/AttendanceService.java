@@ -4,6 +4,7 @@ import katecam.luvicookie.ditto.domain.attendance.dao.AttendanceDateRepository;
 import katecam.luvicookie.ditto.domain.attendance.dao.AttendanceRepository;
 import katecam.luvicookie.ditto.domain.attendance.domain.Attendance;
 import katecam.luvicookie.ditto.domain.attendance.domain.AttendanceDate;
+import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceCodeResponse;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceDateListResponse;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceListResponse;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.MemberAttendanceResponse;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -60,42 +62,53 @@ public class AttendanceService {
         attendanceRepository.save(attendance);
     }
 
-    public AttendanceListResponse getAttendanceList(Integer studyId, Integer memberId) {
-        List<Integer> memberIds = Arrays.asList(memberId);
+    public AttendanceListResponse getAttendanceList(Member member, Integer studyId, Integer memberId) {
+        studyMemberService.validateStudyLeader(studyId, member);
+
+        List<StudyMember> studyMemberList = new ArrayList<>();
+
         if (memberId == null) {
-            memberIds = studyMemberRepository.findAllByStudyIdAndRoleIn(studyId, Arrays.asList(StudyMemberRole.LEADER, StudyMemberRole.MEMBER))
-                    .stream()
-                    .map(StudyMember::getMember)
-                    .map(Member::getId)
-                    .toList();
+            studyMemberList = studyMemberRepository.findAllByStudyIdAndRoleIn(studyId, Arrays.asList(StudyMemberRole.LEADER, StudyMemberRole.MEMBER));
+        }
+        else {
+            studyMemberList.add(
+                    studyMemberRepository.findByStudyIdAndMember_Id(studyId, memberId)
+                            .orElseThrow(() -> new GlobalException(ErrorCode.STUDY_MEMBER_NOT_FOUND))
+            );
         }
 
         List<AttendanceDate> attendanceDateList = attendanceDateRepository.findAllByStudy_IdOrderByStartTimeAsc(studyId);
         Map<Integer, MemberAttendanceResponse> memberAttendances = new HashMap<>();
-        for (Integer id : memberIds) {
-            // 해당 스터디에 대한 회원 출석 필터링
-            List<Attendance> memberAttendanceList = attendanceRepository.findAllByMember_IdOrderByIdAsc(memberId)
+
+        // 해당 스터디에 대한 회원 출석 필터링
+        for (StudyMember studyMember : studyMemberList) {
+            List<AttendanceDate> memberAttendanceList = attendanceRepository.findAllByMember_IdOrderByIdAsc(memberId)
                     .stream()
-                    .filter(attendance -> attendanceDateList.contains(attendance.getAttendanceDate()))
+                    .map(Attendance::getAttendanceDate)
+                    .filter(attendanceDateList::contains)
+                    .filter(date -> studyMember.getJoinedAt()
+                            .isBefore(date.getStartTime()))
                     .toList();
 
-            // Todo - attendanceDatesList를 사용자가 스터디에 가입한 날짜 이후로 필터링
-            memberAttendances.put(id, MemberAttendanceResponse.from(attendanceDateList, memberAttendanceList));
+            Integer foundMemberId = studyMember.getMember()
+                    .getId();
+            memberAttendances.put(foundMemberId, MemberAttendanceResponse.from(attendanceDateList, memberAttendanceList));
         }
 
         return AttendanceListResponse.from(attendanceDateList, memberAttendances);
     }
 
     @Transactional
-    public void updateAttendance(Integer studyId, Integer memberId, LocalDateTime dateTime, Boolean isAttended) {
-        AttendanceDate attendanceDate = getAttendanceDatesByStudyIdAndTime(studyId, dateTime);
+    public void updateAttendance(Member member, Integer studyId, Integer memberId, LocalDateTime startTime, Boolean isAttended) {
+        studyMemberService.validateStudyLeader(studyId, member);
 
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND));
+        AttendanceDate attendanceDate = getAttendanceDatesByStudyIdAndTime(studyId, startTime);
+        StudyMember studyMember = studyMemberRepository.findByStudyIdAndMember_Id(studyId, memberId)
+                .orElseThrow(() -> new GlobalException(ErrorCode.STUDY_MEMBER_NOT_FOUND));
 
         Attendance attendance = Attendance.builder()
                 .attendanceDate(attendanceDate)
-                .member(member)
+                .member(studyMember.getMember())
                 .build();
 
         if (isAttended) {
@@ -106,18 +119,21 @@ public class AttendanceService {
         attendanceRepository.delete(attendance);
     }
 
-    public AttendanceDateListResponse getAttendanceDateList(Integer studyId) {
+    public AttendanceDateListResponse getAttendanceDateList(Member member, Integer studyId) {
+        studyMemberService.validateStudyMember(studyId, member);
         List<AttendanceDate> attendanceDateList = attendanceDateRepository.findAllByStudy_IdOrderByStartTimeAsc(studyId);
         return AttendanceDateListResponse.from(attendanceDateList);
     }
 
-    private AttendanceDate getAttendanceDatesByStudyIdAndTime(Integer studyId, LocalDateTime attendanceTime) {
-        return attendanceDateRepository.findByStudy_IdAndAttendanceTime(studyId, attendanceTime)
+    private AttendanceDate getAttendanceDatesByStudyIdAndTime(Integer studyId, LocalDateTime startTime) {
+        return attendanceDateRepository.findByStudy_IdAndDateTime(studyId, startTime)
                 .orElseThrow(() -> new GlobalException(ErrorCode.DATE_UNABLE_TO_ATTEND));
     }
 
     @Transactional
-    public void createAttendanceDate(Integer studyId, LocalDateTime startTime, Integer intervalMinutes) {
+    public void createAttendanceDate(Member member, Integer studyId, LocalDateTime startTime, Integer intervalMinutes) {
+        studyMemberService.validateStudyLeader(studyId, member);
+
         Study study = studyRepository.findById(studyId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.STUDY_NOT_FOUND));
 
