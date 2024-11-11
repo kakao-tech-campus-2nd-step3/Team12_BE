@@ -10,6 +10,7 @@ import katecam.luvicookie.ditto.domain.studymember.dto.request.StudyMemberApplyR
 import katecam.luvicookie.ditto.domain.studymember.dto.request.StudyMemberInviteRequest;
 import katecam.luvicookie.ditto.domain.studymember.dto.request.StudyMemberRoleRequest;
 import katecam.luvicookie.ditto.domain.studymember.dto.response.StudyInviteResponse;
+import katecam.luvicookie.ditto.domain.studymember.dto.response.StudyMemberApplyResponse;
 import katecam.luvicookie.ditto.domain.studymember.dto.response.StudyMemberResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,10 +32,10 @@ public class StudyMemberController {
         return ResponseEntity.ok(memberResponseList);
     }
 
-    @PutMapping
+    @PutMapping("/{memberId}")
     public ResponseEntity<StudyMemberResponse> putStudyMember(@LoginUser Member member, @PathVariable Integer studyId, @PathVariable Integer memberId, @Valid @RequestBody StudyMemberRoleRequest studyMemberRequest) {
         studyMemberService.validateStudyLeader(studyId, member);
-        StudyMemberResponse memberResponse = studyMemberService.updateStudyMember(studyId, memberId, studyMemberRequest.toStudyMemberRole());
+        StudyMemberResponse memberResponse = studyMemberService.updateStudyMember(studyId, memberId, StudyMemberRole.from(studyMemberRequest.role()));
         return ResponseEntity.ok(memberResponse);
     }
 
@@ -46,22 +47,22 @@ public class StudyMemberController {
     }
 
     @GetMapping("/apply")
-    public ResponseEntity<List<StudyMemberResponse>> getStudyMemberRequests(@LoginUser Member member, @PathVariable Integer studyId) {
+    public ResponseEntity<List<StudyMemberApplyResponse>> getStudyMemberRequests(@LoginUser Member member, @PathVariable Integer studyId) {
         studyMemberService.validateStudyLeader(studyId, member);
-        List<StudyMemberResponse> memberResponseList = studyMemberService.getStudyMemberApplyList(studyId);
+        List<StudyMemberApplyResponse> memberResponseList = studyMemberService.getStudyMemberApplyList(studyId);
         return ResponseEntity.ok(memberResponseList);
     }
 
     @PostMapping("/apply")
-    public ResponseEntity<Object> postStudyMemberRequest(@LoginUser Member member, @Valid @RequestBody StudyMemberApplyRequest request) {
-        StudyMemberResponse memberResponse = studyMemberService.createStudyMember(request.studyId(), member, StudyMemberRole.APPLICANT, request.message());
+    public ResponseEntity<Object> postStudyMemberRequest(@LoginUser Member member, @PathVariable Integer studyId, @Valid @RequestBody StudyMemberApplyRequest request) {
+        StudyMemberResponse memberResponse = studyMemberService.createStudyMember(studyId, member, StudyMemberRole.APPLICANT, request.message());
         return ResponseEntity.ok(memberResponse);
     }
 
     @PutMapping("/apply/{memberId}")
     public ResponseEntity<Object> putStudyMemberRequest(@LoginUser Member member, @PathVariable Integer studyId, @PathVariable Integer memberId, @Valid @RequestBody StudyMemberRoleRequest studyMemberRequest) {
         studyMemberService.validateStudyLeader(studyId, member);
-        StudyMemberResponse memberResponse = studyMemberService.updateStudyMember(studyId, memberId, studyMemberRequest.toStudyMemberRole());
+        StudyMemberResponse memberResponse = studyMemberService.updateStudyMember(studyId, memberId, StudyMemberRole.from(studyMemberRequest.role()));
         return ResponseEntity.ok(memberResponse);
     }
 
