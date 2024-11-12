@@ -43,13 +43,20 @@ public class AttendanceService {
     public void createAttendance(Member member, Integer studyId, String code, Integer dateId) {
         studyMemberService.validateStudyMember(studyId, member);
 
+        // 중복 출석 여부 확인
+        if (attendanceRepository.existsByAttendanceDate_IdAndMember_Id(dateId, member.getId())) {
+            throw new GlobalException(ErrorCode.ALREADY_ATTENDED);
+        }
+
         AttendanceDate attendanceDate = attendanceDateRepository.findById(dateId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.DATE_NOT_FOUND));
 
+        // 출석 시간대 확인
         if (attendanceDate.isUnableToAttend()) {
             throw new GlobalException(ErrorCode.DATE_UNABLE_TO_ATTEND);
         }
 
+        // 출석 코드 확인
         if (attendanceDate.isDifferentCode(code)) {
             throw new GlobalException(ErrorCode.CODE_MISMATCH);
         }
@@ -67,6 +74,7 @@ public class AttendanceService {
 
         List<StudyMember> studyMemberList = new ArrayList<>();
 
+        // 조회할 회원이 없으면 스터디원 전체를 조회
         if (memberId == null) {
             studyMemberList = studyMemberRepository.findAllByStudyIdAndRoleIn(studyId, Arrays.asList(StudyMemberRole.LEADER, StudyMemberRole.MEMBER));
         }
@@ -82,12 +90,12 @@ public class AttendanceService {
 
         // 해당 스터디에 대한 회원 출석 필터링
         for (StudyMember studyMember : studyMemberList) {
-            List<AttendanceDate> memberAttendanceList = attendanceRepository.findAllByMember_IdOrderByIdAsc(memberId)
+            List<LocalDateTime> memberAttendanceList = attendanceRepository.findAllByMember_IdOrderByIdAsc(memberId)
                     .stream()
-                    .map(Attendance::getAttendanceDate)
-                    .filter(attendanceDateList::contains)
-                    .filter(date -> studyMember.getJoinedAt()
-                            .isBefore(date.getStartTime()))
+                    .filter(attendance -> attendanceDateList.contains(attendance.getAttendanceDate()))
+                    .map(Attendance::getCreatedAt)
+                    .filter(dateTime -> studyMember.getJoinedAt()
+                            .isBefore(dateTime))
                     .toList();
 
             Integer foundMemberId = studyMember.getMember()

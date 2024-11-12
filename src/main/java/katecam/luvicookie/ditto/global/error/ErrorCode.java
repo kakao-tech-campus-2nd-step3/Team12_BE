@@ -31,6 +31,7 @@ public enum ErrorCode {
 
     // 409 - Conflict
     CODE_MISMATCH("코드가 일치하지 않습니다.", HttpStatus.CONFLICT),
+    ALREADY_ATTENDED("해당 일자는 이미 출석하였습니다.", HttpStatus.CONFLICT),
 
     // 500 - Internal Server Error
     FILE_CONVERT_FAILED("파일을 변환할 수 없습니다.", HttpStatus.INTERNAL_SERVER_ERROR),

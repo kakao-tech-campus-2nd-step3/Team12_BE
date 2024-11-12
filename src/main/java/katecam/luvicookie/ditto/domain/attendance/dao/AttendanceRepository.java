@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface AttendanceRepository extends JpaRepository<Attendance, Integer> {
     List<Attendance> findAllByMember_IdOrderByIdAsc(Integer memberId);
+
+    Boolean existsByAttendanceDate_IdAndMember_Id(Integer dateId, Integer memberId);
 }
