@@ -1,4 +1,4 @@
-package katecam.luvicookie.ditto.domain.member.dto;
+package katecam.luvicookie.ditto.domain.member.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class memberCreateRequestDTO {
+public class memberCreateRequest {
     @NotBlank(message = "이름을 입력해주세요.")
     String name;
     @NotBlank(message = "이메일을 입력해주세요.")
@@ -21,7 +21,7 @@ public class memberCreateRequestDTO {
     @NotBlank(message = "자기소개를 입력해주세요.")
     String description;
 
-    public memberCreateRequestDTO(Member member){
+    public memberCreateRequest(Member member){
         this.name = member.getName();
         this.email = member.getEmail();
         this.contact = member.getContact();

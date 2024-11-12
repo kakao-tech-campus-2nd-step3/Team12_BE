@@ -3,9 +3,9 @@ package katecam.luvicookie.ditto.domain.member.api;
 import katecam.luvicookie.ditto.domain.login.annotation.LoginUser;
 import katecam.luvicookie.ditto.domain.member.application.MemberService;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
-import katecam.luvicookie.ditto.domain.member.dto.memberCreateRequestDTO;
-import katecam.luvicookie.ditto.domain.member.dto.memberResponseDTO;
-import katecam.luvicookie.ditto.domain.member.dto.memberUpdateRequestDTO;
+import katecam.luvicookie.ditto.domain.member.dto.request.memberCreateRequest;
+import katecam.luvicookie.ditto.domain.member.dto.response.memberResponse;
+import katecam.luvicookie.ditto.domain.member.dto.response.memberUpdateRequest;
 import katecam.luvicookie.ditto.domain.study.application.StudyService;
 import katecam.luvicookie.ditto.domain.study.dto.response.StudyResponse;
 import lombok.RequiredArgsConstructor;
@@ -39,22 +39,22 @@ public class MemberController {
 
     @ResponseBody
     @PostMapping("/api/auth")
-    public ResponseEntity<memberResponseDTO> signup(@RequestBody memberCreateRequestDTO memberCreateRequestDTO){
-        Member member = memberService.registerMember(memberCreateRequestDTO);
-        return ResponseEntity.ok(new memberResponseDTO(member));
+    public ResponseEntity<memberResponse> signup(@RequestBody memberCreateRequest memberCreateRequest){
+        Member member = memberService.registerMember(memberCreateRequest);
+        return ResponseEntity.ok(new memberResponse(member));
     }
 
     @ResponseBody
     @GetMapping("/api/users")
-    public ResponseEntity<memberResponseDTO> getUserInfo(@LoginUser Member member){
-        return ResponseEntity.ok(new memberResponseDTO(member));
+    public ResponseEntity<memberResponse> getUserInfo(@LoginUser Member member){
+        return ResponseEntity.ok(new memberResponse(member));
     }
 
     @ResponseBody
     @PutMapping("/api/users")
-    public ResponseEntity<memberResponseDTO> updateUserInfo(@LoginUser Member member, @RequestBody memberUpdateRequestDTO memberDTO){
+    public ResponseEntity<memberResponse> updateUserInfo(@LoginUser Member member, @RequestBody memberUpdateRequest memberDTO){
         Member updateMember = memberService.updateMember(memberDTO, member);
-        return ResponseEntity.ok(new memberResponseDTO(updateMember));
+        return ResponseEntity.ok(new memberResponse(updateMember));
     }
 
     @ResponseBody

@@ -1,4 +1,4 @@
-package katecam.luvicookie.ditto.domain.notice.dto;
+package katecam.luvicookie.ditto.domain.notice.dto.response;
 
 import lombok.Builder;
 import org.springframework.data.domain.Page;

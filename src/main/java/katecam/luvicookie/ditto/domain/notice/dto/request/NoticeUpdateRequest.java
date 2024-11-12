@@ -1,4 +1,4 @@
-package katecam.luvicookie.ditto.domain.notice.dto;
+package katecam.luvicookie.ditto.domain.notice.dto.request;
 
 import lombok.Getter;
 

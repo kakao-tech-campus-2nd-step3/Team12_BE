@@ -1,4 +1,4 @@
-package katecam.luvicookie.ditto.domain.assignment.dto;
+package katecam.luvicookie.ditto.domain.assignment.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import katecam.luvicookie.ditto.domain.assignment.domain.Assignment;

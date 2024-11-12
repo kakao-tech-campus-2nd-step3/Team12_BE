@@ -1,4 +1,4 @@
-package katecam.luvicookie.ditto.domain.member.dto;
+package katecam.luvicookie.ditto.domain.member.dto.response;
 
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class memberResponseDTO {
+public class memberResponse {
     Integer id;
     String name;
     String email;
@@ -17,7 +17,7 @@ public class memberResponseDTO {
     String description;
     String profileImage;
 
-    public memberResponseDTO(Member member){
+    public memberResponse(Member member){
         this.id = member.getId();
         this.name = member.getName();
         this.email = member.getEmail();

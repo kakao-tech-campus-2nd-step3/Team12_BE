@@ -9,7 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import katecam.luvicookie.ditto.domain.assignment.dto.AssignmentRequest;
+import katecam.luvicookie.ditto.domain.assignment.dto.request.AssignmentRequest;
 import katecam.luvicookie.ditto.domain.study.domain.Study;
 import katecam.luvicookie.ditto.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;

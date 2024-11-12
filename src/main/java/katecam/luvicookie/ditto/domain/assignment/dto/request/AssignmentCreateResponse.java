@@ -1,9 +1,8 @@
-package katecam.luvicookie.ditto.domain.assignment.dto;
+package katecam.luvicookie.ditto.domain.assignment.dto.request;
 
 import katecam.luvicookie.ditto.domain.assignment.domain.Assignment;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Builder
 @Getter
