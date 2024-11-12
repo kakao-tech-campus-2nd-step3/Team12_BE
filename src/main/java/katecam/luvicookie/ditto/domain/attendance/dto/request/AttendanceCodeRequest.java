@@ -1,5 +1,6 @@
 package katecam.luvicookie.ditto.domain.attendance.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -12,6 +13,7 @@ public record AttendanceCodeRequest(
         String code,
 
         @NotNull(message = "출석일자 ID를 입력해주세요.")
+        @JsonProperty("date_id")
         Integer dateId
 ) {
 }
