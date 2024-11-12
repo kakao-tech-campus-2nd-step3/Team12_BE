@@ -53,7 +53,7 @@ public class StudyMemberController {
     }
 
     @GetMapping("/apply")
-    public ResponseEntity<List<StudyMemberApplyResponse>> getStudyMemberRequests(@LoginUser Member member, @PathVariable Integer studyId) {
+    public ResponseEntity<List<StudyMemberApplyResponse>> getStudyMemberRequest(@LoginUser Member member, @PathVariable Integer studyId) {
         studyMemberService.validateStudyLeader(studyId, member);
         List<StudyMemberApplyResponse> memberResponseList = studyMemberService.getStudyMemberApplyList(studyId);
         return ResponseEntity.ok(memberResponseList);
