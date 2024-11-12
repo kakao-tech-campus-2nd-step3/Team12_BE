@@ -48,6 +48,11 @@ public class StudyMemberService {
         studyMemberRepository.deleteByStudyIdAndMember_Id(studyId, memberId);
     }
 
+    @Transactional
+    public void deleteAllStudyMember(Integer studyId) {
+        studyMemberRepository.deleteAllByStudyId(studyId);
+    }
+
     public List<StudyMemberApplyResponse> getStudyMemberApplyList(Integer studyId) {
         return studyMemberRepository.findAllByStudyIdAndRoleIn(studyId, List.of(StudyMemberRole.APPLICANT))
                 .stream()

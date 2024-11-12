@@ -17,5 +17,7 @@ public interface StudyMemberRepository extends JpaRepository<StudyMember, Intege
 
     void deleteByStudyIdAndMember_Id(Integer studyId, Integer memberId);
 
+    void deleteAllByStudyId(Integer studyId);
+
     boolean existsByStudyIdAndMemberAndRoleIn(Integer studyId, Member member, List<StudyMemberRole> roles);
 }

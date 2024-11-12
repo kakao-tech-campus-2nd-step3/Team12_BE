@@ -74,6 +74,7 @@ public class StudyService {
     @Transactional
     public void delete(Member member, Integer studyId) {
         studyMemberService.validateStudyLeader(studyId, member);
+        studyMemberService.deleteAllStudyMember(studyId);
         studyRepository.deleteById(studyId);
     }
 
