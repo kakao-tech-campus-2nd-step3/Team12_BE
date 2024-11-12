@@ -40,13 +40,13 @@ public class StudyMemberController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deleteStudy(@LoginUser Member member, @PathVariable Integer studyId) {
+    public ResponseEntity<Void> withdrawFromStudy(@LoginUser Member member, @PathVariable Integer studyId) {
         studyMemberService.deleteStudyMember(studyId, member.getId());
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{memberId}")
-    public ResponseEntity<Void> deleteStudyMembers(@LoginUser Member member, @PathVariable Integer studyId, @PathVariable Integer memberId) {
+    public ResponseEntity<Void> deleteStudyMember(@LoginUser Member member, @PathVariable Integer studyId, @PathVariable Integer memberId) {
         studyMemberService.validateStudyLeader(studyId, member);
         studyMemberService.deleteStudyMember(studyId, memberId);
         return ResponseEntity.noContent().build();
