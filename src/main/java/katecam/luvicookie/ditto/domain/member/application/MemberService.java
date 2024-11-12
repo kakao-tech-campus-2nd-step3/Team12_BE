@@ -18,6 +18,7 @@ import java.io.IOException;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MemberService {
 
     private final MemberRepository memberRepository;
@@ -52,7 +53,7 @@ public class MemberService {
     }
 
     @Transactional
-    public Member updateProfileImage(MultipartFile profileImage, Integer memberId){
+    public Member updateProfileImage(MultipartFile profileImage, Integer memberId) {
         Member member = findMemberById(memberId);
         member.authorizeUser();
 

@@ -17,8 +17,3 @@ spring:
   config:
     import: classpath:/application-secret.yml
 
-file:
-  path: "src/main/resources/static/files/"
-  upload:
-    path: "/opt/app/files/"
-
