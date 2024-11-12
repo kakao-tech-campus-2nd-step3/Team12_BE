@@ -4,8 +4,9 @@ import katecam.luvicookie.ditto.domain.file.application.AwsFileService;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.study.dao.StudyRepository;
 import katecam.luvicookie.ditto.domain.study.domain.Study;
-import katecam.luvicookie.ditto.domain.study.dto.request.StudyRequest;
+import katecam.luvicookie.ditto.domain.study.dto.request.StudyCreateRequest;
 import katecam.luvicookie.ditto.domain.study.dto.request.StudyCriteria;
+import katecam.luvicookie.ditto.domain.study.dto.request.StudyUpdateRequest;
 import katecam.luvicookie.ditto.domain.study.dto.response.StudyListResponse;
 import katecam.luvicookie.ditto.domain.study.dto.response.StudyResponse;
 import katecam.luvicookie.ditto.domain.studymember.application.StudyMemberService;
@@ -59,7 +60,7 @@ public class StudyService {
     }
 
     @Transactional
-    public void create(Member member, StudyRequest request, MultipartFile profileImage) {
+    public void create(Member member, StudyCreateRequest request, MultipartFile profileImage) {
         try {
             String imageUrl = awsFileService.saveStudyProfileImage(profileImage);
             Study study = request.toEntity(imageUrl);
@@ -77,7 +78,7 @@ public class StudyService {
     }
 
     @Transactional
-    public void update(Member member, Integer studyId, StudyRequest request) {
+    public void update(Member member, Integer studyId, StudyUpdateRequest request) {
         studyMemberService.validateStudyLeader(studyId, member);
 
         Study study = studyRepository.findById(studyId)

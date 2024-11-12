@@ -5,7 +5,8 @@ import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.study.dao.StudyRepository;
 import katecam.luvicookie.ditto.domain.study.domain.Study;
 import katecam.luvicookie.ditto.domain.study.dto.request.StudyCriteria;
-import katecam.luvicookie.ditto.domain.study.dto.request.StudyRequest;
+import katecam.luvicookie.ditto.domain.study.dto.request.StudyCreateRequest;
+import katecam.luvicookie.ditto.domain.study.dto.request.StudyUpdateRequest;
 import katecam.luvicookie.ditto.domain.study.dto.response.StudyListResponse;
 import katecam.luvicookie.ditto.domain.study.dto.response.StudyResponse;
 import katecam.luvicookie.ditto.domain.studymember.application.StudyMemberService;
@@ -168,7 +169,7 @@ class StudyServiceTest {
                 .name("스터디 회원")
                 .build();
 
-        StudyRequest request = new StudyRequest("스터디", "스터디 설명", true, "스터디 주제");
+        StudyCreateRequest request = new StudyCreateRequest("스터디", "스터디 설명", true, "스터디 주제");
 
         String imageUrl = "https://test_domain.com/image.jpg";
 
@@ -188,7 +189,7 @@ class StudyServiceTest {
                 .name("스터디 회원")
                 .build();
 
-        StudyRequest request = new StudyRequest("스터디", "스터디 설명", true, "스터디 주제");
+        StudyCreateRequest request = new StudyCreateRequest("스터디", "스터디 설명", true, "스터디 주제");
 
         given(awsFileService.saveStudyProfileImage(any()))
                 .willThrow(IOException.class);
@@ -240,7 +241,7 @@ class StudyServiceTest {
 
         Integer studyId = 1;
 
-        StudyRequest request = new StudyRequest("스터디", "스터디 설명", true, "스터디 주제");
+        StudyUpdateRequest request = new StudyUpdateRequest("스터디", "스터디 설명", true, "스터디 주제");
 
         Study study = Study.builder()
                 .name("테스트 스터디")
@@ -265,7 +266,7 @@ class StudyServiceTest {
 
         Integer studyId = 1;
 
-        StudyRequest request = new StudyRequest("스터디", "스터디 설명", true, "스터디 주제");
+        StudyUpdateRequest request = new StudyUpdateRequest("스터디", "스터디 설명", true, "스터디 주제");
 
         willThrow(new GlobalException(ErrorCode.NOT_STUDY_LEADER))
                 .given(studyMemberService).validateStudyLeader(studyId, member);
