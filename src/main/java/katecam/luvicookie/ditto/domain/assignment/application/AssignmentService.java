@@ -39,6 +39,7 @@ public class AssignmentService {
     private final AwsFileService awsFileService;
     private final StudyMemberService studyMemberService;
 
+    @Transactional
     public AssignmentCreateResponse create(AssignmentRequest assignmentRequest, Integer studyId, Member member) {
         studyMemberService.validateStudyLeader(studyId, member);
         Assignment assignment = assignmentRequest.toEntity();
@@ -56,6 +57,7 @@ public class AssignmentService {
         return AssignmentResponse.from(assignment);
     }
 
+    @Transactional
     public void delete(Integer assignmentId, Member member) {
         Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(() -> new GlobalException(ErrorCode.ASSIGNMENT_NOT_FOUND));
         studyMemberService.validateStudyLeader(assignment.getStudy().getId(), member);
@@ -84,9 +86,6 @@ public class AssignmentService {
         return AssignmentFileResponse.from(files);
     }
 
-    /*public isTeamReader(TeamMate teamMate){
-
-    }*/
 
     public AssignmentFileResponse uploadAssignments(Member member, Integer assignmentId, MultipartFile file) throws IOException {
 
