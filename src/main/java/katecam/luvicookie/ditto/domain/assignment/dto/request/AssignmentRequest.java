@@ -2,12 +2,10 @@ package katecam.luvicookie.ditto.domain.assignment.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import katecam.luvicookie.ditto.domain.assignment.domain.Assignment;
-import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-@Getter
 public record AssignmentRequest (
 
     @NotBlank(message = "과제명을 입력해주세요")

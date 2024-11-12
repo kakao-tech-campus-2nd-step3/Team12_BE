@@ -3,9 +3,9 @@ package katecam.luvicookie.ditto.domain.member.api;
 import katecam.luvicookie.ditto.domain.login.annotation.LoginUser;
 import katecam.luvicookie.ditto.domain.member.application.MemberService;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
-import katecam.luvicookie.ditto.domain.member.dto.request.memberCreateRequest;
-import katecam.luvicookie.ditto.domain.member.dto.response.memberResponse;
-import katecam.luvicookie.ditto.domain.member.dto.response.memberUpdateRequest;
+import katecam.luvicookie.ditto.domain.member.dto.request.MemberCreateRequest;
+import katecam.luvicookie.ditto.domain.member.dto.response.MemberResponse;
+import katecam.luvicookie.ditto.domain.member.dto.response.MemberUpdateRequest;
 import katecam.luvicookie.ditto.domain.study.application.StudyService;
 import katecam.luvicookie.ditto.domain.study.dto.response.StudyResponse;
 import lombok.RequiredArgsConstructor;
@@ -39,22 +39,22 @@ public class MemberController {
 
     @ResponseBody
     @PostMapping("/api/auth")
-    public ResponseEntity<memberResponse> signup(@RequestBody memberCreateRequest memberCreateRequest){
+    public ResponseEntity<MemberResponse> signup(@RequestBody MemberCreateRequest memberCreateRequest){
         Member member = memberService.registerMember(memberCreateRequest);
-        return ResponseEntity.ok(new memberResponse(member));
+        return ResponseEntity.ok(MemberResponse.from(member));
     }
 
     @ResponseBody
     @GetMapping("/api/users")
-    public ResponseEntity<memberResponse> getUserInfo(@LoginUser Member member){
-        return ResponseEntity.ok(new memberResponse(member));
+    public ResponseEntity<MemberResponse> getUserInfo(@LoginUser Member member){
+        return ResponseEntity.ok(MemberResponse.from(member));
     }
 
     @ResponseBody
     @PutMapping("/api/users")
-    public ResponseEntity<memberResponse> updateUserInfo(@LoginUser Member member, @RequestBody memberUpdateRequest memberDTO){
+    public ResponseEntity<MemberResponse> updateUserInfo(@LoginUser Member member, @RequestBody MemberUpdateRequest memberDTO){
         Member updateMember = memberService.updateMember(memberDTO, member);
-        return ResponseEntity.ok(new memberResponse(updateMember));
+        return ResponseEntity.ok(MemberResponse.from(member));
     }
 
     @ResponseBody

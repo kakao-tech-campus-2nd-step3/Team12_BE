@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Builder
-@Getter
 public record FileResponse (
         Integer id,
         String fileName,

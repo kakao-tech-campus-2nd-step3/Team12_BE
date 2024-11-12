@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotBlank;
 import katecam.luvicookie.ditto.domain.notice.domain.Notice;
 import lombok.Getter;
 
-@Getter
 public record NoticeCreateRequest (
         @NotBlank(message = "공지 제목을 입력해주세요.")
         String title,

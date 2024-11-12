@@ -92,7 +92,7 @@ public class AssignmentService {
         Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(() -> new GlobalException(ErrorCode.ASSIGNMENT_NOT_FOUND));
         FileResponse fileResponse = awsFileService.saveAssignment(file);
 
-        AssignmentFile assignmentFile = new AssignmentFile(fileResponse.getFileName(), assignment, member, fileResponse.getFileUrl());
+        AssignmentFile assignmentFile = new AssignmentFile(fileResponse.fileName(), assignment, member, fileResponse.fileUrl());
         assignmentFileRepository.save(assignmentFile);
         return AssignmentFileResponse.from(assignmentFile);
     }

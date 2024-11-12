@@ -50,13 +50,13 @@ public class Assignment extends BaseTimeEntity {
     }
 
     public void updateAssignment(AssignmentRequest assignmentRequest){
-        if(assignmentRequest.getTitle() != null)
-            this.title = assignmentRequest.getTitle();
-        if(assignmentRequest.getContent() != null)
-            this.content = assignmentRequest.getContent();
-        if(assignmentRequest.getDeadline() != null){
+        if(assignmentRequest.title() != null)
+            this.title = assignmentRequest.title();
+        if(assignmentRequest.content() != null)
+            this.content = assignmentRequest.content();
+        if(assignmentRequest.deadline() != null){
             DateTimeFormatter format1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            this.deadline = LocalDateTime.parse(assignmentRequest.getDeadline(), format1);
+            this.deadline = LocalDateTime.parse(assignmentRequest.deadline(), format1);
         }
     }
 

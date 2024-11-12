@@ -50,9 +50,9 @@ public class NoticeService {
         Notice notice = noticeRepository.findById(noticeId).orElseThrow(() -> new GlobalException(ErrorCode.NOTICE_NOT_FOUND));
         isWriterMatches(notice, member);
         if(notice.getTitle()!=null)
-            notice.updateNoticeTitle(noticeUpdateRequest.getTitle());
+            notice.updateNoticeTitle(noticeUpdateRequest.title());
         if(notice.getContent()!=null)
-            notice.updateNoticeContent(noticeUpdateRequest.getContent());
+            notice.updateNoticeContent(noticeUpdateRequest.content());
         return NoticeResponse.from(notice);
     }
 

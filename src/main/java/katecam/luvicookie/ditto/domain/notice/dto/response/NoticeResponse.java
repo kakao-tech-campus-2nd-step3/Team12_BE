@@ -2,14 +2,10 @@ package katecam.luvicookie.ditto.domain.notice.dto.response;
 
 import katecam.luvicookie.ditto.domain.notice.domain.Notice;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.time.format.DateTimeFormatter;
 
 @Builder
-@Getter
-@Setter
 public record NoticeResponse (
         Integer id,
         String title,

@@ -2,15 +2,11 @@ package katecam.luvicookie.ditto.domain.assignment.dto.response;
 
 import katecam.luvicookie.ditto.domain.assignment.domain.AssignmentFile;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Builder
-@Getter
-@RequiredArgsConstructor
 public record AssignmentFileResponse (
     List<FileResponse> files
 ){

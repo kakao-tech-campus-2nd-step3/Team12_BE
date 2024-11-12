@@ -1,12 +1,8 @@
 package katecam.luvicookie.ditto.domain.member.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
-public record memberCreateRequest (
+public record MemberCreateRequest(
     @NotBlank(message = "이름을 입력해주세요.")
     String name,
     @NotBlank(message = "이메일을 입력해주세요.")

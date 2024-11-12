@@ -2,10 +2,8 @@ package katecam.luvicookie.ditto.domain.assignment.dto.request;
 
 import katecam.luvicookie.ditto.domain.assignment.domain.Assignment;
 import lombok.Builder;
-import lombok.Getter;
 
 @Builder
-@Getter
 public record AssignmentCreateResponse (
     Integer id
 ){
