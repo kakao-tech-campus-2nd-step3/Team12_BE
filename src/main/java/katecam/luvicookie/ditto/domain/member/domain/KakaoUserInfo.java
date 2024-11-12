@@ -1,9 +1,11 @@
 package katecam.luvicookie.ditto.domain.member.domain;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
+@Slf4j
 public class KakaoUserInfo {
     @Getter
     public static String socialId;
@@ -14,6 +16,7 @@ public class KakaoUserInfo {
         socialId = String.valueOf(attributes.get("id"));
         account = (Map<String, Object>) attributes.get("kakao_account");
         profile = (Map<String, Object>) account.get("profile");
+        log.info(account.toString());
     }
 
     public String getEmail(){return String.valueOf(account.get("email"));}
@@ -21,6 +24,6 @@ public class KakaoUserInfo {
         return String.valueOf(profile.get("nickname"));
     }
     public String getProfileImage(){
-        return String.valueOf(profile.get("image"));
+        return String.valueOf(profile.get("profile_image_url"));
     }
 }
