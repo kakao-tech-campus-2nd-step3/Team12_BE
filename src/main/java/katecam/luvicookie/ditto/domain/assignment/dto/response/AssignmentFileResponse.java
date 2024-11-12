@@ -11,12 +11,9 @@ import java.util.List;
 @Builder
 @Getter
 @RequiredArgsConstructor
-public class AssignmentFileResponse {
-    List<FileResponse> files;
-
-    public AssignmentFileResponse(List<FileResponse> fileNames) {
-        this.files = fileNames;
-    }
+public record AssignmentFileResponse (
+    List<FileResponse> files
+){
 
     public static AssignmentFileResponse from(List<AssignmentFile> assignmentFiles) {
         List<FileResponse> fileResponses = assignmentFiles.stream()

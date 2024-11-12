@@ -8,15 +8,15 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Getter
-public class AssignmentRequest {
+public record AssignmentRequest (
 
     @NotBlank(message = "과제명을 입력해주세요")
-    private String title;
+    String title,
     @NotBlank(message = "설명을 입력해주세요")
-    private String content;
+    String content,
     @NotBlank(message = "마감기한을 입력해주세요")
-    private String deadline;
-
+    String deadline
+){
     public Assignment toEntity(){
         DateTimeFormatter format1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         LocalDateTime strDeadline = LocalDateTime.parse(deadline, format1);

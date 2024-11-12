@@ -6,9 +6,9 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class AssignmentCreateResponse {
-    Integer id;
-
+public record AssignmentCreateResponse (
+    Integer id
+){
     public static AssignmentCreateResponse from(Assignment assignment) {
         return AssignmentCreateResponse.builder()
                 .id(assignment.getId())

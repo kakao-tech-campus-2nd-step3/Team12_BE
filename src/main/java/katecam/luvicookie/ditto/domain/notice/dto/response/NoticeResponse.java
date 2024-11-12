@@ -10,13 +10,13 @@ import java.time.format.DateTimeFormatter;
 @Builder
 @Getter
 @Setter
-public class NoticeResponse {
-    private Integer id;
-    private String title;
-    private String nickName;
-    private String content;
-    private String createdAt;
-
+public record NoticeResponse (
+        Integer id,
+        String title,
+        String nickName,
+        String content,
+        String createdAt
+){
     public static NoticeResponse from(Notice notice) {
         return NoticeResponse.builder()
                 .id(notice.getId())

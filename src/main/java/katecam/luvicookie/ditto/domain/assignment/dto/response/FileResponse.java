@@ -6,11 +6,11 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class FileResponse {
-    public Integer id;
-    public String fileName;
-    public String fileUrl;
-
+public record FileResponse (
+        Integer id,
+        String fileName,
+        String fileUrl
+){
     public static FileResponse from(AssignmentFile assignmentFile){
         return FileResponse.builder()
                 .id(assignmentFile.getId())
