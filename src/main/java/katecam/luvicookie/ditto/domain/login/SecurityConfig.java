@@ -86,6 +86,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
+
+
         http.cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()));
 
         http.csrf(AbstractHttpConfigurer::disable)
@@ -103,6 +105,8 @@ public class SecurityConfig {
 
         http.addFilterBefore(TokenAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
 
+        http.oauth2Login(conf -> conf.authorizationEndpoint(end -> end.baseUri("/api/oauth2/authorization/")));
+
 
         http.oauth2Login(httpSecurityOAuth2LoginConfigurer ->
                 httpSecurityOAuth2LoginConfigurer
@@ -116,4 +120,5 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 }

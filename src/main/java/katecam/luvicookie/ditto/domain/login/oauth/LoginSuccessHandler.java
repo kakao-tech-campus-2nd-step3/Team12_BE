@@ -26,8 +26,8 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
         PrincipalDetail principal = (PrincipalDetail) authentication.getPrincipal();
         Member member = principal.getUser();
-        String uri = getRedirectUri(request.getQueryString());
-
+        //String uri = getRedirectUri(request.getQueryString());
+        String uri = "https://ditto.pnu.app/";
         String accessToken = TokenProvider.generateToken(member, JwtConstants.ACCESS_EXP_TIME_MINUTES);
         String refreshToken = TokenProvider.generateToken(member, JwtConstants.REFRESH_EXP_TIME_MINUTES);
 
@@ -53,7 +53,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
             response.addHeader("Set-Cookie", TokenProvider.createCookie(refreshToken).toString());
 
             /// 최초 로그인이 아닌 경우 로그인 성공 페이지로 이동
-            String redirectURL = UriComponentsBuilder.fromUriString(uri + "/auth/kakao")
+            String redirectURL = UriComponentsBuilder.fromUriString(uri)
                     .queryParam(JwtConstants.ACCESS, JwtConstants.JWT_TYPE + accessToken)
                     .build()
                     .encode(StandardCharsets.UTF_8)
