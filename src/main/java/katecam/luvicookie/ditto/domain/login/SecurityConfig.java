@@ -86,6 +86,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
+
+
         http.cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()));
 
         http.csrf(AbstractHttpConfigurer::disable)
@@ -103,9 +105,9 @@ public class SecurityConfig {
 
         http.addFilterBefore(TokenAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
 
-
         http.oauth2Login(httpSecurityOAuth2LoginConfigurer ->
                 httpSecurityOAuth2LoginConfigurer
+                        .authorizationEndpoint(end -> end.baseUri("/api/oauth2/authorization/"))
                         .redirectionEndpoint((endPoint) -> endPoint
                                 .baseUri("/api/login/oauth2/code/kakao"))
                         .loginPage("/user/login/kakao")
@@ -116,4 +118,5 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 }

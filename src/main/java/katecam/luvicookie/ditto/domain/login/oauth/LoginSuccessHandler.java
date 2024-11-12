@@ -34,7 +34,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         // 최초 로그인인 경우 추가 정보 입력을 위한 회원가입 페이지로 리다이렉트
         if (member.isGuest()) {
 
-            //response.addHeader(JwtConstants.ACCESS, JwtConstants.JWT_TYPE + accessToken);
+            response.addHeader(JwtConstants.ACCESS, JwtConstants.JWT_TYPE + accessToken);
             response.addHeader("Set-Cookie", TokenProvider.createCookie(refreshToken).toString());
 
             String redirectURL = UriComponentsBuilder.fromUriString(uri + "/auth")
@@ -49,7 +49,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
         } else {
 
-            //response.addHeader(JwtConstants.ACCESS, JwtConstants.JWT_TYPE + accessToken);
+            response.addHeader(JwtConstants.ACCESS, JwtConstants.JWT_TYPE + accessToken);
             response.addHeader("Set-Cookie", TokenProvider.createCookie(refreshToken).toString());
 
             /// 최초 로그인이 아닌 경우 로그인 성공 페이지로 이동

@@ -86,7 +86,7 @@ public class AssignmentService {
         return AssignmentFileResponse.from(files);
     }
 
-
+    @Transactional
     public AssignmentFileResponse uploadAssignments(Member member, Integer assignmentId, MultipartFile file) throws IOException {
 
         Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(() -> new GlobalException(ErrorCode.ASSIGNMENT_NOT_FOUND));
