@@ -18,6 +18,7 @@ import java.io.IOException;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MemberService {
 
     private final MemberRepository memberRepository;
@@ -43,16 +44,16 @@ public class MemberService {
     public Member updateMember(memberUpdateRequest memberDTO, Member member){
         member.authorizeUser();
 
-        if(memberDTO.getName() != null) member.setName(memberDTO.getName());
-        if(memberDTO.getDescription() != null) member.setDescription(memberDTO.getDescription());
-        if(memberDTO.getContact() != null) member.setContact(memberDTO.getContact());
-        if(memberDTO.getNickname() != null) member.setNickname(memberDTO.getNickname());
+        if (memberDTO.getName() != null) member.setName(memberDTO.getName());
+        if (memberDTO.getDescription() != null) member.setDescription(memberDTO.getDescription());
+        if (memberDTO.getContact() != null) member.setContact(memberDTO.getContact());
+        if (memberDTO.getNickname() != null) member.setNickname(memberDTO.getNickname());
 
         return member;
     }
 
     @Transactional
-    public Member updateProfileImage(MultipartFile profileImage, Integer memberId){
+    public Member updateProfileImage(MultipartFile profileImage, Integer memberId) {
         Member member = findMemberById(memberId);
         member.authorizeUser();
 
