@@ -1,4 +1,4 @@
-package katecam.luvicookie.ditto.domain.member.dto.response;
+package katecam.luvicookie.ditto.domain.member.dto.request;
 
 public record MemberUpdateRequest(
         String name,
