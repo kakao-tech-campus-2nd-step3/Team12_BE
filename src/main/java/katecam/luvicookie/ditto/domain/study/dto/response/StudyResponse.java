@@ -3,23 +3,20 @@ package katecam.luvicookie.ditto.domain.study.dto.response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import katecam.luvicookie.ditto.domain.study.domain.Study;
 import lombok.Builder;
-import lombok.Getter;
 
 import java.time.format.DateTimeFormatter;
 
 @Builder
-@Getter
-public class StudyResponse {
-
-    @JsonProperty("id")
-    private Integer studyId;
-    private String name;
-    private String description;
-    private String createdAt;
-    private Boolean isOpen;
-    private String topic;
-    private String profileImage;
-
+public record StudyResponse (
+        @JsonProperty("id")
+        Integer studyId,
+        String name,
+        String description,
+        String createdAt,
+        Boolean isOpen,
+        String topic,
+        String profileImage
+) {
     public static StudyResponse from(Study study) {
         return StudyResponse.builder()
                 .studyId(study.getId())

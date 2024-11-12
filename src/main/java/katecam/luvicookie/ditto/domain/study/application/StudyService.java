@@ -35,9 +35,9 @@ public class StudyService {
 
     public StudyListResponse getStudyList(Pageable pageable, StudyCriteria studyCriteria) {
         Page<StudyResponse> studyResponses = studyRepository.findAllByTopicAndNameAndIsOpen(
-                studyCriteria.getTopic(),
-                studyCriteria.getName(),
-                studyCriteria.getIsOpen(),
+                studyCriteria.topic(),
+                studyCriteria.name(),
+                studyCriteria.isOpen(),
                 pageable)
                 .map(StudyResponse::from);
         return StudyListResponse.from(studyResponses);

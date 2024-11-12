@@ -67,7 +67,7 @@ class StudyServiceTest {
                 .isOpen(true)
                 .build();
 
-        given(studyRepository.findAllByTopicAndNameAndIsOpen(criteria.getTopic(), criteria.getName(), criteria.getIsOpen(), pageable))
+        given(studyRepository.findAllByTopicAndNameAndIsOpen(criteria.topic(), criteria.name(), criteria.isOpen(), pageable))
                 .willReturn(studies);
 
         StudyListResponse studyListResponse = studyService.getStudyList(pageable, criteria);
