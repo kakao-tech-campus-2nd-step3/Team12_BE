@@ -5,7 +5,7 @@ import katecam.luvicookie.ditto.domain.member.application.MemberService;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.member.dto.request.MemberCreateRequest;
 import katecam.luvicookie.ditto.domain.member.dto.response.MemberResponse;
-import katecam.luvicookie.ditto.domain.member.dto.response.MemberUpdateRequest;
+import katecam.luvicookie.ditto.domain.member.dto.request.MemberUpdateRequest;
 import katecam.luvicookie.ditto.domain.study.application.StudyService;
 import katecam.luvicookie.ditto.domain.study.dto.response.StudyResponse;
 import lombok.RequiredArgsConstructor;
