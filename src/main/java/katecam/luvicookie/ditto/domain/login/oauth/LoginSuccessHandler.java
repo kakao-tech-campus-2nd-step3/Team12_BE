@@ -26,15 +26,15 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
         PrincipalDetail principal = (PrincipalDetail) authentication.getPrincipal();
         Member member = principal.getUser();
-        //String uri = getRedirectUri(request.getQueryString());
-        String uri = "https://ditto.pnu.app/";
+        String uri = getRedirectUri(request.getQueryString());
+
         String accessToken = TokenProvider.generateToken(member, JwtConstants.ACCESS_EXP_TIME_MINUTES);
         String refreshToken = TokenProvider.generateToken(member, JwtConstants.REFRESH_EXP_TIME_MINUTES);
 
         // 최초 로그인인 경우 추가 정보 입력을 위한 회원가입 페이지로 리다이렉트
         if (member.isGuest()) {
 
-            //response.addHeader(JwtConstants.ACCESS, JwtConstants.JWT_TYPE + accessToken);
+            response.addHeader(JwtConstants.ACCESS, JwtConstants.JWT_TYPE + accessToken);
             response.addHeader("Set-Cookie", TokenProvider.createCookie(refreshToken).toString());
 
             String redirectURL = UriComponentsBuilder.fromUriString(uri + "/auth")
@@ -49,11 +49,11 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
         } else {
 
-            //response.addHeader(JwtConstants.ACCESS, JwtConstants.JWT_TYPE + accessToken);
+            response.addHeader(JwtConstants.ACCESS, JwtConstants.JWT_TYPE + accessToken);
             response.addHeader("Set-Cookie", TokenProvider.createCookie(refreshToken).toString());
 
             /// 최초 로그인이 아닌 경우 로그인 성공 페이지로 이동
-            String redirectURL = UriComponentsBuilder.fromUriString(uri)
+            String redirectURL = UriComponentsBuilder.fromUriString(uri + "/auth/kakao")
                     .queryParam(JwtConstants.ACCESS, JwtConstants.JWT_TYPE + accessToken)
                     .build()
                     .encode(StandardCharsets.UTF_8)
