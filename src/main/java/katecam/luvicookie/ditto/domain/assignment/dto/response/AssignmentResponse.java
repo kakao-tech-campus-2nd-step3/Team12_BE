@@ -1,4 +1,4 @@
-package katecam.luvicookie.ditto.domain.assignment.dto;
+package katecam.luvicookie.ditto.domain.assignment.dto.response;
 
 import katecam.luvicookie.ditto.domain.assignment.domain.Assignment;
 import lombok.Builder;
@@ -6,14 +6,14 @@ import lombok.Builder;
 import java.time.format.DateTimeFormatter;
 
 @Builder
-public class AssignmentResponse {
-    public Integer id;
-    public String title;
-    public String content;
-    public Integer studyId;
-    public String createdAt;
-    public String deadline;
-
+public record AssignmentResponse (
+        Integer id,
+        String title,
+        String content,
+        Integer studyId,
+        String createdAt,
+        String deadline
+){
     public static AssignmentResponse from(Assignment assignment) {
         return AssignmentResponse.builder()
                 .id(assignment.getId())

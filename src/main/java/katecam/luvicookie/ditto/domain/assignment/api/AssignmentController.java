@@ -1,11 +1,11 @@
 package katecam.luvicookie.ditto.domain.assignment.api;
 
 import katecam.luvicookie.ditto.domain.assignment.application.AssignmentService;
-import katecam.luvicookie.ditto.domain.assignment.dto.AssignmentCreateResponse;
-import katecam.luvicookie.ditto.domain.assignment.dto.AssignmentFileResponse;
-import katecam.luvicookie.ditto.domain.assignment.dto.AssignmentListResponse;
-import katecam.luvicookie.ditto.domain.assignment.dto.AssignmentRequest;
-import katecam.luvicookie.ditto.domain.assignment.dto.AssignmentResponse;
+import katecam.luvicookie.ditto.domain.assignment.dto.request.AssignmentCreateResponse;
+import katecam.luvicookie.ditto.domain.assignment.dto.response.AssignmentFileResponse;
+import katecam.luvicookie.ditto.domain.assignment.dto.response.AssignmentListResponse;
+import katecam.luvicookie.ditto.domain.assignment.dto.request.AssignmentRequest;
+import katecam.luvicookie.ditto.domain.assignment.dto.response.AssignmentResponse;
 import katecam.luvicookie.ditto.domain.file.application.AwsFileService;
 import katecam.luvicookie.ditto.domain.login.annotation.LoginUser;
 import katecam.luvicookie.ditto.domain.member.domain.Member;

@@ -1,7 +1,6 @@
 package katecam.luvicookie.ditto.domain.member.domain;
 
 import jakarta.persistence.*;
-import katecam.luvicookie.ditto.domain.member.dto.memberDTO;
 import lombok.*;
 
 @Table(name = "member")

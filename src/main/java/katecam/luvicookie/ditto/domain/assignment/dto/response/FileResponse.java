@@ -1,16 +1,15 @@
-package katecam.luvicookie.ditto.domain.assignment.dto;
+package katecam.luvicookie.ditto.domain.assignment.dto.response;
 
 import katecam.luvicookie.ditto.domain.assignment.domain.AssignmentFile;
 import lombok.Builder;
 import lombok.Getter;
 
 @Builder
-@Getter
-public class FileResponse {
-    public Integer id;
-    public String fileName;
-    public String fileUrl;
-
+public record FileResponse (
+        Integer id,
+        String fileName,
+        String fileUrl
+){
     public static FileResponse from(AssignmentFile assignmentFile){
         return FileResponse.builder()
                 .id(assignmentFile.getId())

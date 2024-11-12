@@ -4,7 +4,12 @@ import katecam.luvicookie.ditto.domain.assignment.dao.AssignmentFileRepository;
 import katecam.luvicookie.ditto.domain.assignment.dao.AssignmentRepository;
 import katecam.luvicookie.ditto.domain.assignment.domain.Assignment;
 import katecam.luvicookie.ditto.domain.assignment.domain.AssignmentFile;
-import katecam.luvicookie.ditto.domain.assignment.dto.*;
+import katecam.luvicookie.ditto.domain.assignment.dto.request.AssignmentCreateResponse;
+import katecam.luvicookie.ditto.domain.assignment.dto.request.AssignmentRequest;
+import katecam.luvicookie.ditto.domain.assignment.dto.response.AssignmentFileResponse;
+import katecam.luvicookie.ditto.domain.assignment.dto.response.AssignmentListResponse;
+import katecam.luvicookie.ditto.domain.assignment.dto.response.AssignmentResponse;
+import katecam.luvicookie.ditto.domain.assignment.dto.response.FileResponse;
 import katecam.luvicookie.ditto.domain.file.application.AwsFileService;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.study.dao.StudyRepository;
@@ -88,7 +93,7 @@ public class AssignmentService {
         Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(() -> new GlobalException(ErrorCode.ASSIGNMENT_NOT_FOUND));
         FileResponse fileResponse = awsFileService.saveAssignment(file);
 
-        AssignmentFile assignmentFile = new AssignmentFile(fileResponse.getFileName(), assignment, member, fileResponse.getFileUrl());
+        AssignmentFile assignmentFile = new AssignmentFile(fileResponse.fileName(), assignment, member, fileResponse.fileUrl());
         assignmentFileRepository.save(assignmentFile);
         return AssignmentFileResponse.from(assignmentFile);
     }
