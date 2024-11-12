@@ -1,5 +1,6 @@
 package katecam.luvicookie.ditto.domain.member.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import lombok.Builder;
 
@@ -11,6 +12,7 @@ public record MemberResponse(
         String contact,
         String nickname,
         String description,
+        @JsonProperty("id")
         String profileImage
 ){
     public static MemberResponse from(Member member) {
