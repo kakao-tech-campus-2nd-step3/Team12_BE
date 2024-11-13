@@ -96,12 +96,12 @@ public class AssignmentController {
     }
 
     //현재 과제에 제출한 파일 목록
-    @GetMapping("/files/{assignmentId}")
+    @GetMapping("/files/{assignmentId}/{memberId}")
     public ResponseEntity<AssignmentFileResponse> getAssignmentFiles(
-            @LoginUser Member member,
-            @PathVariable Integer assignmentId
+            @PathVariable Integer assignmentId,
+            @PathVariable Integer memberId
     ){
-        AssignmentFileResponse files = assignmentService.getAssignmentFiles(assignmentId, member);
+        AssignmentFileResponse files = assignmentService.getAssignmentFiles(assignmentId, memberId);
         return ResponseEntity.ok(files);
     }
 
