@@ -6,11 +6,11 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.UUID;
+import org.hibernate.annotations.DynamicInsert;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicInsert
 @Entity
 @Table(name = "study")
 public class Study extends BaseTimeEntity {
@@ -41,7 +41,7 @@ public class Study extends BaseTimeEntity {
     @Column(name = "profile_image", nullable = false, length = MAX_STUDY_PROFILE_IMAGE_LENGTH)
     private String profileImage;
 
-    @Column(name = "invite_token", nullable = true, length = MAX_STUDY_INVITE_TOKEN_LENGTH)
+    @Column(name = "invite_token", insertable = false, updatable = false)
     private String inviteToken;
 
     @Builder
@@ -51,7 +51,6 @@ public class Study extends BaseTimeEntity {
         this.isOpen = isOpen;
         this.topic = topic;
         this.profileImage = profileImage;
-        this.inviteToken = UUID.randomUUID().toString().replace("-", "");
     }
 
     public void update(Study study) {
