@@ -112,31 +112,33 @@ public class AssignmentService {
     }
 
     public double getSubmissionRate(Integer studyId){
-        //과제 마감 기한에 스터디에 있었는지 체크 && 해당 과제에 제출한 파일이 있는지 체크
         Study study = studyRepository.findById(studyId).orElseThrow(() -> new GlobalException(ErrorCode.STUDY_NOT_FOUND));
         List<Assignment> allByStudy = assignmentRepository.findAllByStudy(study);
         List<StudyMemberResponse> memberList = studyMemberService.getStudyMemberList(studyId);
 
         double totalSubmissionRate = 0.0;
 
+        DateTimeFormatter format1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
         for (StudyMemberResponse memberResponse : memberList) {
-            DateTimeFormatter format1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             LocalDateTime joinedAt = LocalDateTime.parse(memberResponse.joinedAt(), format1);
-            int totalAssignment = 0;
-            int submitCount = 0;
-            for (Assignment assignment : allByStudy) {
-                LocalDateTime deadline = assignment.getDeadline();
-                if(joinedAt.isBefore(deadline)){
-                    totalAssignment ++;
-                    if(assignmentFileRepository.existsByAssignmentAndMemberId(assignment, memberResponse.member().id())){
-                        submitCount ++;
-                    }
-                }
-            }
-            totalSubmissionRate += (double) submitCount / (double) totalAssignment;
+
+            long totalAssignment = allByStudy.stream()
+                    .filter(assignment -> joinedAt.isBefore(assignment.getDeadline()))
+                    .count();
+
+            long submitCount = allByStudy.stream()
+                    .filter(assignment -> joinedAt.isBefore(assignment.getDeadline()))
+                    .filter(assignment -> assignmentFileRepository.existsByAssignmentAndMemberId(assignment, memberResponse.member().id()))
+                    .count();
+
+            if (totalAssignment > 0) {
+                totalSubmissionRate += (double) submitCount / (double) totalAssignment;
         }
+
         return totalSubmissionRate / memberList.size();
     }
+
 
     public Integer getTotalAssignmentCount(Integer studyId){
         Study study = studyRepository.findById(studyId).orElseThrow(() -> new GlobalException(ErrorCode.STUDY_NOT_FOUND));

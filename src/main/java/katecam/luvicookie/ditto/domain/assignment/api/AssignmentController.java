@@ -122,12 +122,4 @@ public class AssignmentController {
         return assignmentService.download(fileId);
     }
 
-    @GetMapping("files/rate")
-    public ResponseEntity<Void> getRate(){
-        log.info(String.valueOf(assignmentService.getSubmissionRate(11)));
-        log.info(String.valueOf(assignmentService.getTotalAssignmentCount(11)));
-        return ResponseEntity.noContent()
-                .build();
-    }
-
 }
