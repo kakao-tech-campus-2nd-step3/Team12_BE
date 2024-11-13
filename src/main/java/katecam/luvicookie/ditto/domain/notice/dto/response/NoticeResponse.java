@@ -1,5 +1,6 @@
 package katecam.luvicookie.ditto.domain.notice.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import katecam.luvicookie.ditto.domain.notice.domain.Notice;
 import lombok.Builder;
 
@@ -9,8 +10,9 @@ import java.time.format.DateTimeFormatter;
 public record NoticeResponse (
         Integer id,
         String title,
-        String nickName,
+        String nickname,
         String content,
+        @JsonProperty("created_at")
         String createdAt
 ){
     public static NoticeResponse from(Notice notice) {
@@ -19,7 +21,7 @@ public record NoticeResponse (
                 .title(notice.getTitle())
                 .content(notice.getContent())
                 .createdAt(notice.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
-                .nickName(notice.getMember().getNickname())
+                .nickname(notice.getMember().getNickname())
                 .build();
 
     }

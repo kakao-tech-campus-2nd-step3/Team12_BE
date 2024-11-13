@@ -1,5 +1,6 @@
 package katecam.luvicookie.ditto.domain.assignment.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import katecam.luvicookie.ditto.domain.assignment.domain.Assignment;
 import lombok.Builder;
 
@@ -10,7 +11,9 @@ public record AssignmentResponse (
         Integer id,
         String title,
         String content,
+        @JsonProperty("study_id")
         Integer studyId,
+        @JsonProperty("created_at")
         String createdAt,
         String deadline
 ){
