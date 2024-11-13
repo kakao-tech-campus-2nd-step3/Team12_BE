@@ -11,6 +11,7 @@ import katecam.luvicookie.ditto.domain.assignment.dto.response.AssignmentListRes
 import katecam.luvicookie.ditto.domain.assignment.dto.response.AssignmentResponse;
 import katecam.luvicookie.ditto.domain.assignment.dto.response.FileResponse;
 import katecam.luvicookie.ditto.domain.file.application.AwsFileService;
+import katecam.luvicookie.ditto.domain.member.application.MemberService;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.study.dao.StudyRepository;
 import katecam.luvicookie.ditto.domain.study.domain.Study;
@@ -38,6 +39,7 @@ public class AssignmentService {
     private final AssignmentFileRepository assignmentFileRepository;
     private final AwsFileService awsFileService;
     private final StudyMemberService studyMemberService;
+    private final MemberService memberService;
 
     @Transactional
     public AssignmentCreateResponse create(AssignmentRequest assignmentRequest, Integer studyId, Member member) {
@@ -80,9 +82,10 @@ public class AssignmentService {
         return AssignmentResponse.from(assignment);
     }
 
-    public AssignmentFileResponse getAssignmentFiles(Integer assignmentId, Member member){
+    public AssignmentFileResponse getAssignmentFiles(Integer assignmentId, Integer memberId){
         Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(() -> new GlobalException(ErrorCode.ASSIGNMENT_NOT_FOUND));
-        List<AssignmentFile> files = assignmentFileRepository.findAllByAssignmentAndMember(assignment, member);
+        Member searchMember = memberService.findMemberById(memberId);
+        List<AssignmentFile> files = assignmentFileRepository.findAllByAssignmentAndMember(assignment, searchMember);
         return AssignmentFileResponse.from(files);
     }
 
