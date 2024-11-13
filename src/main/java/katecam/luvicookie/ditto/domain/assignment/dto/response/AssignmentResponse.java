@@ -11,6 +11,7 @@ public record AssignmentResponse (
         Integer id,
         String title,
         String content,
+        @JsonProperty("study_id")
         Integer studyId,
         @JsonProperty("created_at")
         String createdAt,
