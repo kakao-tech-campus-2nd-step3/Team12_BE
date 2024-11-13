@@ -4,18 +4,15 @@ import katecam.luvicookie.ditto.domain.assignment.dao.AssignmentFileRepository;
 import katecam.luvicookie.ditto.domain.assignment.dao.AssignmentRepository;
 import katecam.luvicookie.ditto.domain.assignment.domain.Assignment;
 import katecam.luvicookie.ditto.domain.assignment.domain.AssignmentFile;
-import katecam.luvicookie.ditto.domain.assignment.dto.response.AssignmentCreateResponse;
+import katecam.luvicookie.ditto.domain.assignment.dto.response.*;
 import katecam.luvicookie.ditto.domain.assignment.dto.request.AssignmentRequest;
-import katecam.luvicookie.ditto.domain.assignment.dto.response.AssignmentFileResponse;
-import katecam.luvicookie.ditto.domain.assignment.dto.response.AssignmentListResponse;
-import katecam.luvicookie.ditto.domain.assignment.dto.response.AssignmentResponse;
-import katecam.luvicookie.ditto.domain.assignment.dto.response.FileResponse;
 import katecam.luvicookie.ditto.domain.file.application.AwsFileService;
 import katecam.luvicookie.ditto.domain.member.application.MemberService;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.study.dao.StudyRepository;
 import katecam.luvicookie.ditto.domain.study.domain.Study;
 import katecam.luvicookie.ditto.domain.studymember.application.StudyMemberService;
+import katecam.luvicookie.ditto.domain.studymember.dto.response.StudyMemberResponse;
 import katecam.luvicookie.ditto.global.error.ErrorCode;
 import katecam.luvicookie.ditto.global.error.GlobalException;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -89,6 +88,12 @@ public class AssignmentService {
         return AssignmentFileResponse.from(files);
     }
 
+    public AssignmentFileListResponse getAllAssignmentFiles(Integer assignmentId, Member member, Pageable pageable){
+        Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(() -> new GlobalException(ErrorCode.ASSIGNMENT_NOT_FOUND));
+        Page<AssignmentFileResponse> fileResponses = assignmentFileRepository.findAllByAssignment(pageable, assignment).map(AssignmentFileResponse::from);
+        return AssignmentFileListResponse.from(fileResponses);
+    }
+
     @Transactional
     public AssignmentFileResponse uploadAssignments(Member member, Integer assignmentId, MultipartFile file) throws IOException {
 
@@ -104,5 +109,39 @@ public class AssignmentService {
         AssignmentFile assignmentFile = assignmentFileRepository.findById(fileId).orElseThrow(() -> new GlobalException(ErrorCode.FILE_NOT_FOUND));
         return awsFileService.downloadFile(assignmentFile.getFileName());
     }
+
+    public double getSubmissionRate(Integer studyId){
+        //과제 마감 기한에 스터디에 있었는지 체크 && 해당 과제에 제출한 파일이 있는지 체크
+        Study study = studyRepository.findById(studyId).orElseThrow(() -> new GlobalException(ErrorCode.STUDY_NOT_FOUND));
+        List<Assignment> allByStudy = assignmentRepository.findAllByStudy(study);
+        List<StudyMemberResponse> memberList = studyMemberService.getStudyMemberList(studyId);
+
+        double totalSubmissionRate = 0.0;
+
+        for (StudyMemberResponse memberResponse : memberList) {
+            DateTimeFormatter format1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            LocalDateTime joinedAt = LocalDateTime.parse(memberResponse.joinedAt(), format1);
+            int totalAssignment = 0;
+            int submitCount = 0;
+            for (Assignment assignment : allByStudy) {
+                LocalDateTime deadline = assignment.getDeadline();
+                if(joinedAt.isBefore(deadline)){
+                    totalAssignment ++;
+                    if(assignmentFileRepository.existsByAssignmentAndMemberId(assignment, memberResponse.member().id())){
+                        submitCount ++;
+                    }
+                }
+            }
+            totalSubmissionRate += (double) submitCount / (double) totalAssignment;
+        }
+        return totalSubmissionRate / memberList.size();
+    }
+
+    public Integer getTotalAssignmentCount(Integer studyId){
+        Study study = studyRepository.findById(studyId).orElseThrow(() -> new GlobalException(ErrorCode.STUDY_NOT_FOUND));
+        List<Assignment> allByStudy = assignmentRepository.findAllByStudy(study);
+        return allByStudy.size();
+    }
+
 
 }

@@ -1,15 +1,14 @@
 package katecam.luvicookie.ditto.domain.assignment.api;
 
 import katecam.luvicookie.ditto.domain.assignment.application.AssignmentService;
-import katecam.luvicookie.ditto.domain.assignment.dto.response.AssignmentCreateResponse;
-import katecam.luvicookie.ditto.domain.assignment.dto.response.AssignmentFileResponse;
-import katecam.luvicookie.ditto.domain.assignment.dto.response.AssignmentListResponse;
+import katecam.luvicookie.ditto.domain.assignment.dto.response.*;
 import katecam.luvicookie.ditto.domain.assignment.dto.request.AssignmentRequest;
-import katecam.luvicookie.ditto.domain.assignment.dto.response.AssignmentResponse;
 import katecam.luvicookie.ditto.domain.file.application.AwsFileService;
 import katecam.luvicookie.ditto.domain.login.annotation.LoginUser;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/assignments")
@@ -105,11 +105,29 @@ public class AssignmentController {
         return ResponseEntity.ok(files);
     }
 
+    @GetMapping("/files/{assignmentId}")
+    public ResponseEntity<AssignmentFileListResponse> getAllAssignmentFiles(
+            @PathVariable Integer assignmentId,
+            @LoginUser Member member,
+            @PageableDefault Pageable pageable
+    ){
+        AssignmentFileListResponse files = assignmentService.getAllAssignmentFiles(assignmentId, member, pageable);
+        return ResponseEntity.ok(files);
+    }
+
     //다운로드
     @GetMapping("/files/download/{fileId}")
     public ResponseEntity<byte[]> downloadAssignment(
             @PathVariable Integer fileId) throws IOException {
         return assignmentService.download(fileId);
+    }
+
+    @GetMapping("files/rate")
+    public ResponseEntity<Void> getRate(){
+        log.info(String.valueOf(assignmentService.getSubmissionRate(11)));
+        log.info(String.valueOf(assignmentService.getTotalAssignmentCount(11)));
+        return ResponseEntity.noContent()
+                .build();
     }
 
 }
