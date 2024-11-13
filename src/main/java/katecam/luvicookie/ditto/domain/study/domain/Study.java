@@ -1,16 +1,13 @@
 package katecam.luvicookie.ditto.domain.study.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import katecam.luvicookie.ditto.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.UUID;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -19,8 +16,8 @@ import lombok.NoArgsConstructor;
 public class Study extends BaseTimeEntity {
 
     public static final int MAX_STUDY_NAME_LENGTH = 127;
-    private static final int MAX_STUDY_DESCRIPTION_LENGTH = 255;
     public static final int MAX_STUDY_TOPIC_LENGTH = 25;
+    private static final int MAX_STUDY_DESCRIPTION_LENGTH = 255;
     private static final int MAX_STUDY_PROFILE_IMAGE_LENGTH = 255;
     private static final int MAX_STUDY_INVITE_TOKEN_LENGTH = 48;
 
@@ -54,6 +51,7 @@ public class Study extends BaseTimeEntity {
         this.isOpen = isOpen;
         this.topic = topic;
         this.profileImage = profileImage;
+        this.inviteToken = UUID.randomUUID().toString().replace("-", "");
     }
 
     public void update(Study study) {
