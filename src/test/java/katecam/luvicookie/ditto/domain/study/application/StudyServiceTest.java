@@ -16,6 +16,7 @@ import katecam.luvicookie.ditto.domain.studymember.domain.StudyMemberRole;
 import katecam.luvicookie.ditto.global.error.ErrorCode;
 import katecam.luvicookie.ditto.global.error.GlobalException;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -41,6 +42,7 @@ import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("스터디 서비스 테스트")
 class StudyServiceTest {
 
     @Mock
@@ -58,270 +60,285 @@ class StudyServiceTest {
     @InjectMocks
     private StudyService studyService;
 
-    @Test
-    @DisplayName("스터디 목록 페이지 조회 성공")
-    void getStudyListSuccess() {
-        Study study1 = Study.builder()
-                .name("테스트 스터디")
-                .topic("테스트 주제")
-                .isOpen(true)
-                .build();
-        study1.initCreatedAt();
+    @Nested
+    @DisplayName("스터디 조회")
+    class getStudy {
+        @Test
+        @DisplayName("스터디 목록 페이지 조회 성공")
+        void getStudyListSuccess() {
+            Study study1 = Study.builder()
+                    .name("테스트 스터디")
+                    .topic("테스트 주제")
+                    .isOpen(true)
+                    .build();
+            study1.initCreatedAt();
 
-        Study study2 = Study.builder()
-                .name("CS 스터디")
-                .topic("CS 주제")
-                .isOpen(true)
-                .build();
-        study2.initCreatedAt();
+            Study study2 = Study.builder()
+                    .name("CS 스터디")
+                    .topic("CS 주제")
+                    .isOpen(true)
+                    .build();
+            study2.initCreatedAt();
 
-        List<Study> studyList = Arrays.asList(study1, study2);
-        Pageable pageable = PageRequest.of(0, 10);
+            List<Study> studyList = Arrays.asList(study1, study2);
+            Pageable pageable = PageRequest.of(0, 10);
+            Page<Study> studies = new PageImpl<>(studyList, pageable, 0);
+            StudyCriteria criteria = StudyCriteria.builder()
+                    .name("스터디")
+                    .topic("주제")
+                    .isOpen(true)
+                    .build();
+            given(studyRepository.findAllByTopicAndNameAndIsOpen(criteria.topic(), criteria.name(), criteria.isOpen(), pageable))
+                    .willReturn(studies);
 
-        Page<Study> studies = new PageImpl<>(studyList, pageable, 0);
-        StudyCriteria criteria = StudyCriteria.builder()
-                .name("스터디")
-                .topic("주제")
-                .isOpen(true)
-                .build();
+            StudyListResponse studyListResponse = studyService.getStudyList(pageable, criteria);
 
-        given(studyRepository.findAllByTopicAndNameAndIsOpen(criteria.topic(), criteria.name(), criteria.isOpen(), pageable))
-                .willReturn(studies);
+            assertThat(studyListResponse).isNotNull();
+            assertThat(studyListResponse.studies().size())
+                    .isEqualTo(studyList.size());
+        }
 
-        StudyListResponse studyListResponse = studyService.getStudyList(pageable, criteria);
+        @Test
+        @DisplayName("스터디 조회 성공")
+        void getStudyByIdSuccess() {
+            Study study = Study.builder()
+                    .name("테스트 스터디")
+                    .topic("테스트 주제")
+                    .isOpen(true)
+                    .build();
+            study.initCreatedAt();
 
-        assertThat(studyListResponse).isNotNull();
-        assertThat(studyListResponse.studies().size())
-                .isEqualTo(studyList.size());
+            Integer studyId = 1;
+
+            given(studyRepository.findById(studyId))
+                    .willReturn(Optional.of(study));
+
+            StudyResponse studyResponse = studyService.getStudy(studyId);
+
+            assertThat(studyResponse).isNotNull();
+            assertThat(studyResponse.name()).isEqualTo(study.getName());
+        }
+
+        @Test
+        @DisplayName("사용자 스터디 조회 성공")
+        void getStudyListOfMemberFail() {
+            Study study1 = Study.builder()
+                    .name("테스트 스터디")
+                    .topic("테스트 주제")
+                    .isOpen(true)
+                    .build();
+            study1.initCreatedAt();
+
+            Study study2 = Study.builder()
+                    .name("CS 스터디")
+                    .topic("CS 주제")
+                    .isOpen(true)
+                    .build();
+            study2.initCreatedAt();
+
+            List<Study> studyList = Arrays.asList(study1, study2);
+
+            StudyMember studyMember1 = StudyMember.builder()
+                    .studyId(1)
+                    .build();
+
+            StudyMember studyMember2 = StudyMember.builder()
+                    .studyId(2)
+                    .build();
+
+            List<StudyMember> studyMemberList = Arrays.asList(studyMember1, studyMember2);
+
+            Integer memberId = 1;
+
+            given(studyMemberRepository.findAllByMember_Id(memberId))
+                    .willReturn(studyMemberList);
+            given(studyRepository.findById(studyMember1.getStudyId()))
+                    .willReturn(Optional.of(study1));
+            given(studyRepository.findById(studyMember2.getStudyId()))
+                    .willReturn(Optional.of(study2));
+
+            List<StudyResponse> studyResponseList = studyService.getStudyListByMemberId(memberId);
+
+            assertThat(studyResponseList).isNotNull();
+            assertThat(studyResponseList.size()).isEqualTo(studyList.size());
+            verify(studyRepository).findById(studyMember1.getStudyId());
+            verify(studyRepository).findById(studyMember2.getStudyId());
+        }
     }
 
-    @Test
-    @DisplayName("스터디 조회 성공")
-    void getStudyByIdSuccess() {
-        Study study = Study.builder()
-                .name("테스트 스터디")
-                .topic("테스트 주제")
-                .isOpen(true)
-                .build();
-        study.initCreatedAt();
+    @Nested
+    @DisplayName("스터디 생성")
+    class createStudy {
+        @Test
+        @DisplayName("스터디 생성 성공")
+        void createStudySuccess() throws IOException {
+            Member member = Member.builder()
+                    .name("스터디 회원")
+                    .build();
 
-        Integer studyId = 1;
+            StudyCreateRequest request = new StudyCreateRequest("스터디", "스터디 설명", true, "스터디 주제");
 
-        given(studyRepository.findById(studyId))
-                .willReturn(Optional.of(study));
+            String imageUrl = "https://test_domain.com/image.jpg";
 
-        StudyResponse studyResponse = studyService.getStudy(studyId);
+            given(awsFileService.saveStudyProfileImage(any()))
+                    .willReturn(imageUrl);
 
-        assertThat(studyResponse).isNotNull();
-        assertThat(studyResponse.name()).isEqualTo(study.getName());
+            assertDoesNotThrow(() -> studyService.create(member, request, null));
+            verify(awsFileService).saveStudyProfileImage(null);
+            verify(studyRepository).save(any());
+            verify(studyMemberService).createStudyMember(any(), eq(member), eq(StudyMemberRole.LEADER), eq(""));
+        }
+
+        @Test
+        @DisplayName("스터디 생성 실패")
+        void createStudyFail() throws IOException {
+            Member member = Member.builder()
+                    .name("스터디 회원")
+                    .build();
+
+            StudyCreateRequest request = new StudyCreateRequest("스터디", "스터디 설명", true, "스터디 주제");
+
+            given(awsFileService.saveStudyProfileImage(any()))
+                    .willThrow(IOException.class);
+
+            assertThatThrownBy(() -> studyService.create(member, request, null))
+                    .isInstanceOf(GlobalException.class)
+                    .hasMessage(ErrorCode.FILE_UPLOAD_FAILED.getMessage());
+            verify(awsFileService).saveStudyProfileImage(null);
+        }
     }
 
-    @Test
-    @DisplayName("사용자 스터디 조회 성공")
-    void getStudyListOfMemberFail() {
-        Study study1 = Study.builder()
-                .name("테스트 스터디")
-                .topic("테스트 주제")
-                .isOpen(true)
-                .build();
-        study1.initCreatedAt();
+    @Nested
+    @DisplayName("스터디 삭제")
+    class deleteStudy {
+        @Test
+        @DisplayName("스터디 삭제 성공")
+        void deleteStudySuccess() {
+            Member member = Member.builder()
+                    .name("스터디 회원")
+                    .build();
 
-        Study study2 = Study.builder()
-                .name("CS 스터디")
-                .topic("CS 주제")
-                .isOpen(true)
-                .build();
-        study2.initCreatedAt();
+            Integer studyId = 1;
 
-        List<Study> studyList = Arrays.asList(study1, study2);
+            assertDoesNotThrow(() -> studyService.delete(member, studyId));
+            verify(studyMemberService).validateStudyLeader(studyId, member);
+            verify(studyMemberService).deleteAllStudyMember(studyId);
+            verify(studyRepository).deleteById(studyId);
+        }
 
-        StudyMember studyMember1 = StudyMember.builder()
-                .studyId(1)
-                .build();
+        @Test
+        @DisplayName("스터디 삭제 실패")
+        void deleteStudyFail() {
+            Member member = Member.builder()
+                    .name("스터디 회원")
+                    .build();
 
-        StudyMember studyMember2 = StudyMember.builder()
-                .studyId(2)
-                .build();
+            Integer studyId = 1;
 
-        List<StudyMember> studyMemberList = Arrays.asList(studyMember1, studyMember2);
+            willThrow(new GlobalException(ErrorCode.NOT_STUDY_LEADER))
+                    .given(studyMemberService).validateStudyLeader(studyId, member);
 
-        Integer memberId = 1;
-
-        given(studyMemberRepository.findAllByMember_Id(memberId))
-                .willReturn(studyMemberList);
-        given(studyRepository.findById(studyMember1.getStudyId()))
-                .willReturn(Optional.of(study1));
-        given(studyRepository.findById(studyMember2.getStudyId()))
-                .willReturn(Optional.of(study2));
-
-        List<StudyResponse> studyResponseList = studyService.getStudyListByMemberId(memberId);
-
-        assertThat(studyResponseList).isNotNull();
-        assertThat(studyResponseList.size()).isEqualTo(studyList.size());
-        verify(studyRepository).findById(studyMember1.getStudyId());
-        verify(studyRepository).findById(studyMember2.getStudyId());
+            assertThatThrownBy(() -> studyService.delete(member, studyId))
+                    .isInstanceOf(GlobalException.class)
+                    .hasMessage(ErrorCode.NOT_STUDY_LEADER.getMessage());
+            verify(studyMemberService).validateStudyLeader(studyId, member);
+        }
     }
 
-    @Test
-    @DisplayName("스터디 생성 성공")
-    void createStudySuccess() throws IOException {
-        Member member = Member.builder()
-                .name("스터디 회원")
-                .build();
+    @Nested
+    @DisplayName("스터디 수정")
+    class updateStudy {
+        @Test
+        @DisplayName("스터디 정보 수정 성공")
+        void updateStudySuccess() {
+            Member member = Member.builder()
+                    .name("스터디 회원")
+                    .build();
 
-        StudyCreateRequest request = new StudyCreateRequest("스터디", "스터디 설명", true, "스터디 주제");
+            Integer studyId = 1;
 
-        String imageUrl = "https://test_domain.com/image.jpg";
+            StudyUpdateRequest request = new StudyUpdateRequest("스터디", "스터디 설명", true, "스터디 주제");
 
-        given(awsFileService.saveStudyProfileImage(any()))
-                .willReturn(imageUrl);
+            Study study = Study.builder()
+                    .name("테스트 스터디")
+                    .topic("테스트 주제")
+                    .isOpen(true)
+                    .build();
 
-        assertDoesNotThrow(() -> studyService.create(member, request, null));
-        verify(awsFileService).saveStudyProfileImage(null);
-        verify(studyRepository).save(any());
-        verify(studyMemberService).createStudyMember(any(), eq(member), eq(StudyMemberRole.LEADER), eq(""));
-    }
+            given(studyRepository.findById(studyId))
+                    .willReturn(Optional.of(study));
 
-    @Test
-    @DisplayName("스터디 생성 실패")
-    void createStudyFail() throws IOException {
-        Member member = Member.builder()
-                .name("스터디 회원")
-                .build();
+            assertDoesNotThrow(() -> studyService.update(member, studyId, request));
+            verify(studyMemberService).validateStudyLeader(studyId, member);
+            verify(studyRepository).findById(studyId);
+        }
 
-        StudyCreateRequest request = new StudyCreateRequest("스터디", "스터디 설명", true, "스터디 주제");
+        @Test
+        @DisplayName("스터디 정보 수정 실패")
+        void updateStudyFail() {
+            Member member = Member.builder()
+                    .name("스터디 회원")
+                    .build();
 
-        given(awsFileService.saveStudyProfileImage(any()))
-                .willThrow(IOException.class);
+            Integer studyId = 1;
 
-        assertThatThrownBy(() -> studyService.create(member, request, null))
-                .isInstanceOf(GlobalException.class)
-                .hasMessage(ErrorCode.FILE_UPLOAD_FAILED.getMessage());
-        verify(awsFileService).saveStudyProfileImage(null);
-    }
+            StudyUpdateRequest request = new StudyUpdateRequest("스터디", "스터디 설명", true, "스터디 주제");
 
-    @Test
-    @DisplayName("스터디 삭제 성공")
-    void deleteStudySuccess() {
-        Member member = Member.builder()
-                .name("스터디 회원")
-                .build();
+            willThrow(new GlobalException(ErrorCode.NOT_STUDY_LEADER))
+                    .given(studyMemberService).validateStudyLeader(studyId, member);
 
-        Integer studyId = 1;
+            assertThatThrownBy(() -> studyService.update(member, studyId, request))
+                    .isInstanceOf(GlobalException.class)
+                    .hasMessage(ErrorCode.NOT_STUDY_LEADER.getMessage());
+            verify(studyMemberService).validateStudyLeader(studyId, member);
+        }
 
-        assertDoesNotThrow(() -> studyService.delete(member, studyId));
-        verify(studyMemberService).validateStudyLeader(studyId, member);
-        verify(studyRepository).deleteById(studyId);
-    }
+        @Test
+        @DisplayName("스터디 프로필 이미지 수정 성공")
+        void updateProfileImageSuccess() throws IOException {
+            Member member = Member.builder()
+                    .name("스터디 회원")
+                    .build();
 
-    @Test
-    @DisplayName("스터디 삭제 실패")
-    void deleteStudyFail() {
-        Member member = Member.builder()
-                .name("스터디 회원")
-                .build();
+            Integer studyId = 1;
 
-        Integer studyId = 1;
+            Study study = Study.builder()
+                    .name("테스트 스터디")
+                    .topic("테스트 주제")
+                    .isOpen(true)
+                    .build();
 
-        willThrow(new GlobalException(ErrorCode.NOT_STUDY_LEADER))
-                .given(studyMemberService).validateStudyLeader(studyId, member);
+            given(studyRepository.findById(studyId))
+                    .willReturn(Optional.of(study));
 
-        assertThatThrownBy(() -> studyService.delete(member, studyId))
-                .isInstanceOf(GlobalException.class)
-                .hasMessage(ErrorCode.NOT_STUDY_LEADER.getMessage());
-        verify(studyMemberService).validateStudyLeader(studyId, member);
-    }
+            String imageUrl = "https://test_domain.com/image.jpg";
 
-    @Test
-    @DisplayName("스터디 정보 수정 성공")
-    void updateStudySuccess() {
-        Member member = Member.builder()
-                .name("스터디 회원")
-                .build();
+            given(awsFileService.saveStudyProfileImage(any()))
+                    .willReturn(imageUrl);
 
-        Integer studyId = 1;
+            assertDoesNotThrow(() -> studyService.updateProfileImage(member, studyId, null));
+            verify(studyMemberService).validateStudyLeader(studyId, member);
+            verify(studyRepository).findById(studyId);
+            verify(awsFileService).saveStudyProfileImage(null);
+        }
 
-        StudyUpdateRequest request = new StudyUpdateRequest("스터디", "스터디 설명", true, "스터디 주제");
+        @Test
+        @DisplayName("스터디 프로필 이미지 수정 실패")
+        void updateProfileImageFail() {
+            Member member = Member.builder()
+                    .name("스터디 회원")
+                    .build();
 
-        Study study = Study.builder()
-                .name("테스트 스터디")
-                .topic("테스트 주제")
-                .isOpen(true)
-                .build();
+            Integer studyId = 1;
 
-        given(studyRepository.findById(studyId))
-                .willReturn(Optional.of(study));
+            willThrow(new GlobalException(ErrorCode.NOT_STUDY_LEADER))
+                    .given(studyMemberService).validateStudyLeader(studyId, member);
 
-        assertDoesNotThrow(() -> studyService.update(member, studyId, request));
-        verify(studyMemberService).validateStudyLeader(studyId, member);
-        verify(studyRepository).findById(studyId);
-    }
-
-    @Test
-    @DisplayName("스터디 정보 수정 실패")
-    void updateStudyFail() {
-        Member member = Member.builder()
-                .name("스터디 회원")
-                .build();
-
-        Integer studyId = 1;
-
-        StudyUpdateRequest request = new StudyUpdateRequest("스터디", "스터디 설명", true, "스터디 주제");
-
-        willThrow(new GlobalException(ErrorCode.NOT_STUDY_LEADER))
-                .given(studyMemberService).validateStudyLeader(studyId, member);
-
-        assertThatThrownBy(() -> studyService.update(member, studyId, request))
-                .isInstanceOf(GlobalException.class)
-                .hasMessage(ErrorCode.NOT_STUDY_LEADER.getMessage());
-        verify(studyMemberService).validateStudyLeader(studyId, member);
-    }
-
-    @Test
-    @DisplayName("스터디 프로필 이미지 수정 성공")
-    void updateProfileImageSuccess() throws IOException {
-        Member member = Member.builder()
-                .name("스터디 회원")
-                .build();
-
-        Integer studyId = 1;
-
-        Study study = Study.builder()
-                .name("테스트 스터디")
-                .topic("테스트 주제")
-                .isOpen(true)
-                .build();
-
-        given(studyRepository.findById(studyId))
-                .willReturn(Optional.of(study));
-
-        String imageUrl = "https://test_domain.com/image.jpg";
-
-        given(awsFileService.saveStudyProfileImage(any()))
-                .willReturn(imageUrl);
-
-        assertDoesNotThrow(() -> studyService.updateProfileImage(member, studyId, null));
-        verify(studyMemberService).validateStudyLeader(studyId, member);
-        verify(studyRepository).findById(studyId);
-        verify(awsFileService).saveStudyProfileImage(null);
-    }
-
-    @Test
-    @DisplayName("스터디 프로필 이미지 수정 실패")
-    void updateProfileImageFail() {
-        Member member = Member.builder()
-                .name("스터디 회원")
-                .build();
-
-        Integer studyId = 1;
-
-        willThrow(new GlobalException(ErrorCode.NOT_STUDY_LEADER))
-                .given(studyMemberService).validateStudyLeader(studyId, member);
-
-        assertThatThrownBy(() -> studyService.updateProfileImage(member, studyId, null))
-                .isInstanceOf(GlobalException.class)
-                .hasMessage(ErrorCode.NOT_STUDY_LEADER.getMessage());
-        verify(studyMemberService).validateStudyLeader(studyId, member);
+            assertThatThrownBy(() -> studyService.updateProfileImage(member, studyId, null))
+                    .isInstanceOf(GlobalException.class)
+                    .hasMessage(ErrorCode.NOT_STUDY_LEADER.getMessage());
+            verify(studyMemberService).validateStudyLeader(studyId, member);
+        }
     }
 
 }
