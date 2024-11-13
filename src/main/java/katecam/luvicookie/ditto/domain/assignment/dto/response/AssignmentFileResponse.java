@@ -1,5 +1,6 @@
 package katecam.luvicookie.ditto.domain.assignment.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import katecam.luvicookie.ditto.domain.assignment.domain.AssignmentFile;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import lombok.Builder;
@@ -10,6 +11,7 @@ import java.util.List;
 @Builder
 public record AssignmentFileResponse (
     List<FileResponse> files,
+    @JsonProperty("member_id")
     Integer memberId,
     String nickname
 ){
