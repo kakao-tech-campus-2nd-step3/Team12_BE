@@ -62,4 +62,9 @@ public class AttendanceDate extends BaseTimeEntity {
         return !(currentTime.isAfter(startTime) && currentTime.isBefore(deadline));
     }
 
+    public void update(LocalDateTime startTime, LocalDateTime deadline) {
+        this.startTime = startTime;
+        this.deadline = deadline;
+    }
+
 }
