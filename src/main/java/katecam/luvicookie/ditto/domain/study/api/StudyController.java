@@ -5,7 +5,8 @@ import katecam.luvicookie.ditto.domain.login.annotation.LoginUser;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.study.application.StudyService;
 import katecam.luvicookie.ditto.domain.study.dto.request.StudyCriteria;
-import katecam.luvicookie.ditto.domain.study.dto.request.StudyRequest;
+import katecam.luvicookie.ditto.domain.study.dto.request.StudyCreateRequest;
+import katecam.luvicookie.ditto.domain.study.dto.request.StudyUpdateRequest;
 import katecam.luvicookie.ditto.domain.study.dto.response.StudyListResponse;
 import katecam.luvicookie.ditto.domain.study.dto.response.StudyResponse;
 import lombok.RequiredArgsConstructor;
@@ -42,14 +43,16 @@ public class StudyController {
     }
 
     @GetMapping("/{studyId}")
-    public ResponseEntity<StudyResponse> getStudy(@PathVariable Integer studyId) {
+    public ResponseEntity<StudyResponse> getStudy(
+            @PathVariable Integer studyId
+    ) {
         return ResponseEntity.ok(studyService.getStudy(studyId));
     }
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Void> createStudy(
             @LoginUser Member member,
-            @RequestPart @Valid StudyRequest request,
+            @RequestPart @Valid StudyCreateRequest request,
             @RequestPart MultipartFile profileImage
     ) {
         studyService.create(member, request, profileImage);
@@ -71,7 +74,7 @@ public class StudyController {
     public ResponseEntity<Void> updateStudy(
             @LoginUser Member member,
             @PathVariable Integer studyId,
-            @RequestBody @Valid StudyRequest request
+            @RequestBody @Valid StudyUpdateRequest request
     ) {
         studyService.update(member, studyId, request);
         return ResponseEntity.noContent()
