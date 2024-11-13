@@ -6,6 +6,7 @@ import katecam.luvicookie.ditto.domain.attendance.domain.Attendance;
 import katecam.luvicookie.ditto.domain.attendance.domain.AttendanceDate;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceCodeResponse;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceDateListResponse;
+import katecam.luvicookie.ditto.domain.member.dao.MemberRepository;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.study.dao.StudyRepository;
 import katecam.luvicookie.ditto.domain.study.domain.Study;
@@ -52,6 +53,9 @@ class AttendanceServiceTest {
 
     @Mock
     private StudyMemberService studyMemberService;
+
+    @Mock
+    private MemberRepository memberRepository;
 
     @InjectMocks
     private AttendanceService attendanceService;
