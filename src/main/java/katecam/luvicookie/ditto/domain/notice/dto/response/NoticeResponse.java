@@ -10,8 +10,7 @@ import java.time.format.DateTimeFormatter;
 public record NoticeResponse (
         Integer id,
         String title,
-        @JsonProperty("nick_name")
-        String nickName,
+        String nickname,
         String content,
         @JsonProperty("created_at")
         String createdAt
@@ -22,7 +21,7 @@ public record NoticeResponse (
                 .title(notice.getTitle())
                 .content(notice.getContent())
                 .createdAt(notice.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
-                .nickName(notice.getMember().getNickname())
+                .nickname(notice.getMember().getNickname())
                 .build();
 
     }
