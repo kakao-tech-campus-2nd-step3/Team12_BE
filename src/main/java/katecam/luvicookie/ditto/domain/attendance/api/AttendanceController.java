@@ -1,6 +1,7 @@
 package katecam.luvicookie.ditto.domain.attendance.api;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import katecam.luvicookie.ditto.domain.attendance.application.AttendanceService;
 import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceCodeRequest;
@@ -89,9 +90,10 @@ public class AttendanceController {
             @RequestParam("studyId") Integer studyId,
             @RequestBody
             @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
-            LocalDateTime attendanceTime
+            @JsonProperty("start_time")
+            LocalDateTime startTime
     ) {
-        attendanceService.deleteAttendanceDate(member, studyId, attendanceTime);
+        attendanceService.deleteAttendanceDate(member, studyId, startTime);
         return ResponseEntity.noContent()
                 .build();
     }

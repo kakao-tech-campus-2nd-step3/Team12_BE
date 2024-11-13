@@ -10,11 +10,19 @@ import java.time.format.DateTimeFormatter;
 public record StudyResponse (
         @JsonProperty("id")
         Integer studyId,
+
         String name,
         String description,
+
+        @JsonProperty("created_at")
         String createdAt,
+
+        @JsonProperty("is_open")
         Boolean isOpen,
+
         String topic,
+
+        @JsonProperty("profile_image")
         String profileImage
 ) {
     public static StudyResponse from(Study study) {
