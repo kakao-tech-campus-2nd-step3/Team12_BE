@@ -190,4 +190,42 @@ public class AttendanceService {
         return AttendanceCodeResponse.from(attendanceDate.getCode());
     }
 
+    public Integer getStudyAttendanceCount(Integer studyId) {
+        List<StudyMember> studyMemberList = studyMemberRepository.findAllByStudyIdAndRoleIn(studyId, Arrays.asList(StudyMemberRole.LEADER, StudyMemberRole.MEMBER));
+        List<AttendanceDate> attendanceDateList = attendanceDateRepository.findAllByStudy_IdOrderByStartTimeAsc(studyId);
+        List<AttendanceDate> studyAttendanceDateList = List.copyOf(attendanceDateList);
+
+        // 스터디 구성원들이 모두 출석한 일자 필터링
+        for (StudyMember studyMember : studyMemberList) {
+            Integer memberId = studyMember.getMember()
+                    .getId();
+
+            List<AttendanceDate> memberAttendanceDateList = attendanceRepository.findAllByMember_IdOrderByIdAsc(memberId)
+                    .stream()
+                    .filter(attendance -> attendanceDateList.contains(attendance.getAttendanceDate()))
+                    .filter(attendance -> studyMember.getJoinedAt()
+                            .isBefore(attendance.getCreatedAt()))
+                    .map(Attendance::getAttendanceDate)
+                    .toList();
+
+            studyAttendanceDateList = studyAttendanceDateList.stream()
+                    .filter(memberAttendanceDateList::contains)
+                    .toList();
+        }
+
+        return studyAttendanceDateList.size();
+    }
+
+    public double getStudyAttendanceRate(Integer studyId) {
+        Integer studyAttendanceCount = getStudyAttendanceCount(studyId);
+        Integer studyAttendanceDateCount = attendanceDateRepository.findAllByStudy_IdOrderByStartTimeAsc(studyId)
+                .size();
+
+        if (studyAttendanceDateCount.equals(0) || studyAttendanceCount.equals(0)) {
+            return 0.0;
+        }
+
+        return (double) studyAttendanceCount / studyAttendanceDateCount;
+    }
+
 }
