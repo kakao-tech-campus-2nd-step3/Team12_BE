@@ -12,7 +12,7 @@ public record MemberResponse(
         String contact,
         String nickname,
         String description,
-        @JsonProperty("id")
+        @JsonProperty("profile_image")
         String profileImage
 ){
     public static MemberResponse from(Member member) {
