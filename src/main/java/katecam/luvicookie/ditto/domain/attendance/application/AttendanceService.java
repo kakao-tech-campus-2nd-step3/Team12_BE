@@ -159,6 +159,8 @@ public class AttendanceService {
     public void createAttendanceDate(Member member, Integer studyId, LocalDateTime startTime, Integer intervalMinutes) {
         studyMemberService.validateStudyLeader(studyId, member);
 
+        validateAttendanceDateTime(startTime);
+
         Study study = studyRepository.findById(studyId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.STUDY_NOT_FOUND));
 
@@ -171,6 +173,25 @@ public class AttendanceService {
                 .build();
 
         attendanceDateRepository.save(attendanceDate);
+    }
+
+    private void validateAttendanceDateTime(LocalDateTime startTime) {
+        boolean isBeforeNow = startTime.isBefore(LocalDateTime.now());
+        if (isBeforeNow) {
+            throw new GlobalException(ErrorCode.INVALID_ATTENDANCE_DATE);
+        }
+    }
+
+    @Transactional
+    public void updateAttendanceDate(Member member, Integer studyId, Integer dateId, LocalDateTime startTime, Integer intervalMinutes) {
+        studyMemberService.validateStudyLeader(studyId, member);
+
+        validateAttendanceDateTime(startTime);
+
+        AttendanceDate attendanceDate = attendanceDateRepository.findById(dateId)
+                .orElseThrow(() -> new GlobalException(ErrorCode.DATE_NOT_FOUND));
+
+        attendanceDate.update(startTime, startTime.plusMinutes(intervalMinutes));
     }
 
     @Transactional

@@ -5,6 +5,7 @@ import katecam.luvicookie.ditto.domain.attendance.application.AttendanceService;
 import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceCodeRequest;
 import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceDateCreateRequest;
 import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceDateDeleteRequest;
+import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceDateUpdateRequest;
 import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceUpdateRequest;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceCodeResponse;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceDateListResponse;
@@ -79,6 +80,17 @@ public class AttendanceController {
             @RequestParam("studyId") Integer studyId
     ) {
         return ResponseEntity.ok(attendanceService.getAttendanceDateList(member, studyId));
+    }
+
+    @PutMapping("/date")
+    public ResponseEntity<Void> updateAttendanceDate(
+            @LoginUser Member member,
+            @RequestParam("studyId") Integer studyId,
+            @RequestBody @Valid AttendanceDateUpdateRequest request
+    ) {
+        attendanceService.updateAttendanceDate(member, studyId, request.dateId(), request.startTime(), request.intervalMinutes());
+        return ResponseEntity.noContent()
+                .build();
     }
 
     @DeleteMapping("/date")
