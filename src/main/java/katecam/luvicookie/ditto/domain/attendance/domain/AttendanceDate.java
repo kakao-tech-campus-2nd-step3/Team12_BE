@@ -15,12 +15,14 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@DynamicInsert
 @Table(name = "attendance_date")
 public class AttendanceDate extends BaseTimeEntity {
 
@@ -41,7 +43,7 @@ public class AttendanceDate extends BaseTimeEntity {
     @Column(name = "deadline", nullable = false)
     private LocalDateTime deadline;
 
-    @Column(name = "code", nullable = false, length = ATTENDANCE_CODE_LENGTH)
+    @Column(name = "code", nullable = false, insertable = false, updatable = false, length = ATTENDANCE_CODE_LENGTH)
     private String code;
 
     @Builder
