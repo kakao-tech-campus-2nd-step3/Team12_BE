@@ -57,7 +57,7 @@ public class AttendanceDate extends BaseTimeEntity {
 
     public boolean isUnableToAttend() {
         LocalDateTime currentTime = LocalDateTime.now();
-        return currentTime.isAfter(startTime) && currentTime.isBefore(deadline);
+        return !(currentTime.isAfter(startTime) && currentTime.isBefore(deadline));
     }
 
 }

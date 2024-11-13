@@ -88,6 +88,7 @@ public class AssignmentService {
         return AssignmentFileResponse.from(files);
     }
 
+
     public AssignmentFileListResponse getAllAssignmentFiles(Integer assignmentId, Member member, Pageable pageable){
         Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(() -> new GlobalException(ErrorCode.ASSIGNMENT_NOT_FOUND));
         Page<AssignmentFileResponse> fileResponses = assignmentFileRepository.findAllByAssignment(pageable, assignment).map(AssignmentFileResponse::from);

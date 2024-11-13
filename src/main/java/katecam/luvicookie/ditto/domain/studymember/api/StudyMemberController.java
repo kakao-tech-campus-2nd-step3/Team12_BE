@@ -39,15 +39,21 @@ public class StudyMemberController {
         return ResponseEntity.ok(memberResponse);
     }
 
+    @DeleteMapping
+    public ResponseEntity<Void> withdrawFromStudy(@LoginUser Member member, @PathVariable Integer studyId) {
+        studyMemberService.deleteStudyMember(studyId, member.getId());
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping("/{memberId}")
-    public ResponseEntity<Void> deleteStudyMembers(@LoginUser Member member, @PathVariable Integer studyId, @PathVariable Integer memberId) {
+    public ResponseEntity<Void> deleteStudyMember(@LoginUser Member member, @PathVariable Integer studyId, @PathVariable Integer memberId) {
         studyMemberService.validateStudyLeader(studyId, member);
         studyMemberService.deleteStudyMember(studyId, memberId);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/apply")
-    public ResponseEntity<List<StudyMemberApplyResponse>> getStudyMemberRequests(@LoginUser Member member, @PathVariable Integer studyId) {
+    public ResponseEntity<List<StudyMemberApplyResponse>> getStudyMemberRequest(@LoginUser Member member, @PathVariable Integer studyId) {
         studyMemberService.validateStudyLeader(studyId, member);
         List<StudyMemberApplyResponse> memberResponseList = studyMemberService.getStudyMemberApplyList(studyId);
         return ResponseEntity.ok(memberResponseList);
