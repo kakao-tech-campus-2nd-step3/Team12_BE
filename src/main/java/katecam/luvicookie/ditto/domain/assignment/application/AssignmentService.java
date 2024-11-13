@@ -4,7 +4,7 @@ import katecam.luvicookie.ditto.domain.assignment.dao.AssignmentFileRepository;
 import katecam.luvicookie.ditto.domain.assignment.dao.AssignmentRepository;
 import katecam.luvicookie.ditto.domain.assignment.domain.Assignment;
 import katecam.luvicookie.ditto.domain.assignment.domain.AssignmentFile;
-import katecam.luvicookie.ditto.domain.assignment.dto.request.AssignmentCreateResponse;
+import katecam.luvicookie.ditto.domain.assignment.dto.response.AssignmentCreateResponse;
 import katecam.luvicookie.ditto.domain.assignment.dto.request.AssignmentRequest;
 import katecam.luvicookie.ditto.domain.assignment.dto.response.AssignmentFileResponse;
 import katecam.luvicookie.ditto.domain.assignment.dto.response.AssignmentListResponse;

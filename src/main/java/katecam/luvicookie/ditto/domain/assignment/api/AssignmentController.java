@@ -1,7 +1,7 @@
 package katecam.luvicookie.ditto.domain.assignment.api;
 
 import katecam.luvicookie.ditto.domain.assignment.application.AssignmentService;
-import katecam.luvicookie.ditto.domain.assignment.dto.request.AssignmentCreateResponse;
+import katecam.luvicookie.ditto.domain.assignment.dto.response.AssignmentCreateResponse;
 import katecam.luvicookie.ditto.domain.assignment.dto.response.AssignmentFileResponse;
 import katecam.luvicookie.ditto.domain.assignment.dto.response.AssignmentListResponse;
 import katecam.luvicookie.ditto.domain.assignment.dto.request.AssignmentRequest;
