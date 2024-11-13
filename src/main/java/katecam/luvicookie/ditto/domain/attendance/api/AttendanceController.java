@@ -1,11 +1,10 @@
 package katecam.luvicookie.ditto.domain.attendance.api;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import katecam.luvicookie.ditto.domain.attendance.application.AttendanceService;
 import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceCodeRequest;
 import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceDateCreateRequest;
+import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceDateDeleteRequest;
 import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceUpdateRequest;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceCodeResponse;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceDateListResponse;
@@ -23,8 +22,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/attendance")
@@ -88,12 +85,9 @@ public class AttendanceController {
     public ResponseEntity<Void> deleteAttendanceDate(
             @LoginUser Member member,
             @RequestParam("studyId") Integer studyId,
-            @RequestBody
-            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
-            @JsonProperty("start_time")
-            LocalDateTime startTime
+            @RequestBody @Valid AttendanceDateDeleteRequest request
     ) {
-        attendanceService.deleteAttendanceDate(member, studyId, startTime);
+        attendanceService.deleteAttendanceDate(member, studyId, request.startTime());
         return ResponseEntity.noContent()
                 .build();
     }
