@@ -134,6 +134,7 @@ public class AssignmentService {
 
             if (totalAssignment > 0) {
                 totalSubmissionRate += (double) submitCount / (double) totalAssignment;
+            }
         }
 
         return totalSubmissionRate / memberList.size();
@@ -145,6 +146,5 @@ public class AssignmentService {
         List<Assignment> allByStudy = assignmentRepository.findAllByStudy(study);
         return allByStudy.size();
     }
-
 
 }
