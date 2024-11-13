@@ -127,6 +127,11 @@ public class AttendanceService {
             return;
         }
 
+        // 출석 여부 확인
+        if (!attendanceRepository.existsByAttendanceDate_IdAndMember_Id(attendanceDate.getId(), memberId)) {
+            throw new GlobalException(ErrorCode.NOT_ATTENDED);
+        }
+
         attendanceRepository.delete(attendance);
     }
 
