@@ -87,9 +87,13 @@ public class AttendanceService {
         List<AttendanceDate> attendanceDateList = attendanceDateRepository.findAllByStudy_IdOrderByStartTimeAsc(studyId);
         Map<Integer, MemberAttendanceResponse> memberAttendances = new HashMap<>();
 
-        // 해당 스터디에 대한 회원 출석 필터링
+        // 스터디원 출석 필터링
+        // 스터디에 참여한 날짜 이후 출석일자만 처리
         for (StudyMember studyMember : studyMemberList) {
-            List<LocalDateTime> memberAttendanceList = attendanceRepository.findAllByMember_IdOrderByIdAsc(memberId)
+            Integer targetMemberId = studyMember.getMember()
+                    .getId();
+
+            List<LocalDateTime> memberAttendanceList = attendanceRepository.findAllByMember_IdOrderByIdAsc(targetMemberId)
                     .stream()
                     .filter(attendance -> attendanceDateList.contains(attendance.getAttendanceDate()))
                     .map(Attendance::getCreatedAt)
@@ -97,9 +101,7 @@ public class AttendanceService {
                             .isBefore(dateTime))
                     .toList();
 
-            Integer foundMemberId = studyMember.getMember()
-                    .getId();
-            memberAttendances.put(foundMemberId, MemberAttendanceResponse.from(attendanceDateList, memberAttendanceList));
+            memberAttendances.put(targetMemberId, MemberAttendanceResponse.from(attendanceDateList, memberAttendanceList));
         }
 
         return AttendanceListResponse.from(attendanceDateList, memberAttendances);

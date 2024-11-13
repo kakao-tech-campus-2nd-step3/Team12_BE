@@ -15,13 +15,13 @@ public record MemberAttendanceResponse(
         Double attendanceRate
 ) {
     public static MemberAttendanceResponse from(List<AttendanceDate> studyAttendanceDateList, List<LocalDateTime> memberAttendanceDateList) {
+        if (studyAttendanceDateList.isEmpty() || memberAttendanceDateList.isEmpty()) {
+            return new MemberAttendanceResponse(List.of(), 0.0);
+        }
+
         List<String> memberAttendanceDateStringList = memberAttendanceDateList.stream()
                 .map(dateTime -> dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
                 .toList();
-
-        if (studyAttendanceDateList.isEmpty()) {
-            return new MemberAttendanceResponse(memberAttendanceDateStringList, 0.0);
-        }
 
         Double attendanceRate = (double) memberAttendanceDateList.size() / studyAttendanceDateList.size();
 
