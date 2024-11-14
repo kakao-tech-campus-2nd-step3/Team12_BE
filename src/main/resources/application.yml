@@ -2,20 +2,23 @@ spring:
   application:
     name: ditto
 
-  profiles:
-    default: local
+  datasource:
+    url: jdbc:postgresql://db.ditto.pnu.app:1004/ditto
+    hikari:
+      maximum-pool-size: 4
+    username: ditto
+    password: kakao2024
 
-  servlet:
-    multipart:
-      max-file-size: 5MB
-      max-request-size: 10MB
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
 
   config:
     import: classpath:/application-secret.yml
 
----
+logging:
+  level:
+    org.apache.coyote.http11.Http11Processor: DEBUG
 
-spring:
-  config:
-    activate:
-      on-profile: local, dev, prod
+
