@@ -8,6 +8,8 @@ import io.jsonwebtoken.security.Keys;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.member.domain.PrincipalDetail;
 import katecam.luvicookie.ditto.domain.member.application.MemberService;
+import katecam.luvicookie.ditto.global.error.ErrorCode;
+import katecam.luvicookie.ditto.global.error.GlobalException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -56,6 +58,7 @@ public class TokenProvider {
     public Authentication getAuthentication(String token) {
         String tokenFromHeader = getTokenFromHeader(token);
         String claims = getClaims(tokenFromHeader);
+        if(claims == null) throw new GlobalException(ErrorCode.UNAUTHORIZED_TOKEN);
         Member member = memberService.findMemberById(Integer.valueOf(claims));
 
         PrincipalDetail principalDetail = new PrincipalDetail(member);

@@ -8,25 +8,26 @@ import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.member.domain.PrincipalDetail;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 
 @Slf4j
 @RequiredArgsConstructor
 public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
+    @Value("${app.redirect.uri}")
+    String uri;
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException {
 
         PrincipalDetail principal = (PrincipalDetail) authentication.getPrincipal();
         Member member = principal.getUser();
-        String uri = getRedirectUri(request.getQueryString());
 
         String accessToken = TokenProvider.generateToken(member, JwtConstants.ACCESS_EXP_TIME_MINUTES);
         String refreshToken = TokenProvider.generateToken(member, JwtConstants.REFRESH_EXP_TIME_MINUTES);
@@ -34,11 +35,11 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         // 최초 로그인인 경우 추가 정보 입력을 위한 회원가입 페이지로 리다이렉트
         if (member.isGuest()) {
 
-            //response.addHeader(JwtConstants.ACCESS, JwtConstants.JWT_TYPE + accessToken);
+            response.addHeader(JwtConstants.ACCESS, JwtConstants.JWT_TYPE + accessToken);
             response.addHeader("Set-Cookie", TokenProvider.createCookie(refreshToken).toString());
 
             String redirectURL = UriComponentsBuilder.fromUriString(uri + "/auth")
-                    .queryParam(JwtConstants.ACCESS, JwtConstants.JWT_TYPE + accessToken)
+                    .queryParam(JwtConstants.ACCESS, accessToken)
                     .build()
                     .encode(StandardCharsets.UTF_8)
                     .toUriString();
@@ -49,26 +50,18 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
         } else {
 
-            //response.addHeader(JwtConstants.ACCESS, JwtConstants.JWT_TYPE + accessToken);
+            response.addHeader(JwtConstants.ACCESS, JwtConstants.JWT_TYPE + accessToken);
             response.addHeader("Set-Cookie", TokenProvider.createCookie(refreshToken).toString());
 
             /// 최초 로그인이 아닌 경우 로그인 성공 페이지로 이동
             String redirectURL = UriComponentsBuilder.fromUriString(uri + "/auth/kakao")
-                    .queryParam(JwtConstants.ACCESS, JwtConstants.JWT_TYPE + accessToken)
+                    .queryParam(JwtConstants.ACCESS, accessToken)
                     .build()
                     .encode(StandardCharsets.UTF_8)
                     .toUriString();
 
             getRedirectStrategy().sendRedirect(request, response, redirectURL);
         }
-    }
-
-    public String getRedirectUri(String queryString){
-        String[] split = queryString.split("&");
-        String[] query = split[0].split("=");
-        if(Objects.equals(query[0], "clientUri"))
-            return query[1];
-        return null;
     }
 
 }

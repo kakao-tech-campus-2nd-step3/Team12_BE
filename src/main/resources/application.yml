@@ -7,7 +7,7 @@ spring:
     hikari:
       maximum-pool-size: 4
     username: ditto
-    password: ${DB_PASSWORD}
+    password: kakao2024
 
   jpa:
     show-sql: true
