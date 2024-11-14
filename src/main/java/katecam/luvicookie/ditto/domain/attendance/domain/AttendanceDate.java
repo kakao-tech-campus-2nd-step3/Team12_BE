@@ -16,6 +16,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -35,6 +37,7 @@ public class AttendanceDate extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Study study;
 
     @Column(name = "start_time", nullable = false)
@@ -43,7 +46,7 @@ public class AttendanceDate extends BaseTimeEntity {
     @Column(name = "deadline", nullable = false)
     private LocalDateTime deadline;
 
-    @Column(name = "code", nullable = false, insertable = false, updatable = false, length = ATTENDANCE_CODE_LENGTH)
+    @Column(name = "code", insertable = false, updatable = false, length = ATTENDANCE_CODE_LENGTH)
     private String code;
 
     @Builder
