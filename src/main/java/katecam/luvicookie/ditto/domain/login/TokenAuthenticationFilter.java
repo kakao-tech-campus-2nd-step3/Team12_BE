@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import katecam.luvicookie.ditto.domain.login.jwt.JwtConstants;
 import katecam.luvicookie.ditto.domain.login.jwt.TokenProvider;
+import katecam.luvicookie.ditto.global.error.GlobalException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -56,6 +57,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
             if (e instanceof ExpiredJwtException) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token_Expired: " + e.getMessage());
+            } else if (e instanceof GlobalException){
+                response.sendError(((GlobalException) e).getHttpStatus().value(), "Error: " +  e.getMessage());
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Error: " + e.getMessage());
             }
