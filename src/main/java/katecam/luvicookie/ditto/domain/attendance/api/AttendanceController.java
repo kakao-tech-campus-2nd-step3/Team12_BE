@@ -59,7 +59,7 @@ public class AttendanceController {
             @RequestBody @Valid AttendanceUpdateRequest request
     ) {
         attendanceService.updateAttendance(member, studyId, memberId, request.dateId(), request.isAttended());
-        return ResponseEntity.noContent()
+        return ResponseEntity.status(HttpStatus.OK)
                 .build();
     }
 
@@ -89,7 +89,7 @@ public class AttendanceController {
             @RequestBody @Valid AttendanceDateUpdateRequest request
     ) {
         attendanceService.updateAttendanceDate(member, studyId, request.dateId(), request.startTime(), request.intervalMinutes());
-        return ResponseEntity.noContent()
+        return ResponseEntity.status(HttpStatus.OK)
                 .build();
     }
 

@@ -77,7 +77,7 @@ public class StudyController {
             @RequestBody @Valid StudyUpdateRequest request
     ) {
         studyService.update(member, studyId, request);
-        return ResponseEntity.noContent()
+        return ResponseEntity.status(HttpStatus.OK)
                 .build();
     }
 
@@ -88,7 +88,7 @@ public class StudyController {
             @RequestPart("profile_image") MultipartFile profileImage
     ) {
         studyService.updateProfileImage(member, studyId, profileImage);
-        return ResponseEntity.noContent()
+        return ResponseEntity.status(HttpStatus.OK)
                 .build();
     }
 
