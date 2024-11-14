@@ -96,9 +96,10 @@ public class AttendanceService {
             List<LocalDateTime> memberAttendanceList = attendanceRepository.findAllByMember_IdOrderByIdAsc(targetMemberId)
                     .stream()
                     .filter(attendance -> attendanceDateList.contains(attendance.getAttendanceDate()))
-                    .map(Attendance::getCreatedAt)
-                    .filter(dateTime -> studyMember.getJoinedAt()
-                            .isBefore(dateTime))
+                    .filter(attendance -> studyMember.getJoinedAt()
+                            .isBefore(attendance.getCreatedAt()))
+                    .map(attendance -> attendance.getAttendanceDate()
+                            .getStartTime())
                     .toList();
 
             memberAttendances.put(targetMemberId, MemberAttendanceResponse.from(attendanceDateList, memberAttendanceList));
@@ -108,7 +109,7 @@ public class AttendanceService {
     }
 
     @Transactional
-    public void updateAttendance(Member member, Integer studyId, Integer memberId, LocalDateTime startTime, Boolean isAttended) {
+    public void updateAttendance(Member member, Integer studyId, Integer memberId, Integer dateId, Boolean isAttended) {
         studyMemberService.validateStudyLeader(studyId, member);
 
         Member targetMember = memberRepository.findById(memberId)
@@ -116,7 +117,8 @@ public class AttendanceService {
 
         studyMemberService.validateStudyMember(studyId, targetMember);
 
-        AttendanceDate attendanceDate = getAttendanceDateByStudyIdAndTime(studyId, startTime);
+        AttendanceDate attendanceDate = attendanceDateRepository.findById(dateId)
+                .orElseThrow(() -> new GlobalException(ErrorCode.DATE_NOT_FOUND));
 
         Attendance attendance = Attendance.builder()
                 .attendanceDate(attendanceDate)

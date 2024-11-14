@@ -2,7 +2,7 @@ package katecam.luvicookie.ditto.domain.attendance.api;
 
 import jakarta.validation.Valid;
 import katecam.luvicookie.ditto.domain.attendance.application.AttendanceService;
-import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceCodeRequest;
+import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceCreateRequest;
 import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceDateCreateRequest;
 import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceDateDeleteRequest;
 import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceDateUpdateRequest;
@@ -35,7 +35,7 @@ public class AttendanceController {
     public ResponseEntity<Void> createAttendance(
             @LoginUser Member member,
             @RequestParam("studyId") Integer studyId,
-            @RequestBody @Valid AttendanceCodeRequest request
+            @RequestBody @Valid AttendanceCreateRequest request
     ) {
         attendanceService.createAttendance(member, studyId, request.code(), request.dateId());
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -58,7 +58,7 @@ public class AttendanceController {
             @RequestParam("memberId") Integer memberId,
             @RequestBody @Valid AttendanceUpdateRequest request
     ) {
-        attendanceService.updateAttendance(member, studyId, memberId, request.dateTime(), request.isAttended());
+        attendanceService.updateAttendance(member, studyId, memberId, request.dateId(), request.isAttended());
         return ResponseEntity.noContent()
                 .build();
     }
