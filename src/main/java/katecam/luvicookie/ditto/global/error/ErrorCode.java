@@ -29,6 +29,7 @@ public enum ErrorCode {
     FILE_NOT_FOUND("존재하지 않는 파일입니다.", HttpStatus.NOT_FOUND),
     DATE_NOT_FOUND("존재하지 않는 출석일자입니다.", HttpStatus.NOT_FOUND),
     STUDY_MEMBER_NOT_FOUND("존재하지 않는 스터디원입니다.", HttpStatus.NOT_FOUND),
+    STUDY_LEADER_NOT_FOUND("스터디장이 존재하지 않습니다.", HttpStatus.NOT_FOUND),
 
     // 409 - Conflict
     CODE_MISMATCH("코드가 일치하지 않습니다.", HttpStatus.CONFLICT),

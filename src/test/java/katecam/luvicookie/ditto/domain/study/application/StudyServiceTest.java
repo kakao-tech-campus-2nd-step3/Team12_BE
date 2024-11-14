@@ -13,6 +13,8 @@ import katecam.luvicookie.ditto.domain.studymember.application.StudyMemberServic
 import katecam.luvicookie.ditto.domain.studymember.dao.StudyMemberRepository;
 import katecam.luvicookie.ditto.domain.studymember.domain.StudyMember;
 import katecam.luvicookie.ditto.domain.studymember.domain.StudyMemberRole;
+import katecam.luvicookie.ditto.domain.studymember.dto.response.StudyLeaderResponse;
+import katecam.luvicookie.ditto.fixture.MemberFixture;
 import katecam.luvicookie.ditto.global.error.ErrorCode;
 import katecam.luvicookie.ditto.global.error.GlobalException;
 import org.junit.jupiter.api.DisplayName;
@@ -91,6 +93,11 @@ class StudyServiceTest {
             given(studyRepository.findAllByTopicAndNameAndIsOpen(criteria.topic(), criteria.name(), criteria.isOpen(), pageable))
                     .willReturn(studies);
 
+            Integer numberOfMember = 2;
+            StudyLeaderResponse studyLeaderResponse = new StudyLeaderResponse(new MemberFixture(1), numberOfMember);
+            given(studyMemberService.getStudyLeader(any()))
+                    .willReturn(studyLeaderResponse);
+
             StudyListResponse studyListResponse = studyService.getStudyList(pageable, criteria);
 
             assertThat(studyListResponse).isNotNull();
@@ -112,6 +119,11 @@ class StudyServiceTest {
 
             given(studyRepository.findById(studyId))
                     .willReturn(Optional.of(study));
+
+            Integer numberOfMember = 2;
+            StudyLeaderResponse studyLeaderResponse = new StudyLeaderResponse(new MemberFixture(1), numberOfMember);
+            given(studyMemberService.getStudyLeader(any()))
+                    .willReturn(studyLeaderResponse);
 
             StudyResponse studyResponse = studyService.getStudy(studyId);
 
@@ -156,6 +168,11 @@ class StudyServiceTest {
                     .willReturn(Optional.of(study1));
             given(studyRepository.findById(studyMember2.getStudyId()))
                     .willReturn(Optional.of(study2));
+
+            Integer numberOfMember = 2;
+            StudyLeaderResponse studyLeaderResponse = new StudyLeaderResponse(new MemberFixture(1), numberOfMember);
+            given(studyMemberService.getStudyLeader(any()))
+                    .willReturn(studyLeaderResponse);
 
             List<StudyResponse> studyResponseList = studyService.getStudyListByMemberId(memberId);
 

@@ -7,6 +7,7 @@ import katecam.luvicookie.ditto.domain.studymember.dao.StudyMemberRepository;
 import katecam.luvicookie.ditto.domain.studymember.domain.StudyMember;
 import katecam.luvicookie.ditto.domain.studymember.domain.StudyMemberRole;
 import katecam.luvicookie.ditto.domain.studymember.dto.response.StudyInviteResponse;
+import katecam.luvicookie.ditto.domain.studymember.dto.response.StudyLeaderResponse;
 import katecam.luvicookie.ditto.domain.studymember.dto.response.StudyMemberApplyResponse;
 import katecam.luvicookie.ditto.domain.studymember.dto.response.StudyMemberResponse;
 import katecam.luvicookie.ditto.global.error.ErrorCode;
@@ -111,5 +112,15 @@ public class StudyMemberService {
         if (isMember) {
             throw new GlobalException(ErrorCode.ALREADY_STUDY_MEMBER);
         }
+    }
+
+    public StudyLeaderResponse getStudyLeader(Integer studyId) {
+        List<StudyMember> studyMemberList = studyMemberRepository.findAllByStudyIdAndRoleIn(studyId, Arrays.asList(StudyMemberRole.LEADER, StudyMemberRole.MEMBER));
+
+        return studyMemberList.stream()
+                .filter(StudyMember::isLeader)
+                .findFirst()
+                .map(studyMember -> new StudyLeaderResponse(studyMember.getMember(), studyMemberList.size()))
+                .orElseThrow(() -> new GlobalException(ErrorCode.STUDY_LEADER_NOT_FOUND));
     }
 }

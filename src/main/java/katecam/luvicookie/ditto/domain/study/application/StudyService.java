@@ -40,13 +40,14 @@ public class StudyService {
                 studyCriteria.name(),
                 studyCriteria.isOpen(),
                 pageable)
-                .map(StudyResponse::from);
+                .map(study -> StudyResponse.from(study, studyMemberService.getStudyLeader(study.getId())));
+
         return StudyListResponse.from(studyResponses);
     }
 
     public StudyResponse getStudy(Integer studyId) {
         return studyRepository.findById(studyId)
-                .map(StudyResponse::from)
+                .map(study -> StudyResponse.from(study, studyMemberService.getStudyLeader(study.getId())))
                 .orElseThrow(() -> new GlobalException(ErrorCode.STUDY_NOT_FOUND));
     }
 
@@ -55,7 +56,7 @@ public class StudyService {
                 .stream()
                 .map(studyMember -> studyRepository.findById(studyMember.getStudyId())
                         .orElseThrow(() -> new GlobalException(ErrorCode.STUDY_NOT_FOUND)))
-                .map(StudyResponse::from)
+                .map(study -> StudyResponse.from(study, studyMemberService.getStudyLeader(study.getId())))
                 .toList();
     }
 
