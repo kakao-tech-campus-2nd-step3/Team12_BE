@@ -79,14 +79,12 @@ class StudyControllerTest extends ControllerTestConfig {
 
         MockMultipartFile profileImage = FileTestUtil.getTestImageFile();
 
-        MvcResult mvcResult = mockMvc.perform(multipart(HttpMethod.POST, "/api/studies")
+        mockMvc.perform(multipart(HttpMethod.POST, "/api/studies")
                         .file(profileImage)
                         .part(mockPart)
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                         .header(HttpHeaders.AUTHORIZATION, accessToken))
-                .andReturn();
-
-        System.out.println(mvcResult.getResolvedException().getMessage());
+                .andExpect(status().isCreated());
     }
 
     @Test

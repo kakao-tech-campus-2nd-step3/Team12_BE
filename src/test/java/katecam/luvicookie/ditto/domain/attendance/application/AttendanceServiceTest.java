@@ -281,32 +281,6 @@ class AttendanceServiceTest {
         }
 
         @Test
-        @DisplayName("스터디 출석 취소 수정 성공")
-        void updateAttendanceIsAttendedFalseSuccess() {
-            Member targetMember = Member.builder()
-                    .name("스터디원")
-                    .build();
-            given(memberRepository.findById(memberId))
-                    .willReturn(Optional.of(targetMember));
-
-            Boolean isAttended = false;
-            AttendanceDate attendanceDate = new AttendanceDateFixture(startTime, startTime.plusMinutes(intervalMinutes));
-            given(attendanceDateRepository.findById(dateId))
-                    .willReturn(Optional.of(attendanceDate));
-
-            given(attendanceRepository.existsByAttendanceDate_IdAndMember_Id(any(), eq(memberId)))
-                    .willReturn(true);
-
-            assertDoesNotThrow(() -> attendanceService.updateAttendance(member, studyId, memberId, dateId, isAttended));
-            verify(studyMemberService).validateStudyLeader(studyId, member);
-            verify(memberRepository).findById(memberId);
-            verify(studyMemberService).validateStudyMember(studyId, targetMember);
-            verify(attendanceDateRepository).findById(dateId);
-            verify(attendanceRepository).existsByAttendanceDate_IdAndMember_Id(any(), eq(memberId));
-            verify(attendanceRepository).delete(any(Attendance.class));
-        }
-
-        @Test
         @DisplayName("중복 출석으로 인한 스터디 출석 확인 수정 실패")
         void updateAttendanceFailDueToDuplicateAttendance() {
             Member targetMember = Member.builder()
@@ -334,6 +308,36 @@ class AttendanceServiceTest {
         }
 
         @Test
+        @DisplayName("스터디 출석 취소 수정 성공")
+        void updateAttendanceIsAttendedFalseSuccess() {
+            Member targetMember = Member.builder()
+                    .name("스터디원")
+                    .build();
+            given(memberRepository.findById(memberId))
+                    .willReturn(Optional.of(targetMember));
+
+            Boolean isAttended = false;
+            AttendanceDate attendanceDate = new AttendanceDateFixture(startTime, startTime.plusMinutes(intervalMinutes));
+            given(attendanceDateRepository.findById(dateId))
+                    .willReturn(Optional.of(attendanceDate));
+
+            Attendance attendance = Attendance.builder()
+                    .attendanceDate(attendanceDate)
+                    .member(targetMember)
+                    .build();
+            given(attendanceRepository.findByAttendanceDate_IdAndMember_Id(any(), eq(memberId)))
+                    .willReturn(Optional.of(attendance));
+
+            assertDoesNotThrow(() -> attendanceService.updateAttendance(member, studyId, memberId, dateId, isAttended));
+            verify(studyMemberService).validateStudyLeader(studyId, member);
+            verify(memberRepository).findById(memberId);
+            verify(studyMemberService).validateStudyMember(studyId, targetMember);
+            verify(attendanceDateRepository).findById(dateId);
+            verify(attendanceRepository).findByAttendanceDate_IdAndMember_Id(any(), eq(memberId));
+            verify(attendanceRepository).delete(any(Attendance.class));
+        }
+
+        @Test
         @DisplayName("출석하지 않았으면 스터디 출석 취소 수정 실패")
         void updateAttendanceFailIfNotAttended() {
             Member targetMember = Member.builder()
@@ -346,9 +350,8 @@ class AttendanceServiceTest {
             AttendanceDate attendanceDate = new AttendanceDateFixture(startTime, startTime.plusMinutes(intervalMinutes));
             given(attendanceDateRepository.findById(dateId))
                     .willReturn(Optional.of(attendanceDate));
-
-            given(attendanceRepository.existsByAttendanceDate_IdAndMember_Id(any(), eq(memberId)))
-                    .willReturn(false);
+            given(attendanceRepository.findByAttendanceDate_IdAndMember_Id(any(), eq(memberId)))
+                    .willReturn(Optional.empty());
 
             assertThatThrownBy(() -> attendanceService.updateAttendance(member, studyId, memberId, dateId, isAttended))
                     .isInstanceOf(GlobalException.class)
@@ -357,7 +360,7 @@ class AttendanceServiceTest {
             verify(memberRepository).findById(memberId);
             verify(studyMemberService).validateStudyMember(studyId, targetMember);
             verify(attendanceDateRepository).findById(dateId);
-            verify(attendanceRepository).existsByAttendanceDate_IdAndMember_Id(any(), eq(memberId));
+            verify(attendanceRepository).findByAttendanceDate_IdAndMember_Id(any(), eq(memberId));
         }
 
         @Test
