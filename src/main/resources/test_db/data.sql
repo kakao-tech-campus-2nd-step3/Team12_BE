@@ -43,3 +43,17 @@ VALUES ('과제1번', '과제1을 마감기한까지 제출하세요', 1, CURREN
 INSERT INTO assignment_file (file_name, file_url, assignment_id, member_id, created_at)
 VALUES ('assignment/file1', 'https://https://test-domain.com/file1.text', 1, 1, CURRENT_TIMESTAMP()),
        ('assignment/file2', 'https://https://test-domain.com/file2.text', 2, 1, CURRENT_TIMESTAMP());
+
+INSERT INTO attendance_date (study_id, start_time, deadline, code)
+VALUES (1, '2024-11-11 11:00:00', '2024-11-11 11:15:00', 'true_'),
+       (1, CURRENT_TIMESTAMP(), TIMESTAMPADD(MINUTE, 5, CURRENT_TIMESTAMP()), 'true_'),
+       (2, CURRENT_TIMESTAMP(), TIMESTAMPADD(MINUTE, 5, CURRENT_TIMESTAMP()), 'abcde'),
+       (3, CURRENT_TIMESTAMP(), TIMESTAMPADD(MINUTE, 5, CURRENT_TIMESTAMP()), 'te2st'),
+       (4, CURRENT_TIMESTAMP(), TIMESTAMPADD(MINUTE, 5, CURRENT_TIMESTAMP()), 'he110');
+
+INSERT INTO attendance (member_id, date_id, created_at)
+VALUES (1, 1, CURRENT_TIMESTAMP()),
+       (2, 2, CURRENT_TIMESTAMP()),
+       (3, 1, CURRENT_TIMESTAMP()),
+       (3, 3, CURRENT_TIMESTAMP());
+

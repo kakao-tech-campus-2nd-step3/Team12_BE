@@ -152,11 +152,6 @@ public class AttendanceService {
         return AttendanceDateListResponse.from(attendanceDateList);
     }
 
-    private AttendanceDate getAttendanceDateByStudyIdAndTime(Integer studyId, LocalDateTime startTime) {
-        return attendanceDateRepository.findByStudy_IdAndDateTime(studyId, startTime)
-                .orElseThrow(() -> new GlobalException(ErrorCode.DATE_UNABLE_TO_ATTEND));
-    }
-
     @Transactional
     public void createAttendanceDate(Member member, Integer studyId, LocalDateTime startTime, Integer intervalMinutes) {
         studyMemberService.validateStudyLeader(studyId, member);
@@ -200,7 +195,8 @@ public class AttendanceService {
     public void deleteAttendanceDate(Member member, Integer studyId, LocalDateTime startTime) {
         studyMemberService.validateStudyLeader(studyId, member);
 
-        AttendanceDate attendanceDate = getAttendanceDateByStudyIdAndTime(studyId, startTime);
+        AttendanceDate attendanceDate = attendanceDateRepository.findByStudy_IdAndDateTime(studyId, startTime)
+                .orElseThrow(() -> new GlobalException(ErrorCode.DATE_UNABLE_TO_ATTEND));
         attendanceDateRepository.delete(attendanceDate);
     }
 
