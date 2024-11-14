@@ -7,6 +7,7 @@ import katecam.luvicookie.ditto.domain.login.jwt.TokenProvider;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.study.dto.request.StudyCreateRequest;
 import katecam.luvicookie.ditto.domain.study.dto.request.StudyCriteria;
+import katecam.luvicookie.ditto.domain.study.dto.request.StudyUpdateRequest;
 import katecam.luvicookie.ditto.fixture.MemberFixture;
 import katecam.luvicookie.ditto.global.util.file.FileTestUtil;
 import org.junit.jupiter.api.DisplayName;
@@ -17,13 +18,14 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.nio.charset.StandardCharsets;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class StudyControllerTest extends ControllerTestConfig {
@@ -89,17 +91,46 @@ class StudyControllerTest extends ControllerTestConfig {
 
     @Test
     @DisplayName("스터디 삭제 테스트")
-    void deleteStudy() {
+    void deleteStudy() throws Exception {
+        Member member = new MemberFixture(1);
+        String accessToken = JwtConstants.JWT_TYPE + TokenProvider.generateToken(member, JwtConstants.ACCESS_EXP_TIME_MINUTES);
+        Integer studyId = 1;
+
+        mockMvc.perform(delete("/api/studies/{studyId}", studyId)
+                        .header(HttpHeaders.AUTHORIZATION, accessToken))
+                .andExpect(status().isNoContent());
     }
 
     @Test
     @DisplayName("스터디 정보 수정 테스트")
-    void updateStudy() {
+    void updateStudy() throws Exception {
+        Member member = new MemberFixture(1);
+        String accessToken = JwtConstants.JWT_TYPE + TokenProvider.generateToken(member, JwtConstants.ACCESS_EXP_TIME_MINUTES);
+        Integer studyId = 1;
+
+        StudyUpdateRequest request = new StudyUpdateRequest("NEW STUDY", "NEW NEW NEW", false, "NEW");
+
+        mockMvc.perform(put("/api/studies/{studyId}", studyId)
+                        .content(toJsonString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, accessToken))
+                .andExpect(status().isOk());
     }
 
     @Test
     @DisplayName("스터디 프로필 이미지 수정 테스트")
-    void updateStudyProfileImage() {
+    void updateStudyProfileImage() throws Exception {
+        Member member = new MemberFixture(1);
+        String accessToken = JwtConstants.JWT_TYPE + TokenProvider.generateToken(member, JwtConstants.ACCESS_EXP_TIME_MINUTES);
+        Integer studyId = 1;
+
+        MockMultipartFile profileImage = FileTestUtil.getTestImageFile();
+
+        mockMvc.perform(multipart(HttpMethod.PUT, "/api/studies/{studyId}/profileImage", studyId)
+                        .file(profileImage)
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .header(HttpHeaders.AUTHORIZATION, accessToken))
+                .andExpect(status().isOk());
     }
 
 }
