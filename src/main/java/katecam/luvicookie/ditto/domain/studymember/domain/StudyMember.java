@@ -37,7 +37,7 @@ public class StudyMember extends BaseTimeEntity {
     @Column(name = "joined_at", nullable = false)
     private LocalDateTime joinedAt;
 
-    @Column(name = "message", nullable = true, length = MAX_STUDY_MEMBER_MESSAGE_LENGTH)
+    @Column(name = "message", length = MAX_STUDY_MEMBER_MESSAGE_LENGTH)
     private String message;
 
     @Builder
@@ -52,4 +52,9 @@ public class StudyMember extends BaseTimeEntity {
     public void setRole(StudyMemberRole role) {
         this.role = role;
     }
+
+    public boolean isLeader() {
+        return role == StudyMemberRole.LEADER;
+    }
+
 }
