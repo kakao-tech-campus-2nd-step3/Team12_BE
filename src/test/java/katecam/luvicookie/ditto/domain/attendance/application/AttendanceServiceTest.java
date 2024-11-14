@@ -19,6 +19,7 @@ import katecam.luvicookie.ditto.fixture.AttendanceDateFixture;
 import katecam.luvicookie.ditto.fixture.StudyMemberFixture;
 import katecam.luvicookie.ditto.global.error.ErrorCode;
 import katecam.luvicookie.ditto.global.error.GlobalException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -68,21 +69,30 @@ class AttendanceServiceTest {
 
     private static final String TEST_TRUE_CODE = "true_";
 
+    private Member member;
+    private Integer studyId;
+    private Integer memberId;
+    private Integer dateId;
+    private int intervalMinutes;
+
+    @BeforeEach
+    void setUp() {
+        member = Member.builder()
+                .name("스터디 회원")
+                .build();
+        studyId = 1;
+        memberId = 4;
+        dateId = 2;
+        intervalMinutes = 5;
+    }
+
     @Nested
     @DisplayName("스터디 출석")
     class attendStudy {
         @Test
         @DisplayName("스터디 출석 성공")
         void createAttendanceSuccess() {
-            Member member = Member.builder()
-                    .name("스터디 회원")
-                    .build();
-
-            Integer studyId = 1;
-            Integer dateId = 3;
-
             LocalDateTime dateTime = LocalDateTime.now();
-            int intervalMinutes = 5;
             AttendanceDate attendanceDate = new AttendanceDateFixture(dateTime.minusMinutes(intervalMinutes), dateTime.plusMinutes(intervalMinutes));
 
             given(attendanceDateRepository.findById(dateId))
@@ -97,13 +107,6 @@ class AttendanceServiceTest {
         @Test
         @DisplayName("스터디원이 아니면 출석 실패")
         void createAttendanceFailIfNotStudyMember() {
-            Member member = Member.builder()
-                    .name("스터디 회원")
-                    .build();
-
-            Integer studyId = 1;
-            Integer dateId = 3;
-
             willThrow(new GlobalException(ErrorCode.NOT_STUDY_MEMBER))
                     .given(studyMemberService).validateStudyMember(studyId, member);
 
@@ -116,14 +119,6 @@ class AttendanceServiceTest {
         @Test
         @DisplayName("출석 시간대가 아니면 출석 실패")
         void createAttendanceFailDueToTime() {
-            Member member = Member.builder()
-                    .name("스터디 회원")
-                    .build();
-
-            Integer studyId = 1;
-            Integer dateId = 3;
-
-            int intervalMinutes = 5;
             LocalDateTime dateTime = LocalDateTime.now();
             AttendanceDate attendanceDate = new AttendanceDateFixture(dateTime.minusMinutes(intervalMinutes), dateTime);
 
@@ -140,16 +135,9 @@ class AttendanceServiceTest {
         @Test
         @DisplayName("출석 코드 불일치로 인한 출석 실패")
         void createAttendanceFailDueToCodeMismatch() {
-            Member member = Member.builder()
-                    .name("스터디 회원")
-                    .build();
-
-            Integer studyId = 1;
-            Integer dateId = 3;
             String code = "code";
 
             LocalDateTime dateTime = LocalDateTime.now();
-            int intervalMinutes = 5;
             AttendanceDate attendanceDate = new AttendanceDateFixture(dateTime.minusMinutes(intervalMinutes), dateTime.plusMinutes(intervalMinutes));
 
             given(attendanceDateRepository.findById(dateId))
@@ -169,13 +157,6 @@ class AttendanceServiceTest {
         @Test
         @DisplayName("스터디원 출석 여부 목록 조회 성공")
         void getAttendanceListSuccess() {
-            Member member = Member.builder()
-                    .name("스터디 회원")
-                    .build();
-
-            Integer studyId = 1;
-            Integer memberId = 2;
-
             LocalDateTime testJoinedAt = LocalDateTime.of(2023, 1, 1, 12, 0);
             StudyMember studyMember = new StudyMemberFixture(testJoinedAt);
             given(studyMemberRepository.findByStudyIdAndMember_Id(studyId, memberId))
@@ -183,7 +164,6 @@ class AttendanceServiceTest {
 
             LocalDateTime startTime1 = LocalDateTime.of(2024, 1, 1, 12, 0);
             LocalDateTime startTime2 = LocalDateTime.of(2024, 2, 2, 12, 0);
-            int intervalMinutes = 5;
             AttendanceDate attendanceDate1 = new AttendanceDateFixture(startTime1, startTime1.plusMinutes(intervalMinutes));
             AttendanceDate attendanceDate2 = new AttendanceDateFixture(startTime2, startTime2.plusMinutes(intervalMinutes));
             List<AttendanceDate> attendanceDateList = Arrays.asList(attendanceDate1, attendanceDate2);
@@ -200,7 +180,7 @@ class AttendanceServiceTest {
 
             AttendanceListResponse attendanceList = attendanceService.getAttendanceList(member, studyId, memberId);
             assertThat(attendanceList).isNotNull();
-            assertThat(attendanceList.attendanceDateList().size())
+            assertThat(attendanceList.studyAttendanceDateList().size())
                     .isEqualTo(attendanceDateList.size());
             assertThat(attendanceList.memberAttendances().size())
                     .isEqualTo(memberAttendanceList.size());
@@ -214,11 +194,6 @@ class AttendanceServiceTest {
         @Test
         @DisplayName("memberId가 null일때 스터디원 전체 출석 여부 목록 조회 성공")
         void getAttendanceListSuccessWhenMemberIdIsNull() {
-            Member member = Member.builder()
-                    .name("스터디 회원")
-                    .build();
-
-            Integer studyId = 1;
             Integer memberId = null;
 
             LocalDateTime testJoinedAt = LocalDateTime.of(2023, 1, 1, 12, 0);
@@ -245,7 +220,7 @@ class AttendanceServiceTest {
 
             AttendanceListResponse attendanceList = attendanceService.getAttendanceList(member, studyId, memberId);
             assertThat(attendanceList).isNotNull();
-            assertThat(attendanceList.attendanceDateList().size())
+            assertThat(attendanceList.studyAttendanceDateList().size())
                     .isEqualTo(attendanceDateList.size());
             assertThat(attendanceList.memberAttendances().size())
                     .isEqualTo(memberAttendanceList.size());
@@ -259,13 +234,6 @@ class AttendanceServiceTest {
         @Test
         @DisplayName("스터디 출석 여부 목록 조회 실패")
         void getAttendanceListFail() {
-            Member member = Member.builder()
-                    .name("스터디 회원")
-                    .build();
-
-            Integer studyId = 1;
-            Integer memberId = 2;
-
             willThrow(new GlobalException(ErrorCode.NOT_STUDY_LEADER))
                     .given(studyMemberService).validateStudyLeader(studyId, member);
 
@@ -279,36 +247,35 @@ class AttendanceServiceTest {
     @Nested
     @DisplayName("스터디 출석 여부 수정")
     class updateAttendance {
+        private LocalDateTime startTime;
+
+        @BeforeEach
+        void setUp() {
+            startTime = LocalDateTime.now();
+        }
+
         @Test
         @DisplayName("스터디 출석 확인 수정 성공")
         void updateAttendanceIsAttendedTrueSuccess() {
-            Member member = Member.builder()
-                    .name("스터디 회원")
-                    .build();
-
             Member targetMember = Member.builder()
                     .name("스터디원")
                     .build();
-            Integer studyId = 1;
-            Integer memberId = 4;
             given(memberRepository.findById(memberId))
                     .willReturn(Optional.of(targetMember));
 
-            LocalDateTime startTime = LocalDateTime.now();
             Boolean isAttended = true;
-            int intervalMinutes = 5;
             AttendanceDate attendanceDate = new AttendanceDateFixture(startTime, startTime.plusMinutes(intervalMinutes));
-            given(attendanceDateRepository.findByStudy_IdAndDateTime(studyId, startTime))
+            given(attendanceDateRepository.findById(dateId))
                     .willReturn(Optional.of(attendanceDate));
 
             given(attendanceRepository.existsByAttendanceDate_IdAndMember_Id(any(), eq(memberId)))
                     .willReturn(false);
 
-            assertDoesNotThrow(() -> attendanceService.updateAttendance(member, studyId, memberId, startTime, isAttended));
+            assertDoesNotThrow(() -> attendanceService.updateAttendance(member, studyId, memberId, dateId, isAttended));
             verify(studyMemberService).validateStudyLeader(studyId, member);
             verify(memberRepository).findById(memberId);
             verify(studyMemberService).validateStudyMember(studyId, targetMember);
-            verify(attendanceDateRepository).findByStudy_IdAndDateTime(studyId, startTime);
+            verify(attendanceDateRepository).findById(dateId);
             verify(attendanceRepository).existsByAttendanceDate_IdAndMember_Id(any(), eq(memberId));
             verify(attendanceRepository).save(any(Attendance.class));
         }
@@ -316,33 +283,25 @@ class AttendanceServiceTest {
         @Test
         @DisplayName("스터디 출석 취소 수정 성공")
         void updateAttendanceIsAttendedFalseSuccess() {
-            Member member = Member.builder()
-                    .name("스터디 회원")
-                    .build();
-
             Member targetMember = Member.builder()
                     .name("스터디원")
                     .build();
-            Integer studyId = 1;
-            Integer memberId = 4;
             given(memberRepository.findById(memberId))
                     .willReturn(Optional.of(targetMember));
 
-            LocalDateTime startTime = LocalDateTime.now();
             Boolean isAttended = false;
-            int intervalMinutes = 5;
             AttendanceDate attendanceDate = new AttendanceDateFixture(startTime, startTime.plusMinutes(intervalMinutes));
-            given(attendanceDateRepository.findByStudy_IdAndDateTime(studyId, startTime))
+            given(attendanceDateRepository.findById(dateId))
                     .willReturn(Optional.of(attendanceDate));
 
             given(attendanceRepository.existsByAttendanceDate_IdAndMember_Id(any(), eq(memberId)))
                     .willReturn(true);
 
-            assertDoesNotThrow(() -> attendanceService.updateAttendance(member, studyId, memberId, startTime, isAttended));
+            assertDoesNotThrow(() -> attendanceService.updateAttendance(member, studyId, memberId, dateId, isAttended));
             verify(studyMemberService).validateStudyLeader(studyId, member);
             verify(memberRepository).findById(memberId);
             verify(studyMemberService).validateStudyMember(studyId, targetMember);
-            verify(attendanceDateRepository).findByStudy_IdAndDateTime(studyId, startTime);
+            verify(attendanceDateRepository).findById(dateId);
             verify(attendanceRepository).existsByAttendanceDate_IdAndMember_Id(any(), eq(memberId));
             verify(attendanceRepository).delete(any(Attendance.class));
         }
@@ -350,89 +309,66 @@ class AttendanceServiceTest {
         @Test
         @DisplayName("중복 출석으로 인한 스터디 출석 확인 수정 실패")
         void updateAttendanceFailDueToDuplicateAttendance() {
-            Member member = Member.builder()
-                    .name("스터디 회원")
-                    .build();
-
             Member targetMember = Member.builder()
                     .name("스터디원")
                     .build();
-            Integer studyId = 1;
-            Integer memberId = 4;
             given(memberRepository.findById(memberId))
                     .willReturn(Optional.of(targetMember));
 
-            LocalDateTime startTime = LocalDateTime.now();
             Boolean isAttended = true;
-            int intervalMinutes = 5;
             AttendanceDate attendanceDate = new AttendanceDateFixture(startTime, startTime.plusMinutes(intervalMinutes));
-            given(attendanceDateRepository.findByStudy_IdAndDateTime(studyId, startTime))
+            given(attendanceDateRepository.findById(dateId))
                     .willReturn(Optional.of(attendanceDate));
 
             given(attendanceRepository.existsByAttendanceDate_IdAndMember_Id(any(), eq(memberId)))
                     .willReturn(true);
 
-            assertThatThrownBy(() -> attendanceService.updateAttendance(member, studyId, memberId, startTime, isAttended))
+            assertThatThrownBy(() -> attendanceService.updateAttendance(member, studyId, memberId, dateId, isAttended))
                     .isInstanceOf(GlobalException.class)
                     .hasMessage(ErrorCode.ALREADY_ATTENDED.getMessage());
             verify(studyMemberService).validateStudyLeader(studyId, member);
             verify(memberRepository).findById(memberId);
             verify(studyMemberService).validateStudyMember(studyId, targetMember);
-            verify(attendanceDateRepository).findByStudy_IdAndDateTime(studyId, startTime);
+            verify(attendanceDateRepository).findById(dateId);
             verify(attendanceRepository).existsByAttendanceDate_IdAndMember_Id(any(), eq(memberId));
         }
 
         @Test
         @DisplayName("출석하지 않았으면 스터디 출석 취소 수정 실패")
         void updateAttendanceFailIfNotAttended() {
-            Member member = Member.builder()
-                    .name("스터디 회원")
-                    .build();
-
             Member targetMember = Member.builder()
                     .name("스터디원")
                     .build();
-            Integer studyId = 1;
-            Integer memberId = 4;
             given(memberRepository.findById(memberId))
                     .willReturn(Optional.of(targetMember));
 
-            LocalDateTime startTime = LocalDateTime.now();
             Boolean isAttended = false;
-            int intervalMinutes = 5;
             AttendanceDate attendanceDate = new AttendanceDateFixture(startTime, startTime.plusMinutes(intervalMinutes));
-            given(attendanceDateRepository.findByStudy_IdAndDateTime(studyId, startTime))
+            given(attendanceDateRepository.findById(dateId))
                     .willReturn(Optional.of(attendanceDate));
 
             given(attendanceRepository.existsByAttendanceDate_IdAndMember_Id(any(), eq(memberId)))
                     .willReturn(false);
 
-            assertThatThrownBy(() -> attendanceService.updateAttendance(member, studyId, memberId, startTime, isAttended))
+            assertThatThrownBy(() -> attendanceService.updateAttendance(member, studyId, memberId, dateId, isAttended))
                     .isInstanceOf(GlobalException.class)
                     .hasMessage(ErrorCode.NOT_ATTENDED.getMessage());
             verify(studyMemberService).validateStudyLeader(studyId, member);
             verify(memberRepository).findById(memberId);
             verify(studyMemberService).validateStudyMember(studyId, targetMember);
-            verify(attendanceDateRepository).findByStudy_IdAndDateTime(studyId, startTime);
+            verify(attendanceDateRepository).findById(dateId);
             verify(attendanceRepository).existsByAttendanceDate_IdAndMember_Id(any(), eq(memberId));
         }
 
         @Test
         @DisplayName("스터디장이 아니면 스터디 출석 수정 실패")
         void updateAttendanceFailIfNotStudyLeader() {
-            Member member = Member.builder()
-                    .name("스터디 회원")
-                    .build();
-
-            Integer studyId = 1;
-            Integer memberId = 4;
-            LocalDateTime startTime = LocalDateTime.now();
             Boolean isAttended = true;
 
             willThrow(new GlobalException(ErrorCode.NOT_STUDY_LEADER))
                     .given(studyMemberService).validateStudyLeader(studyId, member);
 
-            assertThatThrownBy(() -> attendanceService.updateAttendance(member, studyId, memberId, startTime, isAttended))
+            assertThatThrownBy(() -> attendanceService.updateAttendance(member, studyId, memberId, dateId, isAttended))
                     .isInstanceOf(GlobalException.class)
                     .hasMessage(ErrorCode.NOT_STUDY_LEADER.getMessage());
             verify(studyMemberService).validateStudyLeader(studyId, member);
@@ -441,25 +377,18 @@ class AttendanceServiceTest {
         @Test
         @DisplayName("스터디원이 아니면 스터디 출석 수정 실패")
         void updateAttendanceFailIfNotStudyMember() {
-            Member member = Member.builder()
-                    .name("스터디 회원")
-                    .build();
-
             Member targetMember = Member.builder()
                     .name("스터디원")
                     .build();
-            Integer studyId = 1;
-            Integer memberId = 4;
             given(memberRepository.findById(memberId))
                     .willReturn(Optional.of(targetMember));
 
-            LocalDateTime startTime = LocalDateTime.now();
             Boolean isAttended = true;
 
             willThrow(new GlobalException(ErrorCode.NOT_STUDY_MEMBER))
                     .given(studyMemberService).validateStudyMember(studyId, targetMember);
 
-            assertThatThrownBy(() -> attendanceService.updateAttendance(member, studyId, memberId, startTime, isAttended))
+            assertThatThrownBy(() -> attendanceService.updateAttendance(member, studyId, memberId, dateId, isAttended))
                     .isInstanceOf(GlobalException.class)
                     .hasMessage(ErrorCode.NOT_STUDY_MEMBER.getMessage());
             verify(studyMemberService).validateStudyLeader(studyId, member);
@@ -474,15 +403,8 @@ class AttendanceServiceTest {
         @Test
         @DisplayName("출석일자 목록 조회 성공")
         void getAttendanceDateListSuccess() {
-            Member member = Member.builder()
-                    .name("스터디 회원")
-                    .build();
-
-            Integer studyId = 1;
-
             LocalDateTime startTime1 = LocalDateTime.of(2024, 1, 1, 12, 0, 0);
             LocalDateTime startTime2 = LocalDateTime.of(2024, 2, 2, 12, 0, 0);
-            int intervalMinutes = 5;
             AttendanceDate attendanceDate1 = new AttendanceDateFixture(startTime1, startTime1.plusMinutes(intervalMinutes));
             AttendanceDate attendanceDate2 = new AttendanceDateFixture(startTime2, startTime2.plusMinutes(intervalMinutes));
             List<AttendanceDate> attendanceDateList = Arrays.asList(attendanceDate1, attendanceDate2);
@@ -501,12 +423,6 @@ class AttendanceServiceTest {
         @Test
         @DisplayName("출석일자 목록 조회 실패")
         void getAttendanceDateListFail() {
-            Member member = Member.builder()
-                    .name("스터디 회원")
-                    .build();
-
-            Integer studyId = 1;
-
             willThrow(new GlobalException(ErrorCode.NOT_STUDY_MEMBER))
                     .given(studyMemberService).validateStudyMember(studyId, member);
 
@@ -523,15 +439,8 @@ class AttendanceServiceTest {
         @Test
         @DisplayName("출석일자 생성 성공")
         void createAttendanceDateSuccess() {
-            Member member = Member.builder()
-                    .name("스터디 회원")
-                    .build();
-
-            Integer studyId = 1;
-
-            LocalDateTime startTime = LocalDateTime.now();
-
-            Integer intervalMinutes = 5;
+            LocalDateTime startTime = LocalDateTime.now()
+                    .plusMinutes(intervalMinutes);
 
             Study study = Study.builder()
                     .name("테스트 스터디")
@@ -552,15 +461,8 @@ class AttendanceServiceTest {
         @Test
         @DisplayName("출석일자 생성 실패")
         void createAttendanceDateFail() {
-            Member member = Member.builder()
-                    .name("스터디 회원")
-                    .build();
-
-            Integer studyId = 1;
-
-            LocalDateTime startTime = LocalDateTime.now();
-
-            Integer intervalMinutes = 5;
+            LocalDateTime startTime = LocalDateTime.now()
+                    .plusMinutes(intervalMinutes);
 
             willThrow(new GlobalException(ErrorCode.NOT_STUDY_LEADER))
                     .given(studyMemberService).validateStudyLeader(studyId, member);
@@ -578,14 +480,7 @@ class AttendanceServiceTest {
         @Test
         @DisplayName("출석일자 삭제 성공")
         void deleteAttendanceDateSuccess() {
-            Member member = Member.builder()
-                    .name("스터디 회원")
-                    .build();
-
-            Integer studyId = 1;
-
             LocalDateTime startTime = LocalDateTime.now();
-            int intervalMinutes = 5;
             AttendanceDate attendanceDate = new AttendanceDateFixture(startTime, startTime.plusMinutes(intervalMinutes));
 
             given(attendanceDateRepository.findByStudy_IdAndDateTime(studyId, startTime))
@@ -600,12 +495,6 @@ class AttendanceServiceTest {
         @Test
         @DisplayName("출석일자 삭제 실패")
         void deleteAttendanceDateFail() {
-            Member member = Member.builder()
-                    .name("스터디 회원")
-                    .build();
-
-            Integer studyId = 1;
-
             LocalDateTime startTime = LocalDateTime.now();
 
             willThrow(new GlobalException(ErrorCode.NOT_STUDY_LEADER))
@@ -619,21 +508,28 @@ class AttendanceServiceTest {
     }
 
     @Nested
+    @DisplayName("출석일자 수정")
+    class updateAttendanceDate {
+        @Test
+        @DisplayName("출석일자 수정 성공")
+        void updateAttendanceDateSuccess() {
+
+        }
+
+        @Test
+        @DisplayName("출석일자 수정 실패")
+        void updateAttendanceDateFail() {
+
+        }
+    }
+
+    @Nested
     @DisplayName("출석 코드 조회")
     class getAttendanceCode {
         @Test
         @DisplayName("출석 코드 조회 성공")
         void getAttendanceCodeSuccess() {
-            Member member = Member.builder()
-                    .name("스터디 회원")
-                    .build();
-
-            Integer studyId = 1;
-
-            Integer dateId = 3;
-
             LocalDateTime startTime = LocalDateTime.now();
-            int intervalMinutes = 5;
             AttendanceDate attendanceDate = new AttendanceDateFixture(startTime, startTime.plusMinutes(intervalMinutes));;
 
             given(attendanceDateRepository.findById(dateId))
@@ -648,14 +544,6 @@ class AttendanceServiceTest {
         @Test
         @DisplayName("출석 코드 조회 실패")
         void getAttendanceCodeFail() {
-            Member member = Member.builder()
-                    .name("스터디 회원")
-                    .build();
-
-            Integer studyId = 1;
-
-            Integer dateId = 3;
-
             willThrow(new GlobalException(ErrorCode.NOT_STUDY_LEADER))
                     .given(studyMemberService).validateStudyLeader(studyId, member);
 

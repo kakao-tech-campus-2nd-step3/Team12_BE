@@ -2,7 +2,7 @@ package katecam.luvicookie.ditto.domain.attendance.api;
 
 import jakarta.validation.Valid;
 import katecam.luvicookie.ditto.domain.attendance.application.AttendanceService;
-import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceCodeRequest;
+import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceCreateRequest;
 import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceDateCreateRequest;
 import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceDateDeleteRequest;
 import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceDateUpdateRequest;
@@ -34,8 +34,8 @@ public class AttendanceController {
     @PostMapping
     public ResponseEntity<Void> createAttendance(
             @LoginUser Member member,
-            @RequestParam("studyId") Integer studyId,
-            @RequestBody @Valid AttendanceCodeRequest request
+            @RequestParam("study_id") Integer studyId,
+            @RequestBody @Valid AttendanceCreateRequest request
     ) {
         attendanceService.createAttendance(member, studyId, request.code(), request.dateId());
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -45,8 +45,8 @@ public class AttendanceController {
     @GetMapping
     public ResponseEntity<AttendanceListResponse> getAttendanceList(
             @LoginUser Member member,
-            @RequestParam("studyId") Integer studyId,
-            @RequestParam(name = "memberId", required = false) Integer memberId
+            @RequestParam("study_id") Integer studyId,
+            @RequestParam(name = "member_id", required = false) Integer memberId
     ) {
         return ResponseEntity.ok(attendanceService.getAttendanceList(member, studyId, memberId));
     }
@@ -54,11 +54,11 @@ public class AttendanceController {
     @PutMapping
     public ResponseEntity<Void> updateAttendance(
             @LoginUser Member member,
-            @RequestParam("studyId") Integer studyId,
-            @RequestParam("memberId") Integer memberId,
+            @RequestParam("study_id") Integer studyId,
+            @RequestParam("member_id") Integer memberId,
             @RequestBody @Valid AttendanceUpdateRequest request
     ) {
-        attendanceService.updateAttendance(member, studyId, memberId, request.dateTime(), request.isAttended());
+        attendanceService.updateAttendance(member, studyId, memberId, request.dateId(), request.isAttended());
         return ResponseEntity.noContent()
                 .build();
     }
@@ -66,7 +66,7 @@ public class AttendanceController {
     @PostMapping("/date")
     public ResponseEntity<Void> createAttendanceDate(
             @LoginUser Member member,
-            @RequestParam("studyId") Integer studyId,
+            @RequestParam("study_id") Integer studyId,
             @RequestBody @Valid AttendanceDateCreateRequest request
     ) {
         attendanceService.createAttendanceDate(member, studyId, request.startTime(), request.intervalMinutes());
@@ -77,7 +77,7 @@ public class AttendanceController {
     @GetMapping("/date")
     public ResponseEntity<AttendanceDateListResponse> getAttendanceDateList(
             @LoginUser Member member,
-            @RequestParam("studyId") Integer studyId
+            @RequestParam("study_id") Integer studyId
     ) {
         return ResponseEntity.ok(attendanceService.getAttendanceDateList(member, studyId));
     }
@@ -85,7 +85,7 @@ public class AttendanceController {
     @PutMapping("/date")
     public ResponseEntity<Void> updateAttendanceDate(
             @LoginUser Member member,
-            @RequestParam("studyId") Integer studyId,
+            @RequestParam("study_id") Integer studyId,
             @RequestBody @Valid AttendanceDateUpdateRequest request
     ) {
         attendanceService.updateAttendanceDate(member, studyId, request.dateId(), request.startTime(), request.intervalMinutes());
@@ -96,7 +96,7 @@ public class AttendanceController {
     @DeleteMapping("/date")
     public ResponseEntity<Void> deleteAttendanceDate(
             @LoginUser Member member,
-            @RequestParam("studyId") Integer studyId,
+            @RequestParam("study_id") Integer studyId,
             @RequestBody @Valid AttendanceDateDeleteRequest request
     ) {
         attendanceService.deleteAttendanceDate(member, studyId, request.startTime());
@@ -107,8 +107,8 @@ public class AttendanceController {
     @GetMapping("/code")
     public ResponseEntity<AttendanceCodeResponse> requestAttendanceCode(
             @LoginUser Member member,
-            @RequestParam("studyId") Integer studyId,
-            @RequestParam("dateId") Integer dateId
+            @RequestParam("study_id") Integer studyId,
+            @RequestParam("date_id") Integer dateId
     ) {
         return ResponseEntity.ok(attendanceService.getAttendanceCode(member, studyId, dateId));
     }

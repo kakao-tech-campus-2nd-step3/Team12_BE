@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 public record AttendanceListResponse(
-        @JsonProperty("attendance_date_list")
-        List<String> attendanceDateList,
+        @JsonProperty("required_attendance")
+        List<String> studyAttendanceDateList,
 
         @JsonProperty("member_attendance")
         Map<Integer, MemberAttendanceResponse> memberAttendances
