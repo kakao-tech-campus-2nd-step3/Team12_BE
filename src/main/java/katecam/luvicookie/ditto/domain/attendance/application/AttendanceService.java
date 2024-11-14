@@ -120,21 +120,21 @@ public class AttendanceService {
         AttendanceDate attendanceDate = attendanceDateRepository.findById(dateId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.DATE_NOT_FOUND));
 
-        Attendance attendance = Attendance.builder()
-                .attendanceDate(attendanceDate)
-                .member(targetMember)
-                .build();
-
         if (isAttended) {
             validateDuplicateAttendance(attendanceDate.getId(), memberId);
+
+            Attendance attendance = Attendance.builder()
+                    .attendanceDate(attendanceDate)
+                    .member(targetMember)
+                    .build();
+
             attendanceRepository.save(attendance);
             return;
         }
 
         // 출석 여부 확인
-        if (!attendanceRepository.existsByAttendanceDate_IdAndMember_Id(attendanceDate.getId(), memberId)) {
-            throw new GlobalException(ErrorCode.NOT_ATTENDED);
-        }
+        Attendance attendance = attendanceRepository.findByAttendanceDate_IdAndMember_Id(attendanceDate.getId(), memberId)
+                .orElseThrow(() -> new GlobalException(ErrorCode.NOT_ATTENDED));
 
         attendanceRepository.delete(attendance);
     }
