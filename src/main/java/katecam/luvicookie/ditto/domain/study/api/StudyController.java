@@ -1,5 +1,6 @@
 package katecam.luvicookie.ditto.domain.study.api;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import katecam.luvicookie.ditto.domain.login.annotation.LoginUser;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
@@ -53,7 +54,9 @@ public class StudyController {
     public ResponseEntity<Void> createStudy(
             @LoginUser Member member,
             @RequestPart @Valid StudyCreateRequest request,
-            @RequestPart MultipartFile profileImage
+            @RequestPart
+            @JsonProperty("profile_image")
+            MultipartFile profileImage
     ) {
         studyService.create(member, request, profileImage);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -85,7 +88,9 @@ public class StudyController {
     public ResponseEntity<Void> updateStudyProfileImage(
             @LoginUser Member member,
             @PathVariable Integer studyId,
-            @RequestPart MultipartFile profileImage
+            @RequestPart
+            @JsonProperty("profile_image")
+            MultipartFile profileImage
     ) {
         studyService.updateProfileImage(member, studyId, profileImage);
         return ResponseEntity.noContent()
