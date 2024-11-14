@@ -81,29 +81,29 @@ public class AssignmentService {
         return AssignmentResponse.from(assignment);
     }
 
-    public AssignmentFileResponse getAssignmentFiles(Integer assignmentId, Integer memberId){
+    public AssignmentFilesResponse getAssignmentFiles(Integer assignmentId, Integer memberId){
         Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(() -> new GlobalException(ErrorCode.ASSIGNMENT_NOT_FOUND));
         Member searchMember = memberService.findMemberById(memberId);
         List<AssignmentFile> files = assignmentFileRepository.findAllByAssignmentAndMember(assignment, searchMember);
-        return AssignmentFileResponse.from(files);
+        return AssignmentFilesResponse.from(files);
     }
 
 
-    public AssignmentFileListResponse getAllAssignmentFiles(Integer assignmentId, Member member, Pageable pageable){
+    public AssignmentFileListResponse getAllAssignmentFiles(Integer assignmentId, Pageable pageable){
         Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(() -> new GlobalException(ErrorCode.ASSIGNMENT_NOT_FOUND));
         Page<AssignmentFileResponse> fileResponses = assignmentFileRepository.findAllByAssignment(pageable, assignment).map(AssignmentFileResponse::from);
         return AssignmentFileListResponse.from(fileResponses);
     }
 
     @Transactional
-    public AssignmentFileResponse uploadAssignments(Member member, Integer assignmentId, MultipartFile file) throws IOException {
+    public AssignmentFilesResponse uploadAssignments(Member member, Integer assignmentId, MultipartFile file) throws IOException {
 
         Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(() -> new GlobalException(ErrorCode.ASSIGNMENT_NOT_FOUND));
         FileResponse fileResponse = awsFileService.saveAssignment(file);
 
         AssignmentFile assignmentFile = new AssignmentFile(fileResponse.fileName(), assignment, member, fileResponse.fileUrl());
         assignmentFileRepository.save(assignmentFile);
-        return AssignmentFileResponse.from(assignmentFile);
+        return AssignmentFilesResponse.from(assignmentFile);
     }
 
     public ResponseEntity<byte[]> download(Integer fileId) throws IOException {

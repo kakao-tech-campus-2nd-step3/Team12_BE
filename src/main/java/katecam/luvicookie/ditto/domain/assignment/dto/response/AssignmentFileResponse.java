@@ -9,30 +9,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Builder
-public record AssignmentFileResponse (
-    List<FileResponse> files,
+public record AssignmentFileResponse(
+    FileResponse file,
     @JsonProperty("member_id")
     Integer memberId,
     String nickname
 ){
 
-    public static AssignmentFileResponse from(List<AssignmentFile> assignmentFiles) {
-        List<FileResponse> fileResponses = assignmentFiles.stream()
-                .map(FileResponse::from).toList();
-        Member member = assignmentFiles.get(0).getMember();
-        return AssignmentFileResponse.builder()
-                .files(fileResponses)
-                .memberId(member.getId())
-                .nickname(member.getNickname())
-                .build();
-    }
 
     public static AssignmentFileResponse from(AssignmentFile assignmentFile) {
-        List<FileResponse> fileResponses = new ArrayList<>();
-        fileResponses.add(FileResponse.from(assignmentFile));
         Member member = assignmentFile.getMember();
         return AssignmentFileResponse.builder()
-                .files(fileResponses)
+                .file(FileResponse.from(assignmentFile))
                 .memberId(member.getId())
                 .nickname(member.getNickname())
                 .build();

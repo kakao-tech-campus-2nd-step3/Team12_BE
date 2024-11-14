@@ -8,7 +8,6 @@ import katecam.luvicookie.ditto.domain.login.annotation.LoginUser;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -85,33 +84,32 @@ public class AssignmentController {
 
     //제출
     @PostMapping("/files/{assignmentId}")
-    public ResponseEntity<AssignmentFileResponse> submitAssignment(
+    public ResponseEntity<AssignmentFilesResponse> submitAssignment(
             @LoginUser Member member,
             @PathVariable Integer assignmentId,
             @RequestPart MultipartFile file) throws IOException {
 
-        AssignmentFileResponse assignmentFileResponse = assignmentService.uploadAssignments(member, assignmentId, file);
+        AssignmentFilesResponse assignmentFilesResponse = assignmentService.uploadAssignments(member, assignmentId, file);
         awsFileService.saveAssignment(file);
-        return ResponseEntity.ok(assignmentFileResponse);
+        return ResponseEntity.ok(assignmentFilesResponse);
     }
 
     //현재 과제에 제출한 파일 목록
     @GetMapping("/files/{assignmentId}/{memberId}")
-    public ResponseEntity<AssignmentFileResponse> getAssignmentFiles(
+    public ResponseEntity<AssignmentFilesResponse> getAssignmentFiles(
             @PathVariable Integer assignmentId,
             @PathVariable Integer memberId
     ){
-        AssignmentFileResponse files = assignmentService.getAssignmentFiles(assignmentId, memberId);
+        AssignmentFilesResponse files = assignmentService.getAssignmentFiles(assignmentId, memberId);
         return ResponseEntity.ok(files);
     }
 
     @GetMapping("/files/{assignmentId}")
     public ResponseEntity<AssignmentFileListResponse> getAllAssignmentFiles(
             @PathVariable Integer assignmentId,
-            @LoginUser Member member,
             @PageableDefault Pageable pageable
     ){
-        AssignmentFileListResponse files = assignmentService.getAllAssignmentFiles(assignmentId, member, pageable);
+        AssignmentFileListResponse files = assignmentService.getAllAssignmentFiles(assignmentId, pageable);
         return ResponseEntity.ok(files);
     }
 
