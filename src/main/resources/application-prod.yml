@@ -22,7 +22,7 @@ spring:
 
 app:
   redirect:
-    uri: https://ditto.pnu.app
+    uri: https://ditto-beta-eight.vercel.app
 
 logging:
   level:
