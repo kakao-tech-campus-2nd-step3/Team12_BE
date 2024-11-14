@@ -63,7 +63,7 @@ public class JwtController {
         }
 
         return Arrays.stream(cookies)
-                .filter(cookie -> "RefreshToken".equals(cookie.getName()))
+                .filter(cookie -> JwtConstants.REFRESH.equals(cookie.getName()))
                 .map(Cookie::getValue)
                 .findAny()
                 .orElse(null);
