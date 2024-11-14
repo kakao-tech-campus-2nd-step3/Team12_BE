@@ -12,6 +12,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import java.io.IOException;
+
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 @ActiveProfiles("test")
@@ -35,6 +37,14 @@ public abstract class ControllerTestConfig {
                 .apply(springSecurity())
                 .addFilter(new CharacterEncodingFilter("UTF-8", true))
                 .build();
+    }
+
+    protected String toJsonString(Object object) {
+        try {
+            return objectMapper.writeValueAsString(object);
+        } catch (IOException exception) {
+            throw new RuntimeException(exception);
+        }
     }
 
 }
