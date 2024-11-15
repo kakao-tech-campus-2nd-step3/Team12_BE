@@ -12,6 +12,7 @@ import katecam.luvicookie.ditto.domain.studymember.dto.request.StudyMemberRoleRe
 import katecam.luvicookie.ditto.domain.studymember.dto.response.StudyInviteResponse;
 import katecam.luvicookie.ditto.domain.studymember.dto.response.StudyMemberApplyResponse;
 import katecam.luvicookie.ditto.domain.studymember.dto.response.StudyMemberResponse;
+import katecam.luvicookie.ditto.domain.studymember.dto.response.StudyMemberRoleResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,12 @@ public class StudyMemberController {
         studyMemberService.validateStudyMember(studyId, member);
         List<StudyMemberResponse> memberResponseList = studyMemberService.getStudyMemberList(studyId);
         return ResponseEntity.ok(memberResponseList);
+    }
+
+    @GetMapping("/role")
+    public ResponseEntity<StudyMemberRoleResponse> getStudyMemberRole(@LoginUser Member member, @PathVariable Integer studyId) {
+        StudyMemberRoleResponse role = studyMemberService.getStudyMemberRole(studyId, member.getId());
+        return ResponseEntity.ok(role);
     }
 
     @PutMapping("/{memberId}")

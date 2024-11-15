@@ -6,10 +6,7 @@ import katecam.luvicookie.ditto.domain.study.domain.Study;
 import katecam.luvicookie.ditto.domain.studymember.dao.StudyMemberRepository;
 import katecam.luvicookie.ditto.domain.studymember.domain.StudyMember;
 import katecam.luvicookie.ditto.domain.studymember.domain.StudyMemberRole;
-import katecam.luvicookie.ditto.domain.studymember.dto.response.StudyInviteResponse;
-import katecam.luvicookie.ditto.domain.studymember.dto.response.StudyLeaderResponse;
-import katecam.luvicookie.ditto.domain.studymember.dto.response.StudyMemberApplyResponse;
-import katecam.luvicookie.ditto.domain.studymember.dto.response.StudyMemberResponse;
+import katecam.luvicookie.ditto.domain.studymember.dto.response.*;
 import katecam.luvicookie.ditto.global.error.ErrorCode;
 import katecam.luvicookie.ditto.global.error.GlobalException;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +32,11 @@ public class StudyMemberService {
                 .stream()
                 .map(StudyMemberResponse::new)
                 .toList();
+    }
+
+    public StudyMemberRoleResponse getStudyMemberRole(Integer studyId, Integer memberId) {
+        Optional<StudyMember> studyMember = studyMemberRepository.findByStudyIdAndMember_Id(studyId, memberId);
+        return new StudyMemberRoleResponse(Objects.requireNonNull(studyMember.map(StudyMember::getRole).orElse(StudyMemberRole.UNREGISTERED)));
     }
 
     @Transactional
