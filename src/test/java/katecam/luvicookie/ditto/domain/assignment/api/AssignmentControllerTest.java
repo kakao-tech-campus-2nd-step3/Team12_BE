@@ -136,7 +136,6 @@ class AssignmentControllerTest extends ControllerTestConfig {
                 .andExpect(status().isOk());
     }
 
-    //TODO 수정 필요
     @Test
     @DisplayName("과제 파일 다운로드 테스트")
     void downloadAssignment() throws Exception {
