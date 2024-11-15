@@ -30,6 +30,9 @@
 
 ---
 
+### 문서
+- **[API 문서](https://www.notion.so/API-207dbc1991fc48abb2a2bfe051aca514)**
+
 ### 깃허브 레포지토리
 
 - **[FrontEnd Repository](https://github.com/kakao-tech-campus-2nd-step3/Team12_FE)**
@@ -65,9 +68,11 @@
 
 ### 인증
 
-JWT
 
-- ACCESS TOKEN과 REFRESH TOKEN을 구현하였습니다.
+Sping Security + OAuth2 + JWT
+
+- Spring Security와 OAuth2를 사용해서 카카오 소셜 회원가입 및 로그인을 구현하였습니다.
+- 로그인 성공 시, JWT ACCESS TOKEN과 REFRESH TOKEN을 반환합니다.
 
 ### 스터디
 
@@ -85,11 +90,18 @@ JWT
 
 ### 공지
 
-스터디장이 작성하는 포스팅입니다.
+스터디 멤버들이 공지를 올릴 수 있습니다.
+
+- 스터디별로 별도의 공지 게시판이 존재합니다.
+- 스터디원은 공지를 등록, 수정 및 삭제할 수 있습니다.
 
 ### 과제
 
 스터디 내에서 과제를 수행하여 목표를 달성합니다.
+
+- 스터디장은 과제를 등록, 수정 및 삭제할 수 있습니다.
+- 스터디원은 마감기한 전까지 과제를 제출할 수 있습니다.
+- 스터디원은 다른 스터디원들이 올린 과제를 다운로드 받을 수 있습니다.
 
 ### 출석
 
