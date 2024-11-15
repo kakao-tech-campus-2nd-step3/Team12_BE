@@ -42,7 +42,8 @@ VALUES ('과제1번', '과제1을 마감기한까지 제출하세요', 1, CURREN
 
 INSERT INTO assignment_file (file_name, file_url, assignment_id, member_id, created_at)
 VALUES ('assignment/file1', 'https://https://test-domain.com/file1.text', 1, 1, CURRENT_TIMESTAMP()),
-       ('assignment/file2', 'https://https://test-domain.com/file2.text', 2, 1, CURRENT_TIMESTAMP());
+       ('assignment/file2', 'https://https://test-domain.com/file2.text', 2, 1, CURRENT_TIMESTAMP()),
+       ('assignment/5848ad4b-1e46-4800-a813-0f4e3333e502test.text', 'https://ditto2024.s3.ap-northeast-2.amazonaws.com/assignment/5848ad4b-1e46-4800-a813-0f4e3333e502test.text', 1, 4, CURRENT_TIMESTAMP());
 
 INSERT INTO attendance_date (study_id, start_time, deadline, code)
 VALUES (1, '2024-11-11 11:00:00', '2024-11-11 11:15:00', 'true_'),

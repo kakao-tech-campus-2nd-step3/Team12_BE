@@ -140,7 +140,7 @@ class AssignmentControllerTest extends ControllerTestConfig {
     @Test
     @DisplayName("과제 파일 다운로드 테스트")
     void downloadAssignment() throws Exception {
-        Integer fileId = 1;
+        Integer fileId = 3;
         Member member = new MemberFixture(1);
         String accessToken = JwtConstants.JWT_TYPE + TokenProvider.generateToken(member, JwtConstants.ACCESS_EXP_TIME_MINUTES);
 
