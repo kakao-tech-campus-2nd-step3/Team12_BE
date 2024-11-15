@@ -68,6 +68,7 @@
 
 ### 인증
 
+
 Sping Security + OAuth2 + JWT
 
 - Spring Security와 OAuth2를 사용해서 카카오 소셜 회원가입 및 로그인을 구현하였습니다.
