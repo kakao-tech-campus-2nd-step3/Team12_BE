@@ -111,33 +111,28 @@ public class AssignmentService {
         return awsFileService.downloadFile(assignmentFile.getFileName());
     }
 
-    public double getSubmissionRate(Integer studyId){
+    public Integer getSubmissionCount(Integer studyId){
         Study study = studyRepository.findById(studyId).orElseThrow(() -> new GlobalException(ErrorCode.STUDY_NOT_FOUND));
         List<Assignment> allByStudy = assignmentRepository.findAllByStudy(study);
         List<StudyMemberResponse> memberList = studyMemberService.getStudyMemberList(studyId);
-
-        double totalSubmissionRate = 0.0;
+        List<Assignment> studySubmissions = List.copyOf(allByStudy);
 
         DateTimeFormatter format1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
         for (StudyMemberResponse memberResponse : memberList) {
             LocalDateTime joinedAt = LocalDateTime.parse(memberResponse.joinedAt(), format1);
 
-            long totalAssignment = allByStudy.stream()
-                    .filter(assignment -> joinedAt.isBefore(assignment.getDeadline()))
-                    .count();
-
-            long submitCount = allByStudy.stream()
+            List<Assignment> memberSubmissions = allByStudy.stream()
                     .filter(assignment -> joinedAt.isBefore(assignment.getDeadline()))
                     .filter(assignment -> assignmentFileRepository.existsByAssignmentAndMemberId(assignment, memberResponse.member().id()))
-                    .count();
+                    .toList();
 
-            if (totalAssignment > 0) {
-                totalSubmissionRate += (double) submitCount / (double) totalAssignment;
-            }
+            studySubmissions = studySubmissions.stream()
+                    .filter(memberSubmissions::contains)
+                    .toList();
         }
 
-        return totalSubmissionRate / memberList.size();
+        return studySubmissions.size();
     }
 
 

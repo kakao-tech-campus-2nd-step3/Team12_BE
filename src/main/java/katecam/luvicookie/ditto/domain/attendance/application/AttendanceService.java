@@ -235,16 +235,9 @@ public class AttendanceService {
         return studyAttendanceDateList.size();
     }
 
-    public double getStudyAttendanceRate(Integer studyId) {
-        Integer studyAttendanceCount = getStudyAttendanceCount(studyId);
-        Integer studyAttendanceDateCount = attendanceDateRepository.findAllByStudy_IdOrderByStartTimeAsc(studyId)
+    public Integer getTotalAttendanceDateCount(Integer studyId) {
+        return attendanceDateRepository.findAllByStudy_IdOrderByStartTimeAsc(studyId)
                 .size();
-
-        if (studyAttendanceDateCount.equals(0) || studyAttendanceCount.equals(0)) {
-            return 0.0;
-        }
-
-        return (double) studyAttendanceCount / studyAttendanceDateCount;
     }
 
 }
