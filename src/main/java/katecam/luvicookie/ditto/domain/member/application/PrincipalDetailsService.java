@@ -1,8 +1,8 @@
 package katecam.luvicookie.ditto.domain.member.application;
 
+import katecam.luvicookie.ditto.domain.member.dao.MemberRepository;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.member.domain.PrincipalDetail;
-import katecam.luvicookie.ditto.domain.member.dao.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,7 +23,7 @@ public class PrincipalDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.info(username);
         Optional<Member> userEntity = memberRepository.findByName(username);
-        if(userEntity.isEmpty()) {
+        if (userEntity.isEmpty()) {
             return null;
         } else {
             return new PrincipalDetail(userEntity.get());
