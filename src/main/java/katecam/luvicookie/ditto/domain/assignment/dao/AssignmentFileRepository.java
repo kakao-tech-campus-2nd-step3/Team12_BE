@@ -3,8 +3,6 @@ package katecam.luvicookie.ditto.domain.assignment.dao;
 import katecam.luvicookie.ditto.domain.assignment.domain.Assignment;
 import katecam.luvicookie.ditto.domain.assignment.domain.AssignmentFile;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
-import katecam.luvicookie.ditto.domain.notice.domain.Notice;
-import katecam.luvicookie.ditto.domain.study.domain.Study;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

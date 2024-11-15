@@ -4,8 +4,8 @@ import katecam.luvicookie.ditto.domain.assignment.dao.AssignmentFileRepository;
 import katecam.luvicookie.ditto.domain.assignment.dao.AssignmentRepository;
 import katecam.luvicookie.ditto.domain.assignment.domain.Assignment;
 import katecam.luvicookie.ditto.domain.assignment.domain.AssignmentFile;
-import katecam.luvicookie.ditto.domain.assignment.dto.response.*;
 import katecam.luvicookie.ditto.domain.assignment.dto.request.AssignmentRequest;
+import katecam.luvicookie.ditto.domain.assignment.dto.response.*;
 import katecam.luvicookie.ditto.domain.file.application.AwsFileService;
 import katecam.luvicookie.ditto.domain.member.application.MemberService;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
@@ -54,7 +54,8 @@ public class AssignmentService {
     public AssignmentResponse update(Integer assignmentId, AssignmentRequest assignmentRequest, Member member) {
         Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(() -> new GlobalException(ErrorCode.ASSIGNMENT_NOT_FOUND));
         studyMemberService.validateStudyLeader(assignment.getStudy().getId(), member);
-        assignment.updateAssignment(assignmentRequest);
+        assignment.updateAssignment(
+                assignmentRequest.title(), assignmentRequest.content(), assignmentRequest.deadline());
         return AssignmentResponse.from(assignment);
     }
 

@@ -1,13 +1,13 @@
 package katecam.luvicookie.ditto.domain.member.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import katecam.luvicookie.ditto.ControllerTestConfig;
+import katecam.luvicookie.ditto.ControllerTestWebMvcConfig;
 import katecam.luvicookie.ditto.domain.login.jwt.JwtConstants;
 import katecam.luvicookie.ditto.domain.login.jwt.TokenProvider;
+import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.member.dto.request.MemberCreateRequest;
 import katecam.luvicookie.ditto.domain.member.dto.request.MemberUpdateRequest;
 import katecam.luvicookie.ditto.fixture.MemberFixture;
-import katecam.luvicookie.ditto.domain.member.domain.Member;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import org.springframework.web.context.WebApplicationContext;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class MemberControllerTest extends ControllerTestConfig {
+class MemberControllerTest extends ControllerTestWebMvcConfig {
 
     @Autowired
     public MemberControllerTest(WebApplicationContext context, ObjectMapper objectMapper) {
