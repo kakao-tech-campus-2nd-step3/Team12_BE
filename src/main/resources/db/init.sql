@@ -38,6 +38,7 @@ CREATE TABLE attendance_date (
     start_time TIMESTAMP NOT NULL,
     deadline TIMESTAMP NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    code VARCHAR(5) DEFAULT substring(md5(random()::text), 1, 5),
     CONSTRAINT FK_study_TO_attendance_dates FOREIGN KEY (study_id) REFERENCES study (id)
 );
 

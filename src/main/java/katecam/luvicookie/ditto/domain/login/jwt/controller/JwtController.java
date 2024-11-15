@@ -1,11 +1,12 @@
 package katecam.luvicookie.ditto.domain.login.jwt.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import katecam.luvicookie.ditto.domain.login.jwt.JwtConstants;
 import katecam.luvicookie.ditto.domain.login.jwt.TokenProvider;
-import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.member.application.MemberService;
+import katecam.luvicookie.ditto.domain.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -21,6 +22,7 @@ import java.util.Objects;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "토큰 재발급", description = "리프레시 토큰 만료시 재발급 받는 API입니다.")
 public class JwtController {
 
     private final MemberService memberService;
@@ -63,7 +65,7 @@ public class JwtController {
         }
 
         return Arrays.stream(cookies)
-                .filter(cookie -> "RefreshToken".equals(cookie.getName()))
+                .filter(cookie -> JwtConstants.REFRESH.equals(cookie.getName()))
                 .map(Cookie::getValue)
                 .findAny()
                 .orElse(null);

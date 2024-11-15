@@ -2,25 +2,35 @@ package katecam.luvicookie.ditto.domain.study.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import katecam.luvicookie.ditto.domain.study.domain.Study;
+import katecam.luvicookie.ditto.domain.studymember.dto.response.StudyLeaderResponse;
 import lombok.Builder;
-import lombok.Getter;
 
 import java.time.format.DateTimeFormatter;
 
 @Builder
-@Getter
-public class StudyResponse {
+public record StudyResponse (
+        @JsonProperty("id")
+        Integer studyId,
 
-    @JsonProperty("id")
-    private Integer studyId;
-    private String name;
-    private String description;
-    private String createdAt;
-    private Boolean isOpen;
-    private String topic;
-    private String profileImage;
+        String name,
+        String description,
 
-    public static StudyResponse from(Study study) {
+        @JsonProperty("created_at")
+        String createdAt,
+
+        @JsonProperty("is_open")
+        Boolean isOpen,
+
+        String topic,
+
+        @JsonProperty("profile_image")
+        String profileImage,
+
+        @JsonProperty("study_leader_info")
+        StudyLeaderResponse studyLeaderResponse
+
+) {
+    public static StudyResponse from(Study study, StudyLeaderResponse studyLeaderResponse) {
         return StudyResponse.builder()
                 .studyId(study.getId())
                 .name(study.getName())
@@ -32,6 +42,7 @@ public class StudyResponse {
                 .isOpen(study.getIsOpen())
                 .topic(study.getTopic())
                 .profileImage(study.getProfileImage())
+                .studyLeaderResponse(studyLeaderResponse)
                 .build();
     }
 

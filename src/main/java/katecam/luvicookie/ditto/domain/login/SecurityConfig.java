@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -35,7 +36,7 @@ public class SecurityConfig {
     private final TokenProvider tokenProvider;
     private final PrincipalDetailsService principalDetailsService;
     @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {  //해당 URL은 필터 거치지 않겠다
+    public WebSecurityCustomizer webSecurityCustomizer() {
         return (web -> web.ignoring().requestMatchers("/img/**", "/css/**", "/js/**", "/h2-console/**"));
     }
     @Bean
@@ -46,7 +47,7 @@ public class SecurityConfig {
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
         corsConfiguration.setAllowCredentials(true);
-
+        corsConfiguration.addExposedHeader("Content-Disposition");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfiguration); // 모든 경로에 대해서 CORS 설정을 적용
 
@@ -93,7 +94,6 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable);
 
-
         http.sessionManagement(httpSecuritySessionManagementConfigurer -> {
             httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.NEVER);
         });
@@ -103,9 +103,12 @@ public class SecurityConfig {
 
         http.addFilterBefore(TokenAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
 
-
         http.oauth2Login(httpSecurityOAuth2LoginConfigurer ->
-                httpSecurityOAuth2LoginConfigurer.loginPage("/api/auth/kakao")
+                httpSecurityOAuth2LoginConfigurer
+                        .authorizationEndpoint(end -> end.baseUri("/api/oauth2/authorization/"))
+                        .redirectionEndpoint((endPoint) -> endPoint
+                                .baseUri("/api/login/oauth2/code/kakao"))
+                        .loginPage("/user/login/kakao")
                         .successHandler(LoginSuccessHandler())
                         .failureHandler(LoginFailHandler())
                         .userInfoEndpoint(userInfoEndpointConfig ->
@@ -113,4 +116,5 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 }

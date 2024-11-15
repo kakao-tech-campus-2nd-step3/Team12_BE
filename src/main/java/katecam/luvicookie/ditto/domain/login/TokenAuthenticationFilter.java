@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import katecam.luvicookie.ditto.domain.login.jwt.JwtConstants;
 import katecam.luvicookie.ditto.domain.login.jwt.TokenProvider;
+import katecam.luvicookie.ditto.global.error.GlobalException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,7 +20,16 @@ import java.io.IOException;
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private final TokenProvider tokenProvider;
-    private static final String[] whitelist = {"/api/studies", "/api/auth", "/api/auth/kakao", "/user/login/kakao", "/api/auth/reissue"};
+
+    private static final String[] whitelist = {"/api/studies", "/api/auth", "/api/auth/kakao", "/user/login/kakao", "/api/login/oauth2/code/kakao", "/api/auth/reissue",
+
+            "/api/auth/reissue", "/api-docs",
+            "/swagger-ui-custom.html",
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/api-docs/**",
+            "/swagger-ui.html",
+            "/swagger-custom-ui.html"};
 
     public TokenAuthenticationFilter(TokenProvider tokenProvider) {
         this.tokenProvider = tokenProvider;
@@ -56,6 +66,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
             if (e instanceof ExpiredJwtException) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token_Expired: " + e.getMessage());
+            } else if (e instanceof GlobalException){
+                response.sendError(((GlobalException) e).getHttpStatus().value(), "Error: " +  e.getMessage());
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Error: " + e.getMessage());
             }

@@ -15,14 +15,20 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@DynamicInsert
 @Table(name = "attendance_date")
 public class AttendanceDate extends BaseTimeEntity {
+
+    public static final int ATTENDANCE_CODE_LENGTH = 5;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +37,7 @@ public class AttendanceDate extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Study study;
 
     @Column(name = "start_time", nullable = false)
@@ -39,9 +46,26 @@ public class AttendanceDate extends BaseTimeEntity {
     @Column(name = "deadline", nullable = false)
     private LocalDateTime deadline;
 
+    @Column(name = "code", insertable = false, updatable = false, length = ATTENDANCE_CODE_LENGTH)
+    private String code;
+
     @Builder
     public AttendanceDate(Study study, LocalDateTime startTime, LocalDateTime deadline) {
         this.study = study;
+        this.startTime = startTime;
+        this.deadline = deadline;
+    }
+
+    public boolean isDifferentCode(String code) {
+        return !this.code.equals(code);
+    }
+
+    public boolean isUnableToAttend() {
+        LocalDateTime currentTime = LocalDateTime.now();
+        return !(currentTime.isAfter(startTime) && currentTime.isBefore(deadline));
+    }
+
+    public void update(LocalDateTime startTime, LocalDateTime deadline) {
         this.startTime = startTime;
         this.deadline = deadline;
     }

@@ -4,6 +4,7 @@ import katecam.luvicookie.ditto.domain.attendance.dao.AttendanceDateRepository;
 import katecam.luvicookie.ditto.domain.attendance.dao.AttendanceRepository;
 import katecam.luvicookie.ditto.domain.attendance.domain.Attendance;
 import katecam.luvicookie.ditto.domain.attendance.domain.AttendanceDate;
+import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceCodeResponse;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceDateListResponse;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.AttendanceListResponse;
 import katecam.luvicookie.ditto.domain.attendance.dto.response.MemberAttendanceResponse;
@@ -11,6 +12,7 @@ import katecam.luvicookie.ditto.domain.member.dao.MemberRepository;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.study.dao.StudyRepository;
 import katecam.luvicookie.ditto.domain.study.domain.Study;
+import katecam.luvicookie.ditto.domain.studymember.application.StudyMemberService;
 import katecam.luvicookie.ditto.domain.studymember.dao.StudyMemberRepository;
 import katecam.luvicookie.ditto.domain.studymember.domain.StudyMember;
 import katecam.luvicookie.ditto.domain.studymember.domain.StudyMemberRole;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -33,16 +36,29 @@ public class AttendanceService {
 
     private final AttendanceDateRepository attendanceDateRepository;
     private final AttendanceRepository attendanceRepository;
-    private final MemberRepository memberRepository;
     private final StudyRepository studyRepository;
     private final StudyMemberRepository studyMemberRepository;
+    private final StudyMemberService studyMemberService;
+    private final MemberRepository memberRepository;
 
     @Transactional
-    public void createAttendance(Integer studyId, Integer memberId) {
-        AttendanceDate attendanceDate = getAttendanceDatesByStudyIdAndTime(studyId, LocalDateTime.now());
+    public void createAttendance(Member member, Integer studyId, String code, Integer dateId) {
+        studyMemberService.validateStudyMember(studyId, member);
 
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND));
+        validateDuplicateAttendance(dateId, member.getId());
+
+        AttendanceDate attendanceDate = attendanceDateRepository.findById(dateId)
+                .orElseThrow(() -> new GlobalException(ErrorCode.DATE_NOT_FOUND));
+
+        // 출석 시간대 확인
+        if (attendanceDate.isUnableToAttend()) {
+            throw new GlobalException(ErrorCode.DATE_UNABLE_TO_ATTEND);
+        }
+
+        // 출석 코드 확인
+        if (attendanceDate.isDifferentCode(code)) {
+            throw new GlobalException(ErrorCode.CODE_MISMATCH);
+        }
 
         Attendance attendance = Attendance.builder()
                 .attendanceDate(attendanceDate)
@@ -52,64 +68,96 @@ public class AttendanceService {
         attendanceRepository.save(attendance);
     }
 
-    public AttendanceListResponse getAttendanceList(Integer studyId, Integer memberId) {
-        List<Integer> memberIds = Arrays.asList(memberId);
+    public AttendanceListResponse getAttendanceList(Member member, Integer studyId, Integer memberId) {
+        studyMemberService.validateStudyLeader(studyId, member);
+
+        List<StudyMember> studyMemberList = new ArrayList<>();
+
+        // 조회할 회원이 없으면 스터디원 전체를 조회
         if (memberId == null) {
-            memberIds = studyMemberRepository.findAllByStudyIdAndRoleIn(studyId, Arrays.asList(StudyMemberRole.LEADER, StudyMemberRole.MEMBER))
-                    .stream()
-                    .map(StudyMember::getMember)
-                    .map(Member::getId)
-                    .toList();
+            studyMemberList = studyMemberRepository.findAllByStudyIdAndRoleIn(studyId, Arrays.asList(StudyMemberRole.LEADER, StudyMemberRole.MEMBER));
+        }
+        else {
+            studyMemberList.add(
+                    studyMemberRepository.findByStudyIdAndMember_Id(studyId, memberId)
+                            .orElseThrow(() -> new GlobalException(ErrorCode.STUDY_MEMBER_NOT_FOUND))
+            );
         }
 
         List<AttendanceDate> attendanceDateList = attendanceDateRepository.findAllByStudy_IdOrderByStartTimeAsc(studyId);
         Map<Integer, MemberAttendanceResponse> memberAttendances = new HashMap<>();
-        for (Integer id : memberIds) {
-            // 해당 스터디에 대한 회원 출석 필터링
-            List<Attendance> memberAttendanceList = attendanceRepository.findAllByMember_IdOrderByIdAsc(memberId)
+
+        // 스터디원 출석 필터링
+        // 스터디에 참여한 날짜 이후 출석일자만 처리
+        for (StudyMember studyMember : studyMemberList) {
+            Integer targetMemberId = studyMember.getMember()
+                    .getId();
+
+            List<LocalDateTime> memberAttendanceList = attendanceRepository.findAllByMember_IdOrderByIdAsc(targetMemberId)
                     .stream()
                     .filter(attendance -> attendanceDateList.contains(attendance.getAttendanceDate()))
+                    .filter(attendance -> studyMember.getJoinedAt()
+                            .isBefore(attendance.getCreatedAt()))
+                    .map(attendance -> attendance.getAttendanceDate()
+                            .getStartTime())
                     .toList();
 
-            // Todo - attendanceDatesList를 사용자가 스터디에 가입한 날짜 이후로 필터링
-            memberAttendances.put(id, MemberAttendanceResponse.from(attendanceDateList, memberAttendanceList));
+            memberAttendances.put(targetMemberId, MemberAttendanceResponse.from(attendanceDateList, memberAttendanceList));
         }
 
         return AttendanceListResponse.from(attendanceDateList, memberAttendances);
     }
 
     @Transactional
-    public void updateAttendance(Integer studyId, Integer memberId, LocalDateTime dateTime, Boolean isAttended) {
-        AttendanceDate attendanceDate = getAttendanceDatesByStudyIdAndTime(studyId, dateTime);
+    public void updateAttendance(Member member, Integer studyId, Integer memberId, Integer dateId, Boolean isAttended) {
+        studyMemberService.validateStudyLeader(studyId, member);
 
-        Member member = memberRepository.findById(memberId)
+        Member targetMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND));
 
-        Attendance attendance = Attendance.builder()
-                .attendanceDate(attendanceDate)
-                .member(member)
-                .build();
+        studyMemberService.validateStudyMember(studyId, targetMember);
+
+        AttendanceDate attendanceDate = attendanceDateRepository.findById(dateId)
+                .orElseThrow(() -> new GlobalException(ErrorCode.DATE_NOT_FOUND));
 
         if (isAttended) {
+            validateDuplicateAttendance(attendanceDate.getId(), memberId);
+
+            Attendance attendance = Attendance.builder()
+                    .attendanceDate(attendanceDate)
+                    .member(targetMember)
+                    .build();
+
             attendanceRepository.save(attendance);
             return;
         }
 
+        // 출석 여부 확인
+        Attendance attendance = attendanceRepository.findByAttendanceDate_IdAndMember_Id(attendanceDate.getId(), memberId)
+                .orElseThrow(() -> new GlobalException(ErrorCode.NOT_ATTENDED));
+
         attendanceRepository.delete(attendance);
     }
 
-    public AttendanceDateListResponse getAttendanceDateList(Integer studyId) {
+    private void validateDuplicateAttendance(Integer dateId, Integer memberId) {
+        Boolean isAttended = attendanceRepository.existsByAttendanceDate_IdAndMember_Id(dateId, memberId);
+        if (isAttended) {
+            throw new GlobalException(ErrorCode.ALREADY_ATTENDED);
+        }
+    }
+
+    public AttendanceDateListResponse getAttendanceDateList(Member member, Integer studyId) {
+        studyMemberService.validateStudyMember(studyId, member);
         List<AttendanceDate> attendanceDateList = attendanceDateRepository.findAllByStudy_IdOrderByStartTimeAsc(studyId);
         return AttendanceDateListResponse.from(attendanceDateList);
     }
 
-    private AttendanceDate getAttendanceDatesByStudyIdAndTime(Integer studyId, LocalDateTime attendanceTime) {
-        return attendanceDateRepository.findByStudy_IdAndAttendanceTime(studyId, attendanceTime)
-                .orElseThrow(() -> new GlobalException(ErrorCode.DATE_UNABLE_TO_ATTEND));
-    }
-
     @Transactional
-    public void createAttendanceDate(Integer studyId, LocalDateTime startTime, Integer intervalMinutes) {
+    public void createAttendanceDate(Member member, Integer studyId, LocalDateTime startTime, Integer intervalMinutes) {
+        studyMemberService.validateStudyLeader(studyId, member);
+
+        validateAttendanceDateTime(startTime);
+
         Study study = studyRepository.findById(studyId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.STUDY_NOT_FOUND));
 
@@ -124,10 +172,72 @@ public class AttendanceService {
         attendanceDateRepository.save(attendanceDate);
     }
 
+    private void validateAttendanceDateTime(LocalDateTime startTime) {
+        boolean isBeforeNow = startTime.isBefore(LocalDateTime.now());
+        if (isBeforeNow) {
+            throw new GlobalException(ErrorCode.INVALID_ATTENDANCE_DATE);
+        }
+    }
+
     @Transactional
-    public void deleteAttendanceDate(Integer studyId, LocalDateTime attendanceDate) {
-        AttendanceDate attendanceDates = getAttendanceDatesByStudyIdAndTime(studyId, attendanceDate);
-        attendanceDateRepository.delete(attendanceDates);
+    public void updateAttendanceDate(Member member, Integer studyId, Integer dateId, LocalDateTime startTime, Integer intervalMinutes) {
+        studyMemberService.validateStudyLeader(studyId, member);
+
+        validateAttendanceDateTime(startTime);
+
+        AttendanceDate attendanceDate = attendanceDateRepository.findById(dateId)
+                .orElseThrow(() -> new GlobalException(ErrorCode.DATE_NOT_FOUND));
+
+        attendanceDate.update(startTime, startTime.plusMinutes(intervalMinutes));
+    }
+
+    @Transactional
+    public void deleteAttendanceDate(Member member, Integer studyId, LocalDateTime startTime) {
+        studyMemberService.validateStudyLeader(studyId, member);
+
+        AttendanceDate attendanceDate = attendanceDateRepository.findByStudy_IdAndDateTime(studyId, startTime)
+                .orElseThrow(() -> new GlobalException(ErrorCode.DATE_UNABLE_TO_ATTEND));
+        attendanceDateRepository.delete(attendanceDate);
+    }
+
+    public AttendanceCodeResponse getAttendanceCode(Member member, Integer studyId, Integer dateId) {
+        studyMemberService.validateStudyLeader(studyId, member);
+
+        AttendanceDate attendanceDate = attendanceDateRepository.findById(dateId)
+                .orElseThrow(() -> new GlobalException(ErrorCode.DATE_NOT_FOUND));
+
+        return AttendanceCodeResponse.from(attendanceDate.getCode());
+    }
+
+    public Integer getStudyAttendanceCount(Integer studyId) {
+        List<StudyMember> studyMemberList = studyMemberRepository.findAllByStudyIdAndRoleIn(studyId, Arrays.asList(StudyMemberRole.LEADER, StudyMemberRole.MEMBER));
+        List<AttendanceDate> attendanceDateList = attendanceDateRepository.findAllByStudy_IdOrderByStartTimeAsc(studyId);
+        List<AttendanceDate> studyAttendanceDateList = List.copyOf(attendanceDateList);
+
+        // 스터디 구성원들이 모두 출석한 일자 필터링
+        for (StudyMember studyMember : studyMemberList) {
+            Integer memberId = studyMember.getMember()
+                    .getId();
+
+            List<AttendanceDate> memberAttendanceDateList = attendanceRepository.findAllByMember_IdOrderByIdAsc(memberId)
+                    .stream()
+                    .filter(attendance -> attendanceDateList.contains(attendance.getAttendanceDate()))
+                    .filter(attendance -> studyMember.getJoinedAt()
+                            .isBefore(attendance.getCreatedAt()))
+                    .map(Attendance::getAttendanceDate)
+                    .toList();
+
+            studyAttendanceDateList = studyAttendanceDateList.stream()
+                    .filter(memberAttendanceDateList::contains)
+                    .toList();
+        }
+
+        return studyAttendanceDateList.size();
+    }
+
+    public Integer getTotalAttendanceDateCount(Integer studyId) {
+        return attendanceDateRepository.findAllByStudy_IdOrderByStartTimeAsc(studyId)
+                .size();
     }
 
 }

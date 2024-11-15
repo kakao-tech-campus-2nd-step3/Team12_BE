@@ -3,10 +3,10 @@ package katecam.luvicookie.ditto.domain.notice.application;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.notice.dao.NoticeRepository;
 import katecam.luvicookie.ditto.domain.notice.domain.Notice;
-import katecam.luvicookie.ditto.domain.notice.dto.NoticeCreateRequest;
-import katecam.luvicookie.ditto.domain.notice.dto.NoticeListResponse;
-import katecam.luvicookie.ditto.domain.notice.dto.NoticeResponse;
-import katecam.luvicookie.ditto.domain.notice.dto.NoticeUpdateRequest;
+import katecam.luvicookie.ditto.domain.notice.dto.request.NoticeCreateRequest;
+import katecam.luvicookie.ditto.domain.notice.dto.request.NoticeUpdateRequest;
+import katecam.luvicookie.ditto.domain.notice.dto.response.NoticeListResponse;
+import katecam.luvicookie.ditto.domain.notice.dto.response.NoticeResponse;
 import katecam.luvicookie.ditto.domain.study.dao.StudyRepository;
 import katecam.luvicookie.ditto.domain.study.domain.Study;
 import katecam.luvicookie.ditto.global.error.ErrorCode;
@@ -19,11 +19,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class NoticeService {
 
     private final NoticeRepository noticeRepository;
     private final StudyRepository studyRepository;
 
+    @Transactional
     public void create(NoticeCreateRequest noticeCreateRequest, Integer studyId, Member member) {
         Notice notice = noticeCreateRequest.toEntity();
         Study study = studyRepository.findById(studyId)
@@ -50,12 +52,13 @@ public class NoticeService {
         Notice notice = noticeRepository.findById(noticeId).orElseThrow(() -> new GlobalException(ErrorCode.NOTICE_NOT_FOUND));
         isWriterMatches(notice, member);
         if(notice.getTitle()!=null)
-            notice.updateNoticeTitle(noticeUpdateRequest.getTitle());
+            notice.updateNoticeTitle(noticeUpdateRequest.title());
         if(notice.getContent()!=null)
-            notice.updateNoticeContent(noticeUpdateRequest.getContent());
+            notice.updateNoticeContent(noticeUpdateRequest.content());
         return NoticeResponse.from(notice);
     }
 
+    @Transactional
     public void deleteNotice(Integer noticeId, Member member) {
         Notice notice = noticeRepository.findById(noticeId).orElseThrow(() -> new GlobalException(ErrorCode.NOTICE_NOT_FOUND));
         isWriterMatches(notice, member);

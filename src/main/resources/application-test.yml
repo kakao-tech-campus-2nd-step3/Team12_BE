@@ -1,0 +1,48 @@
+spring:
+  application:
+    name: ditto-test
+
+  datasource:
+    url: jdbc:h2:mem:test
+    driver-class-name: org.h2.Driver
+    username: sa
+
+  h2:
+    console:
+      enabled: true
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            redirect-uri: http://localhost:8080/api/login/oauth2/code/kakao
+
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
+
+  config:
+    import: classpath:/application-secret.yml
+
+app:
+  redirect:
+    uri: http://localhost:5173
+
+logging:
+  level:
+    org:
+      springframework:
+        web: info
+      hibernate:
+        SQL: info
+        type: info

@@ -18,4 +18,8 @@ public abstract class BaseTimeEntity {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    public void initCreatedAt() {
+        this.createdAt = LocalDateTime.now();
+    }
+
 }

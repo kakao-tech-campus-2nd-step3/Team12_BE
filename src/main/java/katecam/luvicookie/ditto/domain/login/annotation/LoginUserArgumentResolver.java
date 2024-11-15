@@ -2,15 +2,15 @@ package katecam.luvicookie.ditto.domain.login.annotation;
 
 import jakarta.servlet.http.HttpServletRequest;
 import katecam.luvicookie.ditto.domain.login.jwt.TokenProvider;
-import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.member.application.MemberService;
+import katecam.luvicookie.ditto.domain.member.domain.Member;
+import katecam.luvicookie.ditto.global.error.ErrorCode;
+import katecam.luvicookie.ditto.global.error.GlobalException;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-
-import java.util.Objects;
 
 public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver {
 
@@ -33,8 +33,9 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         String accessToken = request.getHeader("Authorization");
 
-        if(accessToken == null) return null;
-
-        return memberService.findMemberById(Integer.valueOf(Objects.requireNonNull(TokenProvider.getClaims(TokenProvider.getTokenFromHeader(accessToken)))));
+        if(accessToken == null) throw new GlobalException(ErrorCode.AUTHENTICATION_FAILED);
+        String claims = TokenProvider.getClaims(TokenProvider.getTokenFromHeader(accessToken));
+        if(claims == null) throw new GlobalException(ErrorCode.AUTHENTICATION_FAILED);
+        return memberService.findMemberById(Integer.valueOf(claims));
     }
 }

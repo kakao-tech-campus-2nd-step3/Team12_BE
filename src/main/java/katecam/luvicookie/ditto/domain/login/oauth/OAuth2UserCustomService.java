@@ -1,10 +1,10 @@
 package katecam.luvicookie.ditto.domain.login.oauth;
 
+import katecam.luvicookie.ditto.domain.member.dao.MemberRepository;
 import katecam.luvicookie.ditto.domain.member.domain.KakaoUserInfo;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.member.domain.PrincipalDetail;
 import katecam.luvicookie.ditto.domain.member.domain.Role;
-import katecam.luvicookie.ditto.domain.member.dao.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -35,8 +36,8 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
         String email = kakaoUserInfo.getEmail();
         String profileImage = kakaoUserInfo.getProfileImage();
 
-        Member member = memberRepository.findByEmail(email)
-                .orElseGet(() -> saveSocialMember(email, name, profileImage));
+        Optional<Member> byEmail = memberRepository.findByEmail(email);
+        Member member = byEmail.orElseGet(() -> saveSocialMember(email, name, profileImage));
 
         return new PrincipalDetail(member, Collections.singleton(new SimpleGrantedAuthority(member.getRole().getValue())),
                 attributes);

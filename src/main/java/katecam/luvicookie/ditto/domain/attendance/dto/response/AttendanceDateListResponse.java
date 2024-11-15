@@ -1,18 +1,17 @@
 package katecam.luvicookie.ditto.domain.attendance.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import katecam.luvicookie.ditto.domain.attendance.domain.AttendanceDate;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public record AttendanceDateListResponse (
-        List<String> attendanceDateList
+        @JsonProperty("attendance_date_list")
+        List<AttendanceDateResponse> attendanceDateList
 ) {
     public static AttendanceDateListResponse from(List<AttendanceDate> attendanceDates) {
-        List<String> attendanceDateList = attendanceDates.stream()
-                .map(attendanceDate -> attendanceDate.getStartTime()
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
-                )
+        List<AttendanceDateResponse> attendanceDateList = attendanceDates.stream()
+                .map(AttendanceDateResponse::from)
                 .toList();
 
         return new AttendanceDateListResponse(attendanceDateList);

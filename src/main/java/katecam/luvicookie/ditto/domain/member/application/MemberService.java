@@ -3,8 +3,8 @@ package katecam.luvicookie.ditto.domain.member.application;
 import katecam.luvicookie.ditto.domain.file.application.AwsFileService;
 import katecam.luvicookie.ditto.domain.member.dao.MemberRepository;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
-import katecam.luvicookie.ditto.domain.member.dto.memberCreateRequestDTO;
-import katecam.luvicookie.ditto.domain.member.dto.memberUpdateRequestDTO;
+import katecam.luvicookie.ditto.domain.member.dto.request.MemberCreateRequest;
+import katecam.luvicookie.ditto.domain.member.dto.request.MemberUpdateRequest;
 import katecam.luvicookie.ditto.global.error.ErrorCode;
 import katecam.luvicookie.ditto.global.error.GlobalException;
 import lombok.RequiredArgsConstructor;
@@ -18,41 +18,42 @@ import java.io.IOException;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MemberService {
 
     private final MemberRepository memberRepository;
     private final AwsFileService awsFileService;
 
     @Transactional
-    public Member registerMember(memberCreateRequestDTO memberDTO){
-        log.info(String.valueOf(memberDTO.getEmail()));
-        log.info(memberDTO.getEmail());
+    public Member registerMember(MemberCreateRequest memberDTO){
+        log.info(String.valueOf(memberDTO.email()));
+        log.info(memberDTO.email());
 
-        Member member = memberRepository.findByEmail(memberDTO.getEmail())
+        Member member = memberRepository.findByEmail(memberDTO.email())
                 .orElseThrow(() -> new IllegalArgumentException("해당사용자가없습니다"));
         member.authorizeUser();
 
-        member.setDescription(memberDTO.getDescription());
-        member.setContact(memberDTO.getContact());
-        member.setNickname(memberDTO.getNickname());
+        member.setDescription(memberDTO.description());
+        member.setContact(memberDTO.contact());
+        member.setNickname(memberDTO.nickname());
 
         return member;
     }
 
     @Transactional
-    public Member updateMember(memberUpdateRequestDTO memberDTO, Member member){
+    public Member updateMember(MemberUpdateRequest memberDTO, Member member){
         member.authorizeUser();
 
-        if(memberDTO.getName() != null) member.setName(memberDTO.getName());
-        if(memberDTO.getDescription() != null) member.setDescription(memberDTO.getDescription());
-        if(memberDTO.getContact() != null) member.setContact(memberDTO.getContact());
-        if(memberDTO.getNickname() != null) member.setNickname(memberDTO.getNickname());
+        if(memberDTO.name() != null) member.setName(memberDTO.name());
+        if(memberDTO.description() != null) member.setDescription(memberDTO.description());
+        if(memberDTO.contact() != null) member.setContact(memberDTO.contact());
+        if(memberDTO.nickname() != null) member.setNickname(memberDTO.nickname());
 
         return member;
     }
 
     @Transactional
-    public Member updateProfileImage(MultipartFile profileImage, Integer memberId){
+    public Member updateProfileImage(MultipartFile profileImage, Integer memberId) {
         Member member = findMemberById(memberId);
         member.authorizeUser();
 

@@ -6,13 +6,18 @@ import katecam.luvicookie.ditto.domain.studymember.domain.StudyMemberRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface StudyMemberRepository extends JpaRepository<StudyMember, Integer> {
     List<StudyMember> findAllByStudyIdAndRoleIn(Integer studyId, List<StudyMemberRole> roles);
 
-    StudyMember findByStudyIdAndMember_Id(Integer studyId, Integer memberId);
+    List<StudyMember> findAllByMember_Id(Integer memberId);
+
+    Optional<StudyMember> findByStudyIdAndMember_Id(Integer studyId, Integer memberId);
 
     void deleteByStudyIdAndMember_Id(Integer studyId, Integer memberId);
+
+    void deleteAllByStudyId(Integer studyId);
 
     boolean existsByStudyIdAndMemberAndRoleIn(Integer studyId, Member member, List<StudyMemberRole> roles);
 }

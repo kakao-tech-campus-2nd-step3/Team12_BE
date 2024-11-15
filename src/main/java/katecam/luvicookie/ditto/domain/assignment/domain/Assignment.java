@@ -9,7 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import katecam.luvicookie.ditto.domain.assignment.dto.AssignmentRequest;
+import katecam.luvicookie.ditto.domain.assignment.dto.request.AssignmentRequest;
 import katecam.luvicookie.ditto.domain.study.domain.Study;
 import katecam.luvicookie.ditto.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
@@ -49,14 +49,14 @@ public class Assignment extends BaseTimeEntity {
         this.deadline = deadline;
     }
 
-    public void updateAssignment(AssignmentRequest assignmentRequest){
-        if(assignmentRequest.getTitle() != null)
-            this.title = assignmentRequest.getTitle();
-        if(assignmentRequest.getContent() != null)
-            this.content = assignmentRequest.getContent();
-        if(assignmentRequest.getDeadline() != null){
+    public void updateAssignment(String title, String content, String deadline){
+        if(title != null)
+            this.title = title;
+        if(content != null)
+            this.content = content;
+        if(deadline != null){
             DateTimeFormatter format1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            this.deadline = LocalDateTime.parse(assignmentRequest.getDeadline(), format1);
+            this.deadline = LocalDateTime.parse(deadline, format1);
         }
     }
 

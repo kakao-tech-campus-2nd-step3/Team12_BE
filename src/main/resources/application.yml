@@ -2,23 +2,35 @@ spring:
   application:
     name: ditto
 
-  datasource:
-    url: jdbc:postgresql://db.ditto.pnu.app:1004/ditto
-    hikari:
-      maximum-pool-size: 4
-    username: ditto
-    password: ${DB_PASSWORD}
+  profiles:
+    default: local
 
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: validate
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
 
   config:
     import: classpath:/application-secret.yml
 
-file:
-  path: "src/main/resources/static/files/"
-  upload:
-    path: "/opt/app/files/"
+---
 
+spring:
+  config:
+    activate:
+      on-profile: local, dev, prod
+
+
+springdoc:
+  swagger-ui:
+    path: /swagger-custom-ui.html
+  api-docs:
+    path: /api-docs
+
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+
+  paths-to-match:
+    - /api/**
+
+  show-login-endpoint: true

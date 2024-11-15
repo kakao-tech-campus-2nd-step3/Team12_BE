@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: ditto-local
+
+  datasource:
+    url: jdbc:postgresql://local.db.ditto.pnu.app:1004/ditto
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            redirect-uri: http://localhost:8080/api/login/oauth2/code/kakao
+
+app:
+  redirect:
+    uri: http://localhost:5173
+
+logging:
+  level:
+    org:
+      springframework:
+        web: debug
+      hibernate:
+        SQL: debug
+        type: trace

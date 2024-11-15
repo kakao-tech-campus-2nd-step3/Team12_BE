@@ -6,18 +6,22 @@ import katecam.luvicookie.ditto.domain.study.domain.Study;
 import katecam.luvicookie.ditto.domain.studymember.dao.StudyMemberRepository;
 import katecam.luvicookie.ditto.domain.studymember.domain.StudyMember;
 import katecam.luvicookie.ditto.domain.studymember.domain.StudyMemberRole;
-import katecam.luvicookie.ditto.domain.studymember.dto.response.StudyInviteResponse;
-import katecam.luvicookie.ditto.domain.studymember.dto.response.StudyMemberResponse;
+import katecam.luvicookie.ditto.domain.studymember.dto.response.*;
 import katecam.luvicookie.ditto.global.error.ErrorCode;
 import katecam.luvicookie.ditto.global.error.GlobalException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class StudyMemberService {
 
     private final StudyMemberRepository studyMemberRepository;
@@ -30,29 +34,45 @@ public class StudyMemberService {
                 .toList();
     }
 
+    public StudyMemberRoleResponse getStudyMemberRole(Integer studyId, Integer memberId) {
+        Optional<StudyMember> studyMember = studyMemberRepository.findByStudyIdAndMember_Id(studyId, memberId);
+        return new StudyMemberRoleResponse(Objects.requireNonNull(studyMember.map(StudyMember::getRole).orElse(StudyMemberRole.UNREGISTERED)));
+    }
+
+    @Transactional
     public StudyMemberResponse updateStudyMember(Integer studyId, Integer memberId, StudyMemberRole role) {
-        StudyMember studyMember = studyMemberRepository.findByStudyIdAndMember_Id(studyId, memberId);
+        StudyMember studyMember = studyMemberRepository.findByStudyIdAndMember_Id(studyId, memberId)
+                .orElseThrow(() -> new GlobalException(ErrorCode.STUDY_MEMBER_NOT_FOUND));
         studyMember.setRole(role);
         studyMemberRepository.save(studyMember);
         return new StudyMemberResponse(studyMember);
     }
 
+    @Transactional
     public void deleteStudyMember(Integer studyId, Integer memberId) {
         studyMemberRepository.deleteByStudyIdAndMember_Id(studyId, memberId);
     }
 
-    public List<StudyMemberResponse> getStudyMemberApplyList(Integer studyId) {
+    @Transactional
+    public void deleteAllStudyMember(Integer studyId) {
+        studyMemberRepository.deleteAllByStudyId(studyId);
+    }
+
+    public List<StudyMemberApplyResponse> getStudyMemberApplyList(Integer studyId) {
         return studyMemberRepository.findAllByStudyIdAndRoleIn(studyId, List.of(StudyMemberRole.APPLICANT))
                 .stream()
-                .map(StudyMemberResponse::new)
+                .map(StudyMemberApplyResponse::new)
                 .toList();
     }
 
+    @Transactional
     public StudyMemberResponse createStudyMember(Integer studyId, Member member, StudyMemberRole role, String message) {
+        validateNotStudyMember(studyId, member);
         StudyMember studyMember = StudyMember.builder()
                 .studyId(studyId)
                 .member(member)
                 .role(role)
+                .joinedAt(LocalDateTime.now())
                 .message(message)
                 .build();
         studyMemberRepository.save(studyMember);
@@ -66,6 +86,7 @@ public class StudyMemberService {
         return new StudyInviteResponse(studyId, study.getInviteToken());
     }
 
+    @Transactional
     public StudyMemberResponse joinStudyMember(Integer studyId, Member member, String token) {
         Study study = studyRepository.findById(studyId)
                 .orElseThrow(() -> new GlobalException(ErrorCode.STUDY_NOT_FOUND));
@@ -73,7 +94,7 @@ public class StudyMemberService {
         if (!study.getInviteToken().equals(token)) {
             throw new GlobalException(ErrorCode.INVALID_TOKEN);
         }
-        return createStudyMember(studyId, member, StudyMemberRole.MEMBER, null);
+        return createStudyMember(studyId, member, StudyMemberRole.MEMBER, "초대 링크로 가입한 맴버입니다");
     }
 
     public void validateStudyLeader(Integer studyId, Member member) {
@@ -88,5 +109,22 @@ public class StudyMemberService {
         if (!isMember) {
             throw new GlobalException(ErrorCode.NOT_STUDY_MEMBER);
         }
+    }
+
+    public void validateNotStudyMember(Integer studyId, Member member) {
+        boolean isMember = studyMemberRepository.existsByStudyIdAndMemberAndRoleIn(studyId, member, Arrays.asList(StudyMemberRole.LEADER, StudyMemberRole.MEMBER));
+        if (isMember) {
+            throw new GlobalException(ErrorCode.ALREADY_STUDY_MEMBER);
+        }
+    }
+
+    public StudyLeaderResponse getStudyLeader(Integer studyId) {
+        List<StudyMember> studyMemberList = studyMemberRepository.findAllByStudyIdAndRoleIn(studyId, Arrays.asList(StudyMemberRole.LEADER, StudyMemberRole.MEMBER));
+
+        return studyMemberList.stream()
+                .filter(StudyMember::isLeader)
+                .findFirst()
+                .map(studyMember -> new StudyLeaderResponse(studyMember.getMember(), studyMemberList.size()))
+                .orElseThrow(() -> new GlobalException(ErrorCode.STUDY_LEADER_NOT_FOUND));
     }
 }

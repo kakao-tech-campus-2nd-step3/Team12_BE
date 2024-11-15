@@ -4,12 +4,15 @@ import katecam.luvicookie.ditto.domain.assignment.dao.AssignmentFileRepository;
 import katecam.luvicookie.ditto.domain.assignment.dao.AssignmentRepository;
 import katecam.luvicookie.ditto.domain.assignment.domain.Assignment;
 import katecam.luvicookie.ditto.domain.assignment.domain.AssignmentFile;
-import katecam.luvicookie.ditto.domain.assignment.dto.*;
+import katecam.luvicookie.ditto.domain.assignment.dto.request.AssignmentRequest;
+import katecam.luvicookie.ditto.domain.assignment.dto.response.*;
 import katecam.luvicookie.ditto.domain.file.application.AwsFileService;
+import katecam.luvicookie.ditto.domain.member.application.MemberService;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import katecam.luvicookie.ditto.domain.study.dao.StudyRepository;
 import katecam.luvicookie.ditto.domain.study.domain.Study;
 import katecam.luvicookie.ditto.domain.studymember.application.StudyMemberService;
+import katecam.luvicookie.ditto.domain.studymember.dto.response.StudyMemberResponse;
 import katecam.luvicookie.ditto.global.error.ErrorCode;
 import katecam.luvicookie.ditto.global.error.GlobalException;
 import lombok.RequiredArgsConstructor;
@@ -21,10 +24,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AssignmentService {
 
     private final AssignmentRepository assignmentRepository;
@@ -32,7 +38,9 @@ public class AssignmentService {
     private final AssignmentFileRepository assignmentFileRepository;
     private final AwsFileService awsFileService;
     private final StudyMemberService studyMemberService;
+    private final MemberService memberService;
 
+    @Transactional
     public AssignmentCreateResponse create(AssignmentRequest assignmentRequest, Integer studyId, Member member) {
         studyMemberService.validateStudyLeader(studyId, member);
         Assignment assignment = assignmentRequest.toEntity();
@@ -46,10 +54,12 @@ public class AssignmentService {
     public AssignmentResponse update(Integer assignmentId, AssignmentRequest assignmentRequest, Member member) {
         Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(() -> new GlobalException(ErrorCode.ASSIGNMENT_NOT_FOUND));
         studyMemberService.validateStudyLeader(assignment.getStudy().getId(), member);
-        assignment.updateAssignment(assignmentRequest);
+        assignment.updateAssignment(
+                assignmentRequest.title(), assignmentRequest.content(), assignmentRequest.deadline());
         return AssignmentResponse.from(assignment);
     }
 
+    @Transactional
     public void delete(Integer assignmentId, Member member) {
         Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(() -> new GlobalException(ErrorCode.ASSIGNMENT_NOT_FOUND));
         studyMemberService.validateStudyLeader(assignment.getStudy().getId(), member);
@@ -72,29 +82,65 @@ public class AssignmentService {
         return AssignmentResponse.from(assignment);
     }
 
-    public AssignmentFileResponse getAssignmentFiles(Integer assignmentId, Member member){
+    public AssignmentFilesResponse getAssignmentFiles(Integer assignmentId, Integer memberId){
         Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(() -> new GlobalException(ErrorCode.ASSIGNMENT_NOT_FOUND));
-        List<AssignmentFile> files = assignmentFileRepository.findAllByAssignmentAndMember(assignment, member);
-        return AssignmentFileResponse.from(files);
+        Member searchMember = memberService.findMemberById(memberId);
+        List<AssignmentFile> files = assignmentFileRepository.findAllByAssignmentAndMember(assignment, searchMember);
+        return AssignmentFilesResponse.from(files);
     }
 
-    /*public isTeamReader(TeamMate teamMate){
 
-    }*/
+    public AssignmentFileListResponse getAllAssignmentFiles(Integer assignmentId, Pageable pageable){
+        Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(() -> new GlobalException(ErrorCode.ASSIGNMENT_NOT_FOUND));
+        Page<AssignmentFileResponse> fileResponses = assignmentFileRepository.findAllByAssignment(pageable, assignment).map(AssignmentFileResponse::from);
+        return AssignmentFileListResponse.from(fileResponses);
+    }
 
-    public AssignmentFileResponse uploadAssignments(Member member, Integer assignmentId, MultipartFile file) throws IOException {
+    @Transactional
+    public AssignmentFilesResponse uploadAssignments(Member member, Integer assignmentId, MultipartFile file) throws IOException {
 
         Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(() -> new GlobalException(ErrorCode.ASSIGNMENT_NOT_FOUND));
         FileResponse fileResponse = awsFileService.saveAssignment(file);
 
-        AssignmentFile assignmentFile = new AssignmentFile(fileResponse.getFileName(), assignment, member, fileResponse.getFileUrl());
+        AssignmentFile assignmentFile = new AssignmentFile(fileResponse.fileName(), assignment, member, fileResponse.fileUrl());
         assignmentFileRepository.save(assignmentFile);
-        return AssignmentFileResponse.from(assignmentFile);
+        return AssignmentFilesResponse.from(assignmentFile);
     }
 
     public ResponseEntity<byte[]> download(Integer fileId) throws IOException {
         AssignmentFile assignmentFile = assignmentFileRepository.findById(fileId).orElseThrow(() -> new GlobalException(ErrorCode.FILE_NOT_FOUND));
         return awsFileService.downloadFile(assignmentFile.getFileName());
+    }
+
+    public Integer getSubmissionCount(Integer studyId){
+        Study study = studyRepository.findById(studyId).orElseThrow(() -> new GlobalException(ErrorCode.STUDY_NOT_FOUND));
+        List<Assignment> allByStudy = assignmentRepository.findAllByStudy(study);
+        List<StudyMemberResponse> memberList = studyMemberService.getStudyMemberList(studyId);
+        List<Assignment> studySubmissions = List.copyOf(allByStudy);
+
+        DateTimeFormatter format1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        for (StudyMemberResponse memberResponse : memberList) {
+            LocalDateTime joinedAt = LocalDateTime.parse(memberResponse.joinedAt(), format1);
+
+            List<Assignment> memberSubmissions = allByStudy.stream()
+                    .filter(assignment -> joinedAt.isBefore(assignment.getDeadline()))
+                    .filter(assignment -> assignmentFileRepository.existsByAssignmentAndMemberId(assignment, memberResponse.member().id()))
+                    .toList();
+
+            studySubmissions = studySubmissions.stream()
+                    .filter(memberSubmissions::contains)
+                    .toList();
+        }
+
+        return studySubmissions.size();
+    }
+
+
+    public Integer getTotalAssignmentCount(Integer studyId){
+        Study study = studyRepository.findById(studyId).orElseThrow(() -> new GlobalException(ErrorCode.STUDY_NOT_FOUND));
+        List<Assignment> allByStudy = assignmentRepository.findAllByStudy(study);
+        return allByStudy.size();
     }
 
 }
