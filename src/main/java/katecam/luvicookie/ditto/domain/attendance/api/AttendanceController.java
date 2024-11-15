@@ -1,5 +1,7 @@
 package katecam.luvicookie.ditto.domain.attendance.api;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import katecam.luvicookie.ditto.domain.attendance.application.AttendanceService;
 import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceCreateRequest;
@@ -27,11 +29,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/attendance")
 @RequiredArgsConstructor
+@Tag(name = "출석", description = "스터디 멤버의 출석 관련 API입니다.")
 public class AttendanceController {
 
     private final AttendanceService attendanceService;
 
     @PostMapping
+    @Operation(summary = "생성", description = "스터디 멤버들이 출석 해야 할 일자를 생성합니다.")
     public ResponseEntity<Void> createAttendance(
             @LoginUser Member member,
             @RequestParam("study_id") Integer studyId,
@@ -43,6 +47,7 @@ public class AttendanceController {
     }
 
     @GetMapping
+    @Operation(summary = "조회 - 페이지", description = "스터디 멤버의 출석을 페이지로 조회합니다.")
     public ResponseEntity<AttendanceListResponse> getAttendanceList(
             @LoginUser Member member,
             @RequestParam("study_id") Integer studyId,
@@ -52,6 +57,7 @@ public class AttendanceController {
     }
 
     @PutMapping
+    @Operation(summary = "수정", description = "출석 여부를 수정합니다.")
     public ResponseEntity<Void> updateAttendance(
             @LoginUser Member member,
             @RequestParam("study_id") Integer studyId,
@@ -64,6 +70,7 @@ public class AttendanceController {
     }
 
     @PostMapping("/date")
+    @Operation(summary = "조회", description = "등록된 게시물을 조회합니다.")
     public ResponseEntity<Void> createAttendanceDate(
             @LoginUser Member member,
             @RequestParam("study_id") Integer studyId,

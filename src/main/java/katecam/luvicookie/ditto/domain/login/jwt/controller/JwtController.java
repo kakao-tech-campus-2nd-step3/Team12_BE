@@ -1,5 +1,6 @@
 package katecam.luvicookie.ditto.domain.login.jwt.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import katecam.luvicookie.ditto.domain.login.jwt.JwtConstants;
@@ -21,6 +22,7 @@ import java.util.Objects;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "토큰 재발급", description = "리프레시 토큰 만료시 재발급 받는 API입니다.")
 public class JwtController {
 
     private final MemberService memberService;
