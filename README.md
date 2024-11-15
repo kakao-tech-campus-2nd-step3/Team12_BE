@@ -57,6 +57,7 @@
 
 ![java 21](https://img.shields.io/badge/Java%2021-ED8B00?style=for-the-badge&logo=java&logoColor=white)
 ![spring boot 3.1.4](https://img.shields.io/badge/Spring%20boot%203.1.4-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
+![spring security](https://img.shields.io/badge/Spring%20security-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
 ![JPA](https://img.shields.io/badge/JPA-AE3002?style=for-the-badge&logoColor=white)
 ![LOMBOK](https://img.shields.io/badge/LOMBOK-FF1111?style=for-the-badge&logoColor=white)
 
