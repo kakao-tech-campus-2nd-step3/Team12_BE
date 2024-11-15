@@ -19,14 +19,14 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 @ActiveProfiles("test")
 @Sql(value = "classpath:test_db/data.sql", config = @SqlConfig(encoding = "UTF-8"))
 @SpringBootTest
-public abstract class ControllerTestConfig {
+public abstract class ControllerTestWebMvcConfig {
 
     protected WebApplicationContext context;
     protected ObjectMapper objectMapper;
     protected MockMvc mockMvc;
 
     @Autowired
-    public ControllerTestConfig(WebApplicationContext context, ObjectMapper objectMapper) {
+    public ControllerTestWebMvcConfig(WebApplicationContext context, ObjectMapper objectMapper) {
         this.context = context;
         this.objectMapper = objectMapper;
     }

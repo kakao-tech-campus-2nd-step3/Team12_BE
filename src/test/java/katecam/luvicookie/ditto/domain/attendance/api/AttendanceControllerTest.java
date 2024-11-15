@@ -1,7 +1,7 @@
 package katecam.luvicookie.ditto.domain.attendance.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import katecam.luvicookie.ditto.ControllerTestConfig;
+import katecam.luvicookie.ditto.ControllerTestWebMvcConfig;
 import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceCreateRequest;
 import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceDateUpdateRequest;
 import katecam.luvicookie.ditto.domain.attendance.dto.request.AttendanceUpdateRequest;
@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class AttendanceControllerTest extends ControllerTestConfig {
+class AttendanceControllerTest extends ControllerTestWebMvcConfig {
 
     @Autowired
     public AttendanceControllerTest(WebApplicationContext context, ObjectMapper objectMapper) {

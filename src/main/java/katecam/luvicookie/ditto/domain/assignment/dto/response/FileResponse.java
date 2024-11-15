@@ -3,7 +3,6 @@ package katecam.luvicookie.ditto.domain.assignment.dto.response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import katecam.luvicookie.ditto.domain.assignment.domain.AssignmentFile;
 import lombok.Builder;
-import lombok.Getter;
 
 @Builder
 public record FileResponse (

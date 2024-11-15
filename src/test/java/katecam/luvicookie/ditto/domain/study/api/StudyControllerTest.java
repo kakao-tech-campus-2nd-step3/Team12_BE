@@ -1,7 +1,7 @@
 package katecam.luvicookie.ditto.domain.study.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import katecam.luvicookie.ditto.ControllerTestConfig;
+import katecam.luvicookie.ditto.ControllerTestWebMvcConfig;
 import katecam.luvicookie.ditto.domain.login.jwt.JwtConstants;
 import katecam.luvicookie.ditto.domain.login.jwt.TokenProvider;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class StudyControllerTest extends ControllerTestConfig {
+class StudyControllerTest extends ControllerTestWebMvcConfig {
 
     @Autowired
     public StudyControllerTest(WebApplicationContext context, ObjectMapper objectMapper) {

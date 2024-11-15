@@ -5,9 +5,6 @@ import katecam.luvicookie.ditto.domain.assignment.domain.AssignmentFile;
 import katecam.luvicookie.ditto.domain.member.domain.Member;
 import lombok.Builder;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Builder
 public record AssignmentFileResponse(
     FileResponse file,

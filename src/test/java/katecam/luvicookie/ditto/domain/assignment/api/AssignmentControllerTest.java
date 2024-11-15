@@ -1,7 +1,7 @@
 package katecam.luvicookie.ditto.domain.assignment.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import katecam.luvicookie.ditto.ControllerTestConfig;
+import katecam.luvicookie.ditto.ControllerTestWebMvcConfig;
 import katecam.luvicookie.ditto.domain.assignment.dto.request.AssignmentRequest;
 import katecam.luvicookie.ditto.domain.login.jwt.JwtConstants;
 import katecam.luvicookie.ditto.domain.login.jwt.TokenProvider;
@@ -15,11 +15,10 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class AssignmentControllerTest extends ControllerTestConfig {
+class AssignmentControllerTest extends ControllerTestWebMvcConfig {
 
     @Autowired
     public AssignmentControllerTest(WebApplicationContext context, ObjectMapper objectMapper) {

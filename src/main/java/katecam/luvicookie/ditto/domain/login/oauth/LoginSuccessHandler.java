@@ -15,7 +15,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -63,14 +62,6 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
             getRedirectStrategy().sendRedirect(request, response, redirectURL);
         }
-    }
-
-    public String getRedirectUri(String queryString){
-        String[] split = queryString.split("&");
-        String[] query = split[0].split("=");
-        if(Objects.equals(query[0], "clientUri"))
-            return query[1];
-        return null;
     }
 
 }

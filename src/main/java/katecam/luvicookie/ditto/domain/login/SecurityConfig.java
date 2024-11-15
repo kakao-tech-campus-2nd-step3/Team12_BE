@@ -35,7 +35,7 @@ public class SecurityConfig {
     private final TokenProvider tokenProvider;
     private final PrincipalDetailsService principalDetailsService;
     @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {  //해당 URL은 필터 거치지 않겠다
+    public WebSecurityCustomizer webSecurityCustomizer() {
         return (web -> web.ignoring().requestMatchers("/img/**", "/css/**", "/js/**", "/h2-console/**"));
     }
     @Bean

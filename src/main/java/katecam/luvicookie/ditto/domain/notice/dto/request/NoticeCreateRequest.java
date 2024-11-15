@@ -2,7 +2,6 @@ package katecam.luvicookie.ditto.domain.notice.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import katecam.luvicookie.ditto.domain.notice.domain.Notice;
-import lombok.Getter;
 
 public record NoticeCreateRequest (
         @NotBlank(message = "공지 제목을 입력해주세요.")
