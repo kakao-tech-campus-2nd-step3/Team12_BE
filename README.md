@@ -28,26 +28,16 @@
 
 </div>
 
-## Introduction
-
 ---
-
-### 문서
-
-- **[API 문서]()**
 
 ### 깃허브 레포지토리
 
 - **[FrontEnd Repository](https://github.com/kakao-tech-campus-2nd-step3/Team12_FE)**
 - **[BackEnd Repository](https://github.com/kakao-tech-campus-2nd-step3/Team12_BE)**
 
-## System Structure
+### ERD
 
-### 전체 구성도
-
-### 백엔드 구성도
-
-### ERD(ER - Diagram)
+<img src="https://github.com/user-attachments/assets/93bef857-308c-4fff-a269-5408ed906f1c" width="100%" alt=""/>
 
 <br />
 
@@ -68,8 +58,6 @@
 ![docker](https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
 </div>
-
-## How to Start
 
 ---
 
@@ -116,5 +104,3 @@ JWT
 
 - S3에 프로필 이미지와 과제 파일을 업로드하여 이후 재활용할 수 있습니다. 
 - 파일의 사이즈는 5MB로 제한하였습니다.
-
-### 알림
