@@ -38,10 +38,10 @@ public class StudyService {
         Page<StudyResponse> studyResponses = studyRepository.findAllByTopicAndNameAndIsOpen(
                 studyCriteria.topic(),
                 studyCriteria.name(),
-                Boolean.getBoolean(studyCriteria.isOpen()),
+                studyCriteria.isOpen(),
                 pageable)
                 .map(study -> StudyResponse.from(study, studyMemberService.getStudyLeader(study.getId())));
-
+        System.out.println(studyCriteria.isOpen());
         return StudyListResponse.from(studyResponses);
     }
 
