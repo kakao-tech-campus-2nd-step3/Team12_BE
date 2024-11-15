@@ -118,7 +118,7 @@ public class TokenProvider {
                 .secure(true)
                 .path("/")
                 .maxAge(Duration.ofDays(1))
-                .sameSite("Strict")
+                .sameSite("Secure")
                 .build();
 
         return cookie;
