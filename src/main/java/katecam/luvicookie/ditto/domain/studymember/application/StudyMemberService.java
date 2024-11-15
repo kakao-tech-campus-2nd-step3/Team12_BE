@@ -35,8 +35,8 @@ public class StudyMemberService {
     }
 
     public StudyMemberRoleResponse getStudyMemberRole(Integer studyId, Integer memberId) {
-        Optional<StudyMember> syudyMember = studyMemberRepository.findByStudyIdAndMember_Id(studyId, memberId);
-        return new StudyMemberRoleResponse(Objects.requireNonNull(syudyMember.map(StudyMember::getRole).orElse(StudyMemberRole.UNREGISTERED)));
+        Optional<StudyMember> studyMember = studyMemberRepository.findByStudyIdAndMember_Id(studyId, memberId);
+        return new StudyMemberRoleResponse(Objects.requireNonNull(studyMember.map(StudyMember::getRole).orElse(StudyMemberRole.UNREGISTERED)));
     }
 
     @Transactional
