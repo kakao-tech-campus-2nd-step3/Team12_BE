@@ -77,9 +77,10 @@
 
 ### 인증
 
-JWT
+Sping Security + OAuth2 + JWT
 
-- ACCESS TOKEN과 REFRESH TOKEN을 구현하였습니다.
+- Spring Security와 OAuth2를 사용해서 카카오 소셜 회원가입 및 로그인을 구현하였습니다.
+- 로그인 성공 시, JWT ACCESS TOKEN과 REFRESH TOKEN을 반환합니다.
 
 ### 스터디
 
