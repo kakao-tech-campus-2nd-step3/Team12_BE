@@ -88,9 +88,9 @@ class StudyServiceTest {
             StudyCriteria criteria = StudyCriteria.builder()
                     .name("스터디")
                     .topic("주제")
-                    .isOpen(true)
+                    .isOpen("true")
                     .build();
-            given(studyRepository.findAllByTopicAndNameAndIsOpen(criteria.topic(), criteria.name(), criteria.isOpen(), pageable))
+            given(studyRepository.findAllByTopicAndNameAndIsOpen(criteria.topic(), criteria.name(), Boolean.getBoolean(criteria.isOpen()), pageable))
                     .willReturn(studies);
 
             Integer numberOfMember = 2;

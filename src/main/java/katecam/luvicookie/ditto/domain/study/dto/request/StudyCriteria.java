@@ -16,7 +16,7 @@ public record StudyCriteria (
         String name,
 
         @JsonProperty("is_open")
-        Boolean isOpen
+        String isOpen
 ) {
 
 }
