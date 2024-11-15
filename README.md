@@ -30,6 +30,9 @@
 
 ---
 
+### 문서
+- **[API 문서](https://www.notion.so/API-207dbc1991fc48abb2a2bfe051aca514)**
+
 ### 깃허브 레포지토리
 
 - **[FrontEnd Repository](https://github.com/kakao-tech-campus-2nd-step3/Team12_FE)**
