@@ -20,7 +20,9 @@ import java.io.IOException;
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private final TokenProvider tokenProvider;
-    private static final String[] whitelist = {"/api/studies", "/api/auth", "/api/auth/kakao", "/user/login/kakao",
+
+    private static final String[] whitelist = {"/api/studies", "/api/auth", "/api/auth/kakao", "/user/login/kakao", "/api/login/oauth2/code/kakao", "/api/auth/reissue",
+
             "/api/auth/reissue", "/api-docs",
             "/swagger-ui-custom.html",
             "/v3/api-docs/**",
