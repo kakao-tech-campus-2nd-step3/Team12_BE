@@ -15,8 +15,6 @@ public record StudyCriteria (
         @Size(max = MAX_STUDY_NAME_LENGTH, message = "스터디명을 {max}자 이하로 입력해주세요.")
         String name,
 
-        @JsonProperty("is_open")
-        String isOpen
+        Boolean isOpen
 ) {
-
 }

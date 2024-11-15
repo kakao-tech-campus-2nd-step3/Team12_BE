@@ -41,7 +41,7 @@ class StudyControllerTest extends ControllerTestConfig {
         Integer page = 0;
         StudyCriteria studyCriteria = StudyCriteria.builder()
                 .name("테스트")
-                .isOpen("true")
+                .isOpen(true)
                 .build();
 
         Member member = new MemberFixture(1);
@@ -50,7 +50,7 @@ class StudyControllerTest extends ControllerTestConfig {
         mockMvc.perform(get("/api/studies")
                         .param("page", String.valueOf(page))
                         .param("name", studyCriteria.name())
-                        .param("is_open", studyCriteria.isOpen())
+                        .param("is_open", String.valueOf(studyCriteria.isOpen()))
                         .header(HttpHeaders.AUTHORIZATION, accessToken))
                 .andExpect(status().isOk());
     }
